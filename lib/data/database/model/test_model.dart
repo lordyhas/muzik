@@ -1,8 +1,5 @@
-import 'dart:convert';
-
-import '../../../objectbox.g.dart';
-import 'package:json_annotation/json_annotation.dart';
-
+part of data.model;
+/*
 @JsonSerializable()
 @Entity()
 class PossessionStats {
@@ -23,4 +20,4 @@ class PossessionStats {
           json.decode(value).map((k, v) => MapEntry(k as String, v as int)));
     }
   }
-}
+}*/

@@ -92,15 +92,15 @@ ModelDefinition getObjectBoxModel() {
       version: 1);
 
   final bindings = <Type, EntityDefinition>{
-    PlaylistItem: EntityDefinition<PlaylistItem>(
+    PlaylistInfo: EntityDefinition<PlaylistInfo>(
         model: _entities[0],
-        toOneRelations: (PlaylistItem object) => [],
-        toManyRelations: (PlaylistItem object) => {},
-        getId: (PlaylistItem object) => object.id,
-        setId: (PlaylistItem object, int id) {
+        toOneRelations: (PlaylistInfo object) => [],
+        toManyRelations: (PlaylistInfo object) => {},
+        getId: (PlaylistInfo object) => object.id,
+        setId: (PlaylistInfo object, int id) {
           object.id = id;
         },
-        objectToFB: (PlaylistItem object, fb.Builder fbb) {
+        objectToFB: (PlaylistInfo object, fb.Builder fbb) {
           fbb.startTable(3);
           fbb.addInt64(0, object.id);
           fbb.addInt64(1, object.recentIndex);
@@ -111,7 +111,7 @@ ModelDefinition getObjectBoxModel() {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
 
-          final object = PlaylistItem(
+          final object = PlaylistInfo(
               recentIndex:
                   const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0))
             ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
@@ -152,15 +152,15 @@ ModelDefinition getObjectBoxModel() {
   return ModelDefinition(model, bindings);
 }
 
-/// [PlaylistItem] entity fields to define ObjectBox queries.
+/// [PlaylistInfo] entity fields to define ObjectBox queries.
 class PlaylistItem_ {
-  /// see [PlaylistItem.id]
+  /// see [PlaylistInfo.id]
   static final id =
-      QueryIntegerProperty<PlaylistItem>(_entities[0].properties[0]);
+      QueryIntegerProperty<PlaylistInfo>(_entities[0].properties[0]);
 
-  /// see [PlaylistItem.recentIndex]
+  /// see [PlaylistInfo.recentIndex]
   static final recentIndex =
-      QueryIntegerProperty<PlaylistItem>(_entities[0].properties[1]);
+      QueryIntegerProperty<PlaylistInfo>(_entities[0].properties[1]);
 }
 
 /// [RecentState] entity fields to define ObjectBox queries.

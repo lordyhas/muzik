@@ -33,6 +33,10 @@
 
 # Web related
 lib/generated_plugin_registrant.dart
+lib/objectbox.g.dart
+lib/objectbox-model.json
+lib/res.dart
+
 
 # Symbolication related
 app.*.symbols
@@ -44,3 +48,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+android/google-service.json

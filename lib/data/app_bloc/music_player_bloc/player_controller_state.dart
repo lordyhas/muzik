@@ -4,29 +4,38 @@ part of 'player_controller_cubit.dart';
 
 enum MusicPlayerState {playing, stopped, paused}
 enum LectureMode { noRepeat, repeat, repeatOne}
+*/
 
-
-class PlayerController {
-  final List songList;
-  final MusicPlayerState playerState;
+class PlayerControllerState {
+  final Playlist songList;
+  final AudioPlayer player;
   int index;
-  Song? song;
 
 
-  PlayerController({required this.playerState, this.song,this.songList = const [], this.index = 0});
+  PlayerControllerState._({
+    required this.player ,
+    required this.songList,
+    this.index = 0
+  });
+
+  PlayerControllerState.init() : this._(
+      player: AudioPlayer(),
+      songList: Playlist.empty(),
+  );
 
   int get songIndex => index;
 
   set songIndex(int value) {
     index = value;
   }
-  Song get currentSong => songList[songIndex];
-  MusicPlayerState get status => playerState;
 
-  Duration _duration = const Duration(milliseconds: 0);
-  Duration _position = const Duration(milliseconds: 0);
+  SongInfo get currentSong => songList[songIndex];
 
-*/
+  //
+  // AudioPlayer get status => player;
+
+
+}
 /*bool _isPlaying = false;
   bool _isLoading = false;
 

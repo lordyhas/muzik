@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:muzik_audio_player/data/database/model/actual_state_model.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../objectbox.g.dart';
+import 'data_model.dart';
 
 abstract class DatabaseManager {
   const DatabaseManager();
@@ -39,19 +39,16 @@ class ObjectBoxManager extends DatabaseManager {
   void _test() async {
     Store store = await openStoreBox;
 
-    final boxPlaylistItem = store.box<PlaylistItem>();
+    final boxPlaylistItem = store.box<PlaylistInfo>();
     final boxRecentState = store.box<RecentState>();
     store.close();
   }
 
   void addSongsInActualPlaylist(List<SongModel> songs,{int? currentIndex}) async {
     Store store = await openStoreBox;
-    final boxPlaylistItem = store.box<PlaylistItem>();
+    final boxPlaylistItem = store.box<PlaylistInfo>();
 
-    boxPlaylistItem.putMany(
-        songs.map((songModel) => PlaylistItem.fromModel(
-            songModel, index: currentIndex ?? 0,
-        )).toList());
+    //boxPlaylistItem.putMany().toList());
 
     print("#### Added :" + songs.toString());
 
@@ -62,7 +59,7 @@ class ObjectBoxManager extends DatabaseManager {
 
   Future<List<SongModel>> _getActualPlaylist() async {
     Store store = await openStoreBox;
-    final boxPlaylistItem = store.box<PlaylistItem>();
+    final boxPlaylistItem = store.box<PlaylistInfo>();
 
     if(boxPlaylistItem.isEmpty()) {
       store.close();
@@ -70,10 +67,10 @@ class ObjectBoxManager extends DatabaseManager {
     }
 
     print("##########  length : ${boxPlaylistItem.getAll().length}");
-    print("########## songInfo test : ${boxPlaylistItem.getAll()[200].songInfo}");
+    print("########## songInfo test : ${boxPlaylistItem.getAll()[200].songs}");
     int i = 0;
     boxPlaylistItem.getAll().forEach((e) {
-      print("########## songInfo ${i++} : ${e.songInfo}");
+      print("########## songInfo ${i++} : ${e.songs}");
 
     });
 
@@ -87,21 +84,21 @@ class ObjectBoxManager extends DatabaseManager {
     //assert(boxPlaylistItem.count() == 3);             // executes the query, returns int
     //final notesWithNullText = queryNullText.find();
 
-    List<SongModel> songs = boxPlaylistItem.getAll().map((e) {
+    /*List<SongModel> songs = boxPlaylistItem.getAll().map((e) {
       print("########## : ${e.songModel.title}");
       print("########## : ${e.songModel}");
       return e.songModel;
-    }).toList();
+    }).toList();*/
 
     store.close();
 
-    return songs;
+    return [];
 
   }
 
   Future<int> getRecentIndex() async {
     Store store = await openStoreBox;
-    final boxPlaylistItem = store.box<PlaylistItem>();
+    final boxPlaylistItem = store.box<PlaylistInfo>();
     final int index =  boxPlaylistItem.query().build().findFirst()!.recentIndex;
     store.close();
 
@@ -115,8 +112,8 @@ class ObjectBoxManager extends DatabaseManager {
     Store store = await openStoreBox;
     final boxRecentState = store.box<RecentState>();
     final recentState = boxRecentState.query().build().findFirst();
-    recentState?..isShuffle = isShuffle ?? recentState.isShuffle;
-    recentState?..repeatMode = loopMode?.index ?? recentState.repeatMode;
+    recentState?.isShuffle = isShuffle ?? recentState.isShuffle;
+    recentState?.repeatMode = loopMode?.index ?? recentState.repeatMode;
 
     boxRecentState.put(recentState!);
 

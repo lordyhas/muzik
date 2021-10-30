@@ -2,7 +2,7 @@
 import 'package:audio_service/audio_service.dart';
 
 
-class AudioPlayerTask extends BackgroundAudioTask {
+class AudioPlayerBackgroundTask extends BackgroundAudioTask {
   final _player = AudioPlayer();
 
   static const IS_LOCAL_TO_BACKGROUND = 'isLocal';

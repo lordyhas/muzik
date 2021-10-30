@@ -4,28 +4,27 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:muzik_audio_player/data/audio_repository/audio_playlist.dart';
 import 'package:muzik_audio_player/objectbox.g.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+@Entity()
 class SongInfo extends Equatable {
-  Playlist playlist = <SongInfo>[] as Playlist;
 
+  Uri? artUri;
+  @Id()
+  int uid = 0;
+  int id;
+  String title;
+  String? displayName;
+  int? size;
+  String album;
+  String artist;
+  Duration duration;
+  String filePath;
+  String? fileExtension;
+  bool? isMusic;
 
-  //final SongModel songModel;
-  final Uri? artUri;
-
-  final int mid = 0;
-  final int id;
-  final String title;
-  final String displayName;
-  final int? size;
-  final String? album;
-  final String? artist;
-  final Duration duration;
-  final String filePath;
-  final String? fileExtension;
-  final bool? isMusic;
+  @Transient()
   final _map;
 
 
@@ -34,9 +33,9 @@ class SongInfo extends Equatable {
     required this.title,
     required this.duration,
     required this.filePath,
-    this.album,
-    this.artist,
-    this.displayName = '',
+    this.album = 'Unknown album',
+    this.artist = 'Unknown artist',
+    this.displayName,
     this.size,
     this.fileExtension,
     this.isMusic,
@@ -50,8 +49,8 @@ class SongInfo extends Equatable {
     title: songModel.title,
     filePath: songModel.data,
     displayName: songModel.displayName,
-    album: songModel.album,
-    artist: songModel.artist,
+    album: songModel.album ?? 'Unknown album',
+    artist: songModel.artist ?? 'Unknown artist',
     duration: Duration(minutes: songModel.duration!),
     //artUri: Uri.parse(_dUri),
   );
@@ -97,8 +96,7 @@ class SongInfo extends Equatable {
   Map<String, dynamic> toJson() => toMap;
 
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [id, title, filePath, duration,];
 
 }
 
