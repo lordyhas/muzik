@@ -5,10 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:muzik_audio_player/objectbox.g.dart';
+import 'package:objectbox/objectbox.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 @Entity()
-class SongInfo extends Equatable {
+class SongInfo {
 
   Uri? artUri;
   @Id()
@@ -19,6 +20,7 @@ class SongInfo extends Equatable {
   int? size;
   String album;
   String artist;
+  @Transient()
   Duration duration;
   String filePath;
   String? fileExtension;
@@ -95,8 +97,8 @@ class SongInfo extends Equatable {
   Map<String, dynamic> get toMap => _map;
   Map<String, dynamic> toJson() => toMap;
 
-  @override
-  List<Object?> get props => [id, title, filePath, duration,];
+  //@override
+  //List<Object?> get props => [id, title, filePath, duration,];
 
 }
 

@@ -3,7 +3,7 @@ part of data.model;
 @Entity()
 class PlaylistInfo {
   @Id()
-  int mid = 0;
+  int uid = 0;
   int recentIndex;
   final songsFromBox = ToMany<SongInfo>();
 
