@@ -20,8 +20,7 @@ class SongInfo {
   int? size;
   String album;
   String artist;
-  @Transient()
-  Duration duration;
+  int _duration;
   String filePath;
   String? fileExtension;
   bool? isMusic;
@@ -33,8 +32,8 @@ class SongInfo {
   SongInfo({
     required this.id,
     required this.title,
-    required this.duration,
     required this.filePath,
+    Duration duration = const Duration(),
     this.album = 'Unknown album',
     this.artist = 'Unknown artist',
     this.displayName,
@@ -43,7 +42,7 @@ class SongInfo {
     this.isMusic,
     this.artUri,
     Map? map,
-  }): _map = map;
+  }): _duration = duration.inSeconds, _map = map;
 
   factory SongInfo.fromModel(SongModel songModel) => SongInfo(
     map: songModel.getMap,
@@ -67,15 +66,18 @@ class SongInfo {
       artist: map['artist'],
   );
 
-  //String get path => songInfo.data;
-  ///
+  Duration get duration => Duration(seconds: _duration);
+  set duration(Duration duration) => _duration = duration.inSeconds;
 
-  File byteToFile(Uint8List bytes) {
-    //
-    //playlist
+  //String get path => songInfo.data;
+  /// convert byte as [Uint8List] to file as [File]
+
+  File _byteToFile(Uint8List bytes) {
     return File.fromRawPath(bytes);
-    //bytes.toAlbumModel()
-    //return File("");
+  }
+
+  Uri _byteToUri(Uint8List bytes) {
+    return Uri.dataFromBytes(bytes);
 
   }
 
