@@ -48,4 +48,4 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-android/google-service.json
+android/app/google-services.json

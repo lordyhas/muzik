@@ -18,7 +18,7 @@ import 'package:muzik_audio_player/src/widget_model/mini_player.dart';
 
 import 'package:on_audio_query/on_audio_query.dart';
 
-import 'package:muzik_audio_player/src/music_player.dart';
+import 'package:muzik_audio_player/src/music_player_page.dart';
 
 import 'package:muzik_audio_player/src/layout/music_layout.dart';
 
@@ -363,7 +363,7 @@ class _HomePageState extends State<HomePage>
              const Align(
               alignment: Alignment.bottomCenter,
               child: BottomPlayerView(),
-            ),
+             ),
           ],
         ),
       ),

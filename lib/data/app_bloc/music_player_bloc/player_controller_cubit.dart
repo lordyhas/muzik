@@ -7,39 +7,47 @@ import 'package:on_audio_query/on_audio_query.dart';
 
 part 'player_controller_state.dart';
 
-class PlayerController extends Cubit<AudioPlayer> {
-  PlayerController() : super(AudioPlayer());
+class PlayerController extends Cubit<PlayerControllerState> {
+  PlayerController() : super(PlayerControllerState.init());
 
   ObjectBoxManager objectBoxManager = ObjectBoxManager();
 
-  AudioPlayer get player => state;
+  AudioPlayer get player => state.player;
+  Playlist<SongInfo> get currentPlaylist => state.songList;
+  Playlist<SongInfo> get queue => currentPlaylist;
+  int? get currentIndex =>  state.player.currentIndex;
+
+
+  Future<void> loadPlaylist(Playlist<SongInfo> songs) async {
+    emit(state..currentPlaylist = songs);
+  }
 
   Future<void> play() async {
-    emit(state..play());
+    emit(state..player.play());
     //state.play();
   }
 
   Future<void> pause() async {
-    emit(state..pause());
+    emit(state..player.pause());
   }
 
   Future<void> resume() async {
-    state.play();
+    state.player.play();
   }
 
   Future<void> stop() async {
-    state.stop();
+    state.player.stop();
   }
 
   Future<void> next() async {
-    state.seekToNext();
+    state.player.seekToNext();
   }
 
   Future<void> prev() async {
-    if (state.position > const Duration(seconds: 3)) {
-      state.seek(Duration.zero);
+    if (state.player.position > const Duration(seconds: 3)) {
+      state.player.seek(Duration.zero);
     } else {
-      state.seekToPrevious();
+      state.player.seekToPrevious();
     }
   }
 
@@ -48,14 +56,13 @@ class PlayerController extends Cubit<AudioPlayer> {
   }
 
   Future<void> setPosition(Duration position, {int? index}) async {
-    emit(state..seek(position, index: index));
+    emit(state..player.seek(position, index: index));
     //playingPositionCubit.setPosition(position);
   }
 
   Future<void> playAt({required int index}) async {
-    emit(state
-      ..seek(Duration.zero, index: index)
-      ..play());
+    emit(state..player.seek(Duration.zero, index: index));
+    emit(state..songIndex = index);
     //playingPositionCubit.setPosition(position);
   }
 
@@ -82,26 +89,30 @@ class PlayerController extends Cubit<AudioPlayer> {
     int? initialIndex,
 
   }) async {
-    emit(state..setAudioSource(
+
+    Playlist<SongInfo> playlist = Playlist(songs
+        .map((song) => SongInfo.fromModel(song))
+        .toList());
+
+    loadPlaylist(playlist);
+    emit(state..player.setAudioSource(
       ConcatenatingAudioSource(
-          children: songs
-              .map((song) => AudioSource.uri(
-              Uri.file(SongInfo.fromModel(song,).filePath),
-              tag: SongInfo.fromModel(song).mediaItem))
-              .toList()),
+          children: playlist
+              .map((song) => AudioSource.uri(Uri.file(song.filePath),
+              tag: song.mediaItem
+          )).toList()),
       initialIndex: initialIndex,
     ));
+
     //objectBoxManager.addSongsInActualPlaylist(songs);
 
   }
 
   Future<void> shuffle(bool enable) async {
     if (enable) {
-      emit(state
-        ..shuffle()
-        ..setShuffleModeEnabled(enable));
+      //emit(state..player.shuffle()..player.setShuffleModeEnabled(enable));
     }
-    emit(state..setShuffleModeEnabled(enable));
+    //emit(state..player.setShuffleModeEnabled(enable));
   }
 
   Future<void> repeat() async {}
@@ -111,52 +122,3 @@ class PlayerController extends Cubit<AudioPlayer> {
   void setIndex() {}
 }
 
-/*
-class PlayerControllerCubit extends Cubit<PlayerController> {
-  PlayerControllerCubit._() : super(PlayerController(playerState: MusicPlayerState.stopped));
-
-  final AudioPlayer player = AudioPlayer();
-
-
-  Song? _audioTrack;
-
-  factory PlayerControllerCubit() {
-    var mediaPlayer = PlayerControllerCubit._();
-
-
-    return mediaPlayer;
-  }
-
-  Future<void> play() async {
-    //emit(PlayerController());
-    emit(PlayerController(playerState: MusicPlayerState.playing,song: _audioTrack));
-  }
-
-  Future<void> pause() async {
-    emit(PlayerController(playerState: MusicPlayerState.paused, song: _audioTrack));
-
-  }
-
-  Future<void> resume() async {
-    emit(PlayerController(playerState: MusicPlayerState.playing, song: _audioTrack));
-
-  }
-
-  Future<void> stop() async {
-    emit(PlayerController(playerState: MusicPlayerState.stopped, song: _audioTrack));
-
-  }
-
-  Future<void> next() async {}
-  Future<void> prev() async {}
-
-  Future<void> changDuration(Duration duration) async {
-    //playingDurationCubit.setDuration(duration);
-  }
-
-  Future<void> setPosition(Duration position) async {
-    //playingPositionCubit.setPosition(position);
-  }
-
-}
-*/

@@ -1,18 +1,18 @@
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
-
-import 'package:muzik_audio_player/src/player_ui/current_list.dart';
+import 'package:muzik_audio_player/data/audio_repository/audio_playlist_type.dart';
+import 'package:muzik_audio_player/data/audio_repository/audio_song_info.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:muzik_audio_player/src/layout/details_content_screen.dart';
 
 part 'player_ui/player_controllers_ui.dart';
 part 'player_ui/image_cover_widget.dart';
@@ -35,17 +35,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   @override
   void initState() {
     super.initState();
-    //BlocProvider.of<PlayerController>(context).player.
-    //AudioServiceBackground.setMediaItem(mediaItem)
 
-    //BlocProvider.of<PlayerController>(context).player.set
-
-    /* _songPlaylist = ConcatenatingAudioSource(
-        children: songList.map(
-                (song) => AudioSource.uri(
-                Uri.file(song.filePath),
-                tag: song)).toList()
-    );*/
   }
 
   String fromDuration(Duration duration) {
@@ -54,12 +44,15 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
   @override
   void dispose() {
-    //_player.dispose();
     super.dispose();
   }
 
-  final TextStyle primaryTextStyle20sp =
-      const TextStyle(color: Colors.white, fontSize: 20, fontFamily: "ubuntu");
+  final TextStyle primaryTextStyle20sp = const TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+      fontFamily: "ubuntu"
+  );
+
   var iconWhiteColor = Colors.white;
 
   @override
@@ -418,17 +411,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               ],
             ),
           ),
-          CurrentListBottomSheet(
+          QueueBottomSheetUI(
             color: Theme.of(context).scaffoldBackgroundColor,
-            child: StreamBuilder<SequenceState?>(
-              stream: _player.sequenceStateStream,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) return Container();
-                final sequenceState = snapshot.data!;
-                //final sequence = state?.sequence ?? [];
-                return QueueSongList(sequenceState,);
-              },
-            ),
+            child:  const QueueSongList(),
           ),
         ],
       ),
@@ -754,36 +739,53 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 }
 
 
-class QueueSongList extends StatelessWidget {
-  final SequenceState sequenceState;
+class QueueSongList extends StatefulWidget {
+  //final SequenceState sequenceState;
+  //final List _sequence;
   //final ScrollController? scrollController;
-  const QueueSongList(SequenceState _sequenceState, {Key? key}) :
-        sequenceState = _sequenceState,  super(key: key);
+  const QueueSongList({Key? key}) : super(key: key);
 
+  @override
+  State<QueueSongList> createState() => _QueueSongListState();
+}
+
+class _QueueSongListState extends State<QueueSongList> {
   String fromDuration(Duration duration) {
     return (duration.toString().split('.').first).substring(2);
   }
 
+  String artistName(SongInfo song){
+    if(song.artist.length <= 10){
+      return song.artist;
+    }else{
+      return song.artist.substring(0, 10) + "...";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    AudioPlayer _player = BlocProvider.of<PlayerController>(context).player;
+    //AudioPlayer _player = BlocProvider.of<PlayerController>(context).player;
     bool ignorePointer = false;
-    final state = sequenceState;
-    final sequence = state.sequence;
-    final metadata = state.currentSource!.tag as MediaItem;
 
-    ScrollController scrollController = ScrollController(
-        initialScrollOffset: state.currentIndex.toDouble()*73);
+   late ScrollController scrollController;
 
-    if (sequence.isEmpty) return Container();
-    return Expanded(
-      //margin:const EdgeInsets.only(top: 32.0),
-      //height: MediaQuery.of(context).size.height,
-      //padding: const EdgeInsets.all(8.0),
+    return BlocBuilder<PlayerController, PlayerControllerState>(
+      builder: (context, state) {
+        final currentIndex = state.songIndex;
+        final Playlist queue = state.currentPlaylist;
 
-      child: Column(
-        children: [
-          /*ClipRRect(
+        scrollController = ScrollController(
+            initialScrollOffset: currentIndex.toDouble()*73);
+
+        if (queue.isEmpty) return Container();
+        return Expanded(
+          //margin:const EdgeInsets.only(top: 32.0),
+          //height: MediaQuery.of(context).size.height,
+          //padding: const EdgeInsets.all(8.0),
+
+          child: Column(
+            children: [
+              /*ClipRRect(
             //borderRadius: BorderRadius.circular(15),
             borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(15.0),
@@ -800,144 +802,141 @@ class QueueSongList extends StatelessWidget {
             ),
           ),*/
 
-          /*Container(
+              /*Container(
             color: Colors.grey,
             height: 1,
           ),*/
 
-          Expanded(
-            child: IgnorePointer(
-              ignoring: ignorePointer,
-              child: ReorderableListView(
-                scrollController: ScrollController(
-                    initialScrollOffset: state.currentIndex.toDouble()*73),
-                onReorder: (int oldIndex, int newIndex) {
-                  if (oldIndex < newIndex) newIndex--;
-                  //sequence.move(oldIndex, newIndex);
+              Expanded(
+                child: IgnorePointer(
+                  ignoring: ignorePointer,
+                  child: ReorderableListView(
+                    scrollController: ScrollController(
+                        initialScrollOffset: currentIndex.toDouble()*73),
+                    onReorder: (int oldIndex, int newIndex) {
+                      if (oldIndex < newIndex) newIndex--;
+                      //sequence.move(oldIndex, newIndex);
 
-                  //sequence.
-                  //sequence.toAlbumModel()
-                },
-                children: [
-                  for (var i = 0; i < sequence.length; i++)
-                    Dismissible(
-                      key: ValueKey(sequence[i]),
-                      background: Container(
-                        color: Colors.redAccent,
-                        alignment: Alignment.centerRight,
-                        child: const Padding(
-                          padding: EdgeInsets.only(right: 8.0),
-                          child: Icon(Icons.delete, color: Colors.white),
-                        ),
-                      ),
-                      onDismissed: (dismissDirection) {
-                        //sequence.removeAt(i);
-                      },
-                      child: Container(
-                        color: i == state.currentIndex
-                            ? Theme.of(context).primaryColor.withOpacity(0.5)
-                            : null,
-                        margin: const EdgeInsets.symmetric(vertical: 0.0),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                              const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    child: Text('${i + 1}'),
-                                  ),
-                                  Expanded(
-                                    child: ListTile(
-                                      onTap: () {
-                                        _player.seek(Duration.zero,index: i);
-                                      },
-                                      //minLeadingWidth: 0.0,
-                                      ///horizontalTitleGap: 4.0, // todo: uncomment when ready
-                                      ///minVerticalPadding: 0.0, // todo: uncomment when ready
-                                      //tileColor: Colors.grey,
-                                      leading: ClipRRect(
-                                        borderRadius: BorderRadius.circular(5),
-                                        child: SizedBox(
-                                          height: 40,
-                                          width: 40,
-                                          child: GetImageCoverItem(
-                                            //fit: BoxFit.fitWidth,
-                                            futureResource:
-                                            OnAudioQuery().queryArtwork(
-                                              int.parse(sequence[i].tag.id),
-                                              ArtworkType.AUDIO,
+                      //sequence.
+                      //sequence.toAlbumModel()
+                    },
+                    children: [
+                      for (var i = 0; i < queue.length; i++)
+                        Dismissible(
+                          key: ValueKey(queue[i]),
+                          background: Container(
+                            color: Colors.redAccent,
+                            alignment: Alignment.centerRight,
+                            child: const Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: Icon(Icons.delete, color: Colors.white),
+                            ),
+                          ),
+                          onDismissed: (dismissDirection) {
+                            //sequence.removeAt(i);
+                          },
+                          child: Container(
+                            color: i == currentIndex
+                                ? Theme.of(context).primaryColor.withOpacity(0.5)
+                                : null,
+                            margin: const EdgeInsets.symmetric(vertical: 0.0),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        child: Text('${i + 1}'),
+                                      ),
+                                      Expanded(
+                                        child: ListTile(
+                                          onTap: () {
+                                            BlocProvider
+                                                .of<PlayerController>(context)
+                                                .playAt(index: i);
+                                            //state.player.seek(Duration.zero,index: i);
+
+                                            setState(() {});
+
+                                          },
+                                          //minLeadingWidth: 0.0,
+                                          ///horizontalTitleGap: 4.0, // todo: uncomment when ready
+                                          ///minVerticalPadding: 0.0, // todo: uncomment when ready
+                                          //tileColor: Colors.grey,
+                                          leading: ClipRRect(
+                                            borderRadius: BorderRadius.circular(5),
+                                            child: SizedBox(
+                                              height: 40,
+                                              width: 40,
+                                              child: GetImageCoverItem(
+                                                //fit: BoxFit.fitWidth,
+                                                futureResource:
+                                                OnAudioQuery().queryArtwork(
+                                                  queue[i].id,
+                                                  ArtworkType.AUDIO,
+                                                ),
+                                              ),
                                             ),
                                           ),
+                                          title: Text(
+                                            queue[i].title,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          subtitle: Text(
+                                            artistName(queue[i]) +' ● '+
+                                                fromDuration(queue[i].duration),
+                                            //Duration(milliseconds: int.parse(sequence[i].duration!.inMinutes.toString()))
+                                            style: const TextStyle(fontSize: 12),
+                                          ),
+                                          trailing: (i == currentIndex)
+                                              ? const Icon(Icons.play_arrow) : null,
+                                          //trailing: IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
                                         ),
                                       ),
-                                      title: Text(
-                                        sequence[i].tag.title,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      subtitle: Text(
-                                        '${((sequence[i].tag.artist.length <= 10) ? sequence[i].tag.artist : sequence[i].tag.artist.substring(0, 10) + "...") ?? "Unknown Artist"} ● ' +
-                                            fromDuration(
-                                                (sequence[i].tag as MediaItem)
-                                                    .duration ??
-                                                    Duration.zero),
-                                        //Duration(milliseconds: int.parse(sequence[i].duration!.inMinutes.toString()))
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                      trailing: (i == state.currentIndex)
-                                          ? const Icon(Icons.play_arrow) : null,
-                                      //trailing: IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
-                                    ),
-                                  ),
-                                  Container(
-                                    child: InkWell(
-                                      child: const Icon(Icons.more_vert),
-                                      onTap: () {},
-                                    ), /*IconButton(
+                                      Container(
+                                        child: InkWell(
+                                          child: const Icon(Icons.more_vert),
+                                          onTap: () {},
+                                        ), /*IconButton(
                                               onPressed: (){},
                                               icon: Icon(Icons.more_vert),
                                               ///icon:Icon(Icons.drag_handle_rounded),
                                             ),*/
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              color: Colors.white60,
-                              height: 1,
-                              margin:
-                              const EdgeInsets.symmetric(horizontal: 24),
-                            )
-                            /*Divider(
+                                ),
+                                Container(
+                                  color: Colors.white60,
+                                  height: 1,
+                                  margin:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                                )
+                                /*Divider(
                                           color: Colors.white60,
                                           indent: 24.0,
                                           endIndent: 32.0,
                                         ),*/
-                          ],
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+
+      },
     );
+
+
   }
 }
 
-
-extension on List<IndexedAudioSource> {
-  bool move(int oldIndex, int newIndex) {
-    if(length < newIndex) return false;
-    IndexedAudioSource element = elementAt(oldIndex);
-    removeAt(oldIndex);
-    insert(newIndex-1, element);
-    return true;
-
-  }
-}
 
 

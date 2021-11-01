@@ -148,7 +148,7 @@ class _MyAppState extends State<MyApp> {
           Locale('en', ''), // English, no country code
           Locale('es', ''), // Spanish, no country code
         ],
-        home: BlocBuilder<PlayerController, AudioPlayer>(
+        home: BlocBuilder<PlayerController, PlayerControllerState>(
             builder: (_, player) {
           //_init();
           return const HomePage();

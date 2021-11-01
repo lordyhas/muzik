@@ -7,7 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-import '../music_player.dart';
+import '../music_player_page.dart';
 
 class BottomPlayerView extends StatelessWidget {
   const BottomPlayerView({Key? key}) : super(key: key);

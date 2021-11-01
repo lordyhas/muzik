@@ -1,28 +1,47 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
+import 'package:muzik_audio_player/src/layout/music_layout.dart';
+import 'package:muzik_audio_player/src/music_player_page.dart';
+import 'package:muzik_audio_player/src/widget_model/mini_player.dart';
+import 'package:muzik_audio_player/src/widget_model/no_data_widget.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
-const double minHeight = 95;
-const double iconStartSize = 44;
-const double iconEndSize = 120;
-const double iconStartMarginTop = 36;
-const double iconEndMarginTop = 80;
-const double iconsVerticalSpacing = 24;
-const double iconsHorizontalSpacing = 16;
 
-class CurrentListBottomSheet extends StatefulWidget {
+part 'single_page/single_album_page.dart';
+part 'single_page/single_artist_page.dart';
+part 'single_page/quick_song_list_page.dart';
+
+
+
+
+class QueueBottomSheetUI extends StatefulWidget {
   final Widget? child;
   final Color color;
-  const CurrentListBottomSheet({required this.color, this.child, Key? key,}) : super(key: key);
+  const QueueBottomSheetUI({required this.color, this.child, Key? key,}) : super(key: key);
 
   @override
-  _CurrentListBottomSheetState createState() => _CurrentListBottomSheetState();
+  _QueueBottomSheetUIState createState() => _QueueBottomSheetUIState();
 }
 
-class _CurrentListBottomSheetState extends State<CurrentListBottomSheet>
+class _QueueBottomSheetUIState extends State<QueueBottomSheetUI>
     with SingleTickerProviderStateMixin {
+
+  final double minHeight = 95;
+  final double iconStartSize = 44;
+  final double iconEndSize = 120;
+  final double iconStartMarginTop = 36;
+  final double iconEndMarginTop = 80;
+  final double iconsVerticalSpacing = 24;
+  final double iconsHorizontalSpacing = 16;
+
   late AnimationController _controller;
 
   double get maxHeight => MediaQuery.of(context).size.height;
@@ -139,56 +158,59 @@ class SheetHeader extends StatelessWidget {
   final double fontSize;
   final double topMargin;
 
-  const SheetHeader(
-      {Key? key, required this.fontSize, required this.topMargin})
-      : super(key: key);
+  const SheetHeader({
+    required this.fontSize,
+    required this.topMargin,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 42,
-      //top: topMargin,
-      margin: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          const SizedBox(width: 4.0,),
-          /*IconButton(
+        height: 42,
+        //top: topMargin,
+        margin: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            const SizedBox(width: 4.0,),
+            /*IconButton(
               onPressed: (){},
               icon: const Icon(CupertinoIcons.chevron_down),
           ),*/
-          const Spacer(),
+            const Spacer(),
 
-          Column(
-            children: [
-              Container(
-                height: 2,
-                width: MediaQuery.of(context).size.width*0.10,
-                decoration: const BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.all(Radius.circular(50))
+            Column(
+              children: [
+                Container(
+                  height: 2,
+                  width: MediaQuery.of(context).size.width*0.10,
+                  decoration: const BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.all(Radius.circular(50))
+                  ),
                 ),
-              ),
-              const Spacer(),
-              Text(
-                'Playlist ● En attente',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w500,
+                const Spacer(),
+                Text(
+                  'Playlist ● En attente',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              const Spacer(),
-            ],
-          ),
-          const Spacer(),
-          /*IconButton(
+                const Spacer(),
+              ],
+            ),
+            const Spacer(),
+            /*IconButton(
             onPressed: (){},
             icon: const Icon(CupertinoIcons.double_music_note, color: Colors.transparent,),
           ),*/
-          const SizedBox(width: 4.0,),
+            const SizedBox(width: 4.0,),
 
-        ],
-      )
+          ],
+        )
     );
   }
 }
+

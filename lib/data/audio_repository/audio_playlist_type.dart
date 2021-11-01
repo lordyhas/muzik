@@ -53,6 +53,14 @@ class Playlist<Song extends SongInfo> extends Object with ListMixin<Song>
   void insertSong(int i, Song element) => super.insert(i,element);
   void insertSongs(int i, List<Song> elements) => super.insertAll(i,elements);
 
+  bool moveTo(int oldIndex, int newIndex) {
+    if(length < newIndex) return false;
+    Song element = elementAt(oldIndex);
+    super.removeAt(oldIndex);
+    insert(newIndex-1, element);
+    return true;
+  }
+
 
 
 

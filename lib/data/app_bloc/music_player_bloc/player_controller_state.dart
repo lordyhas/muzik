@@ -7,7 +7,7 @@ enum LectureMode { noRepeat, repeat, repeatOne}
 */
 
 class PlayerControllerState {
-  final Playlist songList;
+  Playlist<SongInfo> songList;
   final AudioPlayer player;
   int index;
 
@@ -15,7 +15,7 @@ class PlayerControllerState {
   PlayerControllerState._({
     required this.player ,
     required this.songList,
-    this.index = 0
+    this.index = -1
   });
 
   PlayerControllerState.init() : this._(
@@ -23,13 +23,18 @@ class PlayerControllerState {
       songList: Playlist.empty(),
   );
 
-  int get songIndex => index;
+  int get songIndex => index==-1 ? player.currentIndex! : index;
 
   set songIndex(int value) {
     index = value;
   }
 
   SongInfo get currentSong => songList[songIndex];
+  Playlist<SongInfo> get currentPlaylist => songList;
+  set currentPlaylist(Playlist<SongInfo> songs){
+    songList = songs;
+  }
+
 
   //
   // AudioPlayer get status => player;

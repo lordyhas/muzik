@@ -19,7 +19,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
       child: StreamBuilder<List<AlbumModel>>(
         stream: OnAudioQuery()
             .queryAlbums(
-          sortType: AlbumSortType.ALBUM_NAME,
+          sortType: AlbumSortType.ALBUM,
           orderType: OrderType.ASC_OR_SMALLER,
           uriType: UriType.EXTERNAL,
         ).asStream(),

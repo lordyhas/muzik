@@ -1,4 +1,4 @@
-part of '../music_player.dart';
+part of '../music_player_page.dart';
 
 class ControlButtons extends StatelessWidget {
 
