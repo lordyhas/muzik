@@ -190,6 +190,7 @@ class SingleAlbumScreen extends StatelessWidget {
           const Align(
             alignment: Alignment.bottomCenter,
             child: BottomPlayerView(),
+
           ),
         ],
       ),
