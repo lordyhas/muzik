@@ -26,10 +26,8 @@ class MusicPlayerPage extends StatefulWidget {
 }
 
 class _MusicPlayerPageState extends State<MusicPlayerPage> {
-  final ScrollController _scrollController = ScrollController();
-  //ConcatenatingAudioSource _songPlaylist;
+  //final ScrollController _scrollController = ScrollController();
 
-  //String status = 'hidden';
   bool isMute = false, isShuffle = false, isRepeat = false;
 
   @override
@@ -153,7 +151,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                             CupertinoIcons.ellipsis_vertical,
                           ),
                           onSelected: (index) => Navigator.of(context).pop(),
-                          itemBuilder: (BuildContext context) => _menuItems()
+                          itemBuilder: (BuildContext context) => _menuItems.children
                               .map((menuItem) => PopupMenuItem(child: menuItem))
                               .toList(),
                         ),
@@ -417,20 +415,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
           ),
         ],
       ),
-      /*floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            _songPlaylist.add(AudioSource.uri(
-              Uri.parse("asset:///audio/nature.mp3"),
-              tag: AudioMetadata(
-                album: "Public Domain",
-                title: "Nature Sounds ${++_addedCount}",
-                artwork:
-                "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg",
-              ),
-            ));
-          },
-        ),*/
     );
   }
 
@@ -442,196 +426,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
           content: Text('En développment | Soon :) ')));
   }
 
-
-
-  /*
-  Container? _buildPlaylistBottomSheet(
-      BuildContext context,
-      SequenceState sequenceState,
-      [ScrollController? scrollController]) {
-    final state = sequenceState;
-    final sequence = state.sequence ?? [];
-    if(sequence.isEmpty) return null;
-    return Container(
-      margin:const EdgeInsets.only(top: 32.0),
-      height: MediaQuery.of(context).size.height,
-      padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: background.withOpacity(0.95),
-        //border: Border.all(color: Colors.blue, width: 2.0),
-        /*border: Border(
-          top: BorderSide(color: Colors.blue, width: 2.0),
-          left: BorderSide(color: Colors.blue, width: 2.0),
-          right: BorderSide(color: Colors.blue, width: 2.0),
-          bottom: BorderSide(color: Colors.red, width: 2.0),
-      ),*/
-        //borderRadius: BorderRadius.circular(15.0),
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15.0),
-            topRight: Radius.circular(15.0)),
-
-      ),
-      child: Column(
-        children: [
-          Container(
-            //height: 50,
-
-              child: ClipRRect(
-                //borderRadius: BorderRadius.circular(15),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15.0),
-                    topRight: Radius.circular(15.0)),
-                child: AppBar(
-                  //automaticallyImplyLeading: false,
-                  backgroundColor: Theme.of(context).primaryColorDark.withOpacity(0.2),
-                  centerTitle: true,
-                  leading: IconButton(
-                    icon: Icon(Icons.keyboard_arrow_down),
-                    onPressed: Navigator.of(context).pop,
-                  ),
-                  title: Text("Playlist ● En attente"),
-                ),
-              )  /*Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Playlist"),
-              ],
-            ),*/
-          ),
-
-          Container(
-            color: Colors.grey,
-            height: 1,
-          ),
-
-          Expanded(
-            child: Container(
-              //color: Colors.transparent,
-              child: ReorderableListView(
-                scrollController: scrollController,
-                onReorder: (int oldIndex, int newIndex) {
-                  if (oldIndex < newIndex) newIndex--;
-                  _songPlaylist.move(oldIndex, newIndex);
-                },
-                children: [
-                  for (var i = 0; i < sequence.length; i++)
-                    Dismissible(
-                      key: ValueKey(sequence[i]),
-                      background: Container(
-                        color: Colors.redAccent,
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Icon(Icons.delete, color: Colors.white),
-                        ),
-                      ),
-                      onDismissed: (dismissDirection) {
-                        _songPlaylist.removeAt(i);
-                      },
-                      child: Container(
-                        color: i == state.currentIndex
-                            ? Theme.of(context).accentColor.withOpacity(0.5)
-                            : null,
-                        margin: EdgeInsets.symmetric(vertical: 0.0),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    child: Text('${i + 1}'),
-                                  ),
-                                  Expanded(
-                                    child: Container(
-                                      child: ListTile(
-                                        onTap: () {
-                                          _player.seek(Duration.zero,index: i);
-                                        },
-                                        //minLeadingWidth: 0.0,
-                                        ///horizontalTitleGap: 4.0, // todo: uncomment when ready
-                                        ///minVerticalPadding: 0.0, // todo: uncomment when ready
-                                        //tileColor: Colors.grey,
-                                        leading: Container(
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(5),
-                                            child: Container(
-                                              height: 40,
-                                              width: 40,
-                                              child: GetImageCover(
-                                                futureResource: playerBloc.audioQuery
-                                                    .getArtwork(
-                                                    type: ResourceType.SONG, id: sequence[i].tag.id),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        title: Container(
-                                          ///color: Colors.blue,
-                                          child: Text(
-                                            sequence[i].tag.title,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        subtitle: Text('${ (
-                                            (sequence[i].tag.artist.length <= 10)
-                                                ?sequence[i].tag.artist
-                                                : sequence[i].tag.artist.substring(0,10)+"...")
-                                            ?? "Unknown Artist"}' +
-                                            ' ● ' +
-                                            fromDuration(Duration(milliseconds: int.parse(sequence[i].tag.duration))),
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        //trailing: IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    child: InkWell(
-                                      child:  Icon(Icons.more_vert),
-                                      onTap: (){},
-                                    ), /*IconButton(
-                                      onPressed: (){},
-                                      icon: Icon(Icons.more_vert),
-                                      ///icon:Icon(Icons.drag_handle_rounded),
-                                    ),*/
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              color: Colors.white60,
-                              height: 1,
-                              margin: EdgeInsets.symmetric(horizontal: 24),
-                            )
-                            /*Divider(
-                                  color: Colors.white60,
-                                  indent: 24.0,
-                                  endIndent: 32.0,
-                                ),*/
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-              /*StreamBuilder<SequenceState>(
-                initialData: sequenceState,
-                stream: _player.sequenceStateStream,
-                builder: (context, snapshot) {
-                  final state = snapshot.data;
-                  final sequence = state?.sequence ?? [];
-                  return null;
-                },
-              ),*/
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/
-
-  List<Widget> _menuItems() => <Widget>[
+  Column get _menuItems => Column(
+      children: <Widget>[
         ListTile(
           leading: Icon(CupertinoIcons.arrowshape_turn_up_right,
               color: iconWhiteColor),
@@ -659,7 +455,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                   minute: now.minute,
                 )).then((TimeOfDay? value) {
               if (value != null) {
-                Scaffold.of(context).showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(value.format(context)),
                     action: SnackBarAction(
@@ -674,7 +470,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         ),
         ListTile(
           leading:
-              Icon(CupertinoIcons.person_crop_rectangle, color: iconWhiteColor),
+          Icon(CupertinoIcons.person_crop_rectangle, color: iconWhiteColor),
           title: Text('See artist', style: primaryTextStyle20sp),
           onTap: null, //() => _openArtistPage(actualMusic),
         ),
@@ -688,7 +484,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
         ),
         ListTile(
           leading:
-              Icon(CupertinoIcons.slider_horizontal_3, color: iconWhiteColor),
+          Icon(CupertinoIcons.slider_horizontal_3, color: iconWhiteColor),
           title: Text('Equalizer', style: primaryTextStyle20sp),
           onTap: _defaultOnTap,
         ),
@@ -697,54 +493,15 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
           title: Text('Song Details', style: primaryTextStyle20sp),
           onTap: _defaultOnTap,
         ),
-      ];
+      ]
+  );
 
-/*Container _buildMenuBottomSheet(BuildContext context) {
-    return Container(
-      height: 350,
-      padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: background.withOpacity(0.9),
-        //border: Border.all(color: Colors.blue, width: 2.0),
-        /*border: Border(
-          top: BorderSide(color: Colors.blue, width: 2.0),
-          left: BorderSide(color: Colors.blue, width: 2.0),
-          right: BorderSide(color: Colors.blue, width: 2.0),
-          bottom: BorderSide(color: Colors.red, width: 2.0),
-      ),*/
-        //borderRadius: BorderRadius.circular(15.0),
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15.0),
-            topRight: Radius.circular(15.0)),
-
-      ),
-      child: Column(
-        children: [
-          ListTile(title: Text('Option', style: primaryTextStyle24,),
-            trailing: IconButton(
-              icon: Icon(Icons.close,color: iconWhiteColor,),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-          Expanded(
-            child: ListView(
-                children: _menuItems()
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/
 
 }
 
 
 class QueueSongList extends StatefulWidget {
-  //final SequenceState sequenceState;
-  //final List _sequence;
-  //final ScrollController? scrollController;
   const QueueSongList({Key? key}) : super(key: key);
-
   @override
   State<QueueSongList> createState() => _QueueSongListState();
 }
@@ -767,15 +524,15 @@ class _QueueSongListState extends State<QueueSongList> {
     //AudioPlayer _player = BlocProvider.of<PlayerController>(context).player;
     bool ignorePointer = false;
 
-   late ScrollController scrollController;
+   //late ScrollController scrollController;
 
     return BlocBuilder<PlayerController, PlayerControllerState>(
       builder: (context, state) {
         final currentIndex = state.songIndex;
         final Playlist queue = state.currentPlaylist;
 
-        scrollController = ScrollController(
-            initialScrollOffset: currentIndex.toDouble()*73);
+        /*scrollController = ScrollController(
+            initialScrollOffset: currentIndex.toDouble()*73);*/
 
         if (queue.isEmpty) return Container();
         return Expanded(
@@ -914,11 +671,6 @@ class _QueueSongListState extends State<QueueSongList> {
                                   margin:
                                   const EdgeInsets.symmetric(horizontal: 24),
                                 )
-                                /*Divider(
-                                          color: Colors.white60,
-                                          indent: 24.0,
-                                          endIndent: 32.0,
-                                        ),*/
                               ],
                             ),
                           ),

@@ -11,7 +11,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
-import 'package:muzik_audio_player/data/database/database_manager.dart';
 import 'package:muzik_audio_player/src/pages/app_settings/about.dart';
 import 'package:muzik_audio_player/src/pages/app_settings/settings_pages.dart';
 import 'package:muzik_audio_player/src/widget_model/mini_player.dart';
@@ -64,7 +63,7 @@ class _HomePageState extends State<HomePage>
     super.dispose();
   }
   
-  void _showBottomPlayer(){
+  /*void _showBottomPlayer(){
     //showBottomSheet(builder: (BuildContext context) {  })
     /*_scaffoldKey.currentState?.showBottomSheet(
             (context) => BottomSheet(
@@ -87,7 +86,7 @@ class _HomePageState extends State<HomePage>
 
       );
     });
-  }
+  }*/
 
   void _onShowBottomPlayer(){
     /*_scaffoldKey.currentState?.showBottomSheet(
@@ -374,8 +373,8 @@ class _HomePageState extends State<HomePage>
 
 /// this method return a bottom (display) player.
 
-/*
 
+/*
 Future<void> musicStreamingDialog() async {
   double indent = 34.0;
   return await showDialog<void>(
@@ -388,16 +387,16 @@ Future<void> musicStreamingDialog() async {
             SimpleDialogOption(
               child:
               OutlineButton(
-                  borderSide: BorderSide(
+                  borderSide: const BorderSide(
                     width: 2.0,
                     color: Colors.deepOrange,
                   ),
                   //padding: EdgeInsets.all(8.0),
                   onPressed: (){
                     Navigator.pop(context);
-                    _defaultOnTap();
+                    //_defaultOnTap();
                   },
-                  child: ListTile(
+                  child: const ListTile(
                     leading: Icon(FontAwesomeIcons.google, color: Colors.deepOrange,),
                     title: Text("Play Music",
                         style: TextStyle(fontSize: 18,color: Colors.deepOrange, fontWeight: FontWeight.bold )
@@ -408,7 +407,7 @@ Future<void> musicStreamingDialog() async {
             Divider(indent: indent, endIndent: indent,),
             SimpleDialogOption(
               child: OutlineButton(
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 2.0,
                   color: Colors.purpleAccent,
                 ),
@@ -418,11 +417,11 @@ Future<void> musicStreamingDialog() async {
                 },
                 child: ListTile(
                   //leading: Icon(FontAwesomeIcons.itunes, color: Colors.purpleAccent),
-                  leading: Container(
+                  leading: SizedBox(
                       height: 25,
                       child: Image.asset("assets/icons/itune.png")
                   ),
-                  title: Text("iTunes",
+                  title: const Text("iTunes",
                     style: TextStyle(
                         fontSize: 18,
                         color: Colors.purpleAccent,
@@ -497,77 +496,7 @@ Future<void> musicStreamingDialog() async {
         );
       }
   );
-  /*return showDialog<void>(
-      context: context,
-      barrierDismissible: true, // user must tap button!
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: Text('Rewind and remember'),
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.call),
-              title: Text(strings['about_unh_phone']),
-              onTap: (){
-                Navigator.of(context).pop();
-              },
-            ),
 
-            ListTile(
-              leading: Icon(Icons.mail),
-              title: Text("strings['about_unh_mail']"),
-              onTap: (){
-                //writeMail(strings['about_unh_mail']);
-                Navigator.of(context).pop();
-              },
-            ),
-
-          ],
-
-        );
-      },
-    );*/
-}*/
-
-Widget infoPage(String name, BuildContext context) {
-  double _f = MediaQuery.of(context).textScaleFactor;
-  return Scaffold(
-    backgroundColor: Color(0xffF8F9FB),
-    appBar: AppBar(
-      leading: IconButton(
-        tooltip: 'Back',
-        icon: Icon(
-          CupertinoIcons.chevron_back,
-          color: Colors.black.withOpacity(.7),
-        ),
-        onPressed: () {
-          HapticFeedback.lightImpact();
-          Navigator.maybePop(context);
-        },
-      ),
-      shadowColor: Color(0xffF0F0F0).withOpacity(.4),
-      elevation: 20,
-      backgroundColor: Colors.white,
-      title: Text(
-        name,
-        style: TextStyle(
-          color: Colors.black.withOpacity(.7),
-          fontSize: _f * 22,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      actions: [
-        IconButton(
-          color: Colors.black.withOpacity(.7),
-          tooltip: 'Settings',
-          enableFeedback: true,
-          icon: const Icon(CupertinoIcons.gear_alt_fill),
-          onPressed: () {
-            HapticFeedback.lightImpact();
-            // Navigator.push(context,
-            //     MaterialPageRoute(builder: (context) => SettingsPage()));
-          },
-        ),
-      ],
-    ),
-  );
 }
+
+*/
