@@ -53,8 +53,8 @@ class MuzikAudioApplication extends StatelessWidget {
         BlocProvider<MusicLibraryBloc>(
           create: (BuildContext context) => MusicLibraryBloc(),
         ),
-        BlocProvider<PlayerController>(
-          create: (BuildContext context) => PlayerController(),
+        BlocProvider<PlayerControllerBloc>(
+          create: (BuildContext context) => PlayerControllerBloc(),
         ),
         BlocProvider<Languages>(
           create: (BuildContext context) => Languages(),
@@ -77,7 +77,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  AudioPlayer get _player => BlocProvider.of<PlayerController>(context).player;
+  AudioPlayer get _player => BlocProvider.of<PlayerControllerBloc>(context).player;
   OnAudioQuery audioQuery = OnAudioQuery();
 
   Future<void> _init() async {
@@ -148,7 +148,7 @@ class _MyAppState extends State<MyApp> {
           Locale('en', ''), // English, no country code
           Locale('es', ''), // Spanish, no country code
         ],
-        home: BlocBuilder<PlayerController, PlayerControllerState>(
+        home: BlocBuilder<PlayerControllerBloc, PlayerControllerState>(
             builder: (_, player) {
           //_init();
           return const HomePage();
@@ -179,8 +179,8 @@ class MaterialAppProvider extends StatelessWidget {
         BlocProvider<MusicLibraryBloc>(
           create: (BuildContext context) => MusicLibraryBloc(),
         ),
-        BlocProvider<PlayerController>(
-          create: (BuildContext context) => PlayerController(),
+        BlocProvider<PlayerControllerBloc>(
+          create: (BuildContext context) => PlayerControllerBloc(),
         ),
         BlocProvider<Languages>(
           create: (BuildContext context) => Languages(),

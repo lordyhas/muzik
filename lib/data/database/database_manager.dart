@@ -27,9 +27,9 @@ class ObjectBoxManager extends DatabaseManager {
   Future<void> _initStoreBox() async {
     final store = await openStoreBox;
 
-    final boxRecentState = store.box<RecentState>();
+    final boxRecentState = store.box<ControllerState>();
     if(boxRecentState.isEmpty()){
-      boxRecentState.put(RecentState());
+      boxRecentState.put(ControllerState());
     }
 
     store.close();
@@ -40,7 +40,7 @@ class ObjectBoxManager extends DatabaseManager {
     Store store = await openStoreBox;
 
     final boxPlaylistItem = store.box<PlaylistInfo>();
-    final boxRecentState = store.box<RecentState>();
+    final boxRecentState = store.box<ControllerState>();
     store.close();
   }
 
@@ -110,7 +110,7 @@ class ObjectBoxManager extends DatabaseManager {
 
   void saveActualState({bool? isShuffle, LoopMode? loopMode}) async {
     Store store = await openStoreBox;
-    final boxRecentState = store.box<RecentState>();
+    final boxRecentState = store.box<ControllerState>();
     final recentState = boxRecentState.query().build().findFirst();
     recentState?.isShuffle = isShuffle ?? recentState.isShuffle;
     recentState?.repeatMode = loopMode?.index ?? recentState.repeatMode;
@@ -122,9 +122,9 @@ class ObjectBoxManager extends DatabaseManager {
 
   }
 
-   Future<RecentState> getRecentState() async {
+   Future<ControllerState> getRecentState() async {
     Store store = await openStoreBox;
-    final boxRecentState = store.box<RecentState>();
+    final boxRecentState = store.box<ControllerState>();
     final recentState = boxRecentState.query().build().findFirst();
     store.close();
 

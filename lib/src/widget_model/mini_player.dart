@@ -18,8 +18,8 @@ class BottomPlayerView extends StatelessWidget {
   @override
   Container build(BuildContext context) {
 
-    var musicController = BlocProvider.of<PlayerController>(context);
-    var _player = BlocProvider.of<PlayerController>(context).player;
+    var musicController = BlocProvider.of<PlayerControllerBloc>(context);
+    var _player = BlocProvider.of<PlayerControllerBloc>(context).player;
     //SongModel song = _player.c;
 
     Color iconColor1 = Colors.white;

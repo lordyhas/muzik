@@ -55,7 +55,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    AudioPlayer _player = BlocProvider.of<PlayerController>(context).player;
+    AudioPlayer _player = BlocProvider.of<PlayerControllerBloc>(context).player;
 
     double iSize2 = 27;
     TextStyle titleStyle =
@@ -526,7 +526,7 @@ class _QueueSongListState extends State<QueueSongList> {
 
    //late ScrollController scrollController;
 
-    return BlocBuilder<PlayerController, PlayerControllerState>(
+    return BlocBuilder<PlayerControllerBloc, PlayerControllerState>(
       builder: (context, state) {
         final currentIndex = state.songIndex;
         final Playlist queue = state.currentPlaylist;
@@ -611,7 +611,7 @@ class _QueueSongListState extends State<QueueSongList> {
                                         child: ListTile(
                                           onTap: () {
                                             BlocProvider
-                                                .of<PlayerController>(context)
+                                                .of<PlayerControllerBloc>(context)
                                                 .playAt(index: i);
                                             //state.player.seek(Duration.zero,index: i);
 

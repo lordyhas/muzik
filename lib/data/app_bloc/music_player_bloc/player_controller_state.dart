@@ -7,32 +7,44 @@ enum LectureMode { noRepeat, repeat, repeatOne}
 */
 
 class PlayerControllerState {
-  Playlist<SongInfo> songList;
+  //Playlist<SongInfo> songList;
   final AudioPlayer player;
-  int index;
+  //int index;
+
+  ControllerState controllerState;
 
 
   PlayerControllerState._({
     required this.player ,
-    required this.songList,
-    this.index = -1
+    required this.controllerState,
+    //this.index = -1
   });
 
   PlayerControllerState.init() : this._(
-      player: AudioPlayer(),
-      songList: Playlist.empty(),
+    controllerState : ControllerState(),
+    player: AudioPlayer(),
   );
 
-  int get songIndex => index==-1 ? player.currentIndex! : index;
+  int get songIndex => controllerState.index ;
 
   set songIndex(int value) {
-    index = value;
+    controllerState.index = value;
   }
 
-  SongInfo get currentSong => songList[songIndex];
-  Playlist<SongInfo> get currentPlaylist => songList;
+  //SongInfo get currentSong => songList[songIndex];
+  Playlist<SongInfo> get currentPlaylist {
+    if( controllerState.isShuffle) {
+      return controllerState.shuffledPendingQueue;
+    } else {
+      return controllerState.pendingQueue;
+    }
+  }
   set currentPlaylist(Playlist<SongInfo> songs){
-    songList = songs;
+    if(controllerState.isShuffle) {
+      controllerState.shuffledPendingQueue = songs;
+    } else {
+      controllerState.pendingQueue = songs;
+    }
   }
 
 

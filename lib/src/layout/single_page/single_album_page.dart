@@ -19,8 +19,8 @@ class SingleAlbumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PlayerController musicController =
-    BlocProvider.of<PlayerController>(context);
+    final PlayerControllerBloc musicController =
+    BlocProvider.of<PlayerControllerBloc>(context);
     return Scaffold(
       //backgroundColor: background,
       /*floatingActionButton: FutureBuilder<List<SongModel>>(

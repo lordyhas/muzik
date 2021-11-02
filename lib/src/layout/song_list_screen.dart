@@ -63,8 +63,8 @@ class SongListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PlayerController musicController =
-    BlocProvider.of<PlayerController>(context);
+    final PlayerControllerBloc musicController =
+    BlocProvider.of<PlayerControllerBloc>(context);
     return Scrollbar(
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
@@ -234,8 +234,8 @@ class SongListWithoutScrollingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final PlayerController musicController =
-    BlocProvider.of<PlayerController>(context);
+    final PlayerControllerBloc musicController =
+    BlocProvider.of<PlayerControllerBloc>(context);
     int newLength = songList.length;
     if(length < newLength){
       newLength = length;

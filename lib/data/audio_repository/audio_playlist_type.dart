@@ -28,7 +28,6 @@ class Playlist<Song extends SongInfo> extends Object with ListMixin<Song>
     this.index = index;
   }
 
-
   @override
   int get length => innerList.length;
 

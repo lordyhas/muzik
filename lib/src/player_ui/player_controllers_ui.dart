@@ -20,7 +20,7 @@ class ControlButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PlayerController musicController = BlocProvider.of<PlayerController>(context);
+    PlayerControllerBloc musicController = BlocProvider.of<PlayerControllerBloc>(context);
     //final songData = OtherBlocProvider.of<PlayerBloc>(context).songData;
     double iSizeNB = 30;
 

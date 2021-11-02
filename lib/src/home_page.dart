@@ -42,13 +42,13 @@ class _HomePageState extends State<HomePage>
 
 
   OnAudioQuery audioQuery = OnAudioQuery();
-  late PlayerController
+  late PlayerControllerBloc
       musicController; //= BlocProvider.of<PlayerController>(context);
 
   @override
   void initState() {
     super.initState();
-    musicController = BlocProvider.of<PlayerController>(context);
+    musicController = BlocProvider.of<PlayerControllerBloc>(context);
     setMusic();
     /*if(musicController.player.sequence != null){
       _showBottomPlayer();

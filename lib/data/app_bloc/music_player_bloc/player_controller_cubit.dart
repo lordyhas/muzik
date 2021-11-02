@@ -2,18 +2,19 @@ import 'package:bloc/bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:muzik_audio_player/data/audio_repository/audio_playlist_type.dart';
 import 'package:muzik_audio_player/data/audio_repository/audio_song_info.dart';
+import 'package:muzik_audio_player/data/database/data_model.dart';
 import 'package:muzik_audio_player/data/database/database_manager.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 part 'player_controller_state.dart';
 
-class PlayerController extends Cubit<PlayerControllerState> {
-  PlayerController() : super(PlayerControllerState.init());
+class PlayerControllerBloc extends Cubit<PlayerControllerState> {
+  PlayerControllerBloc() : super(PlayerControllerState.init());
 
   ObjectBoxManager objectBoxManager = ObjectBoxManager();
 
   AudioPlayer get player => state.player;
-  Playlist<SongInfo> get currentPlaylist => state.songList;
+  Playlist<SongInfo> get currentPlaylist => state.currentPlaylist;
   Playlist<SongInfo> get queue => currentPlaylist;
   int? get currentIndex =>  state.player.currentIndex;
 
