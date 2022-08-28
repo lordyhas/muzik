@@ -17,7 +17,7 @@ class _ArtistListScreenState extends State<ArtistListScreen> {
       child: StreamBuilder<List<ArtistModel>>(
           stream: OnAudioQuery()
               .queryArtists(
-                sortType: ArtistSortType.ARTIST_NAME,
+                sortType: ArtistSortType.ARTIST,
                 orderType: OrderType.ASC_OR_SMALLER,
                 uriType: UriType.EXTERNAL,
               )

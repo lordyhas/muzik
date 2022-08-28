@@ -21,6 +21,8 @@ import 'package:muzik_audio_player/src/music_player_page.dart';
 
 import 'package:muzik_audio_player/src/layout/music_layout.dart';
 
+import '../res.dart';
+
 part 'elevated_drawer.dart';
 
 class HomePage extends StatefulWidget {
@@ -250,7 +252,7 @@ class _HomePageState extends State<HomePage>
           title: AnimatedTextKit(
             animatedTexts: [
               TypewriterAnimatedText(
-                'Music',
+                'Music P',
                 speed: const Duration(milliseconds: 150),
                 curve: Curves.bounceIn,
                 textStyle: const TextStyle(
@@ -260,7 +262,7 @@ class _HomePageState extends State<HomePage>
               ),
               //TyperAnimatedText(text)
               TyperAnimatedText(
-                'Muzik Audio Player',
+                'Muzik Player',
                 speed: const Duration(milliseconds: 150),
                 curve: Curves.easeInCirc,
                 textStyle: const TextStyle(

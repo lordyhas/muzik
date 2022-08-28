@@ -41,7 +41,10 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
   }
 
   Future<void> next() async {
+
     state.player.seekToNext();
+    //state.songIndex++;
+    emit(state);
   }
 
   Future<void> prev() async {
@@ -87,7 +90,7 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
 
   Future<void> setListSong({
     required List<SongModel> songs,
-    int? initialIndex,
+    required int initialIndex,
 
   }) async {
 
@@ -103,7 +106,7 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
               tag: song.mediaItem
           )).toList()),
       initialIndex: initialIndex,
-    ));
+    )..songIndex = initialIndex );
 
     //objectBoxManager.addSongsInActualPlaylist(songs);
 
@@ -120,6 +123,6 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
 
   //Future<void> shuffle() async {}
 
-  void setIndex() {}
+  void setIndex(int index) => emit(state..songIndex = index);
 }
 

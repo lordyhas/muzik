@@ -42,7 +42,7 @@ class SongInfo {
     this.isMusic,
     this.artUri,
     Map? map,
-  }): _duration = duration.inSeconds, _map = map;
+  }): _duration = duration.inMinutes, _map = map;
 
   factory SongInfo.fromModel(SongModel songModel) => SongInfo(
     map: songModel.getMap,

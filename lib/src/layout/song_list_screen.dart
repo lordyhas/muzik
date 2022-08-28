@@ -21,7 +21,7 @@ class _SongListScreenState extends State<SongListScreen> {
       child: StreamBuilder<List<SongModel>>(
         stream: OnAudioQuery()
             .querySongs(
-              sortType: SongSortType.DEFAULT,
+              sortType: SongSortType.TITLE,
               orderType: OrderType.ASC_OR_SMALLER,
               uriType: UriType.EXTERNAL,
             )

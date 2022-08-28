@@ -528,7 +528,7 @@ class _QueueSongListState extends State<QueueSongList> {
 
     return BlocBuilder<PlayerControllerBloc, PlayerControllerState>(
       builder: (context, state) {
-        final currentIndex = state.songIndex;
+        final currentIndex = state.player.currentIndex;
         final Playlist queue = state.currentPlaylist;
 
         /*scrollController = ScrollController(
@@ -569,7 +569,7 @@ class _QueueSongListState extends State<QueueSongList> {
                   ignoring: ignorePointer,
                   child: ReorderableListView(
                     scrollController: ScrollController(
-                        initialScrollOffset: currentIndex.toDouble()*73),
+                        initialScrollOffset: currentIndex!.toDouble()*73),
                     onReorder: (int oldIndex, int newIndex) {
                       if (oldIndex < newIndex) newIndex--;
                       //sequence.move(oldIndex, newIndex);

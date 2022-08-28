@@ -23,9 +23,10 @@ class ControllerState {
   Playlist<SongInfo>? _shuffledPendingPlaylist = Playlist.empty();
 
   ControllerState({
+    int? index,
     LoopMode loopMode = LoopMode.off,
     this.isShuffle = false,
-    int? index,
+
     final Playlist? playlist,
   })  : repeatMode = loopMode.index,
         _pendingPlaylist = playlist,
