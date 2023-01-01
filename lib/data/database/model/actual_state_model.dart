@@ -30,7 +30,7 @@ class ControllerState {
     final Playlist? playlist,
   })  : repeatMode = loopMode.index,
         _pendingPlaylist = playlist,
-        _index = index;
+        _index = index ?? 0;
 
   LoopMode get currentLoopMode => LoopMode.values[repeatMode];
 

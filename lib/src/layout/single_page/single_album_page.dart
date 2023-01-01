@@ -1,5 +1,6 @@
 part of '../details_content_screen.dart';
 
+// ignore: must_be_immutable
 class SingleAlbumScreen extends StatelessWidget {
   final Uint8List? appBarBackgroundImage;
   final String appBarTitle;
@@ -8,7 +9,7 @@ class SingleAlbumScreen extends StatelessWidget {
   final void Function()? onSongTap;
 
 
-  SingleAlbumScreen({
+   SingleAlbumScreen({
     required this.album,
     required this.appBarTitle,
     this.appBarBackgroundImage,
@@ -58,7 +59,7 @@ class SingleAlbumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final PlayerControllerBloc musicController =
+    //final PlayerControllerBloc musicController =
     BlocProvider.of<PlayerControllerBloc>(context);
     return Scaffold(
       //backgroundColor: background,

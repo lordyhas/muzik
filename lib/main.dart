@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:get_storage/get_storage.dart';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:audio_session/audio_session.dart';
@@ -20,12 +19,11 @@ import 'package:muzik_audio_player/data/values.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'data/database/database_manager.dart';
+import 'package:muzik_audio_player/data/database/database_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ObjectBoxManager.init();
-  await GetStorage.init();
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     //androidNotificationChannelName: 'Muzik Audio playback',
@@ -50,6 +48,9 @@ class MuzikAudioApplication extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider<StyleBloc>(
+          create: (BuildContext context) => StyleBloc(),
+        ),
         BlocProvider<MusicLibraryBloc>(
           create: (BuildContext context) => MusicLibraryBloc(),
         ),
@@ -59,9 +60,10 @@ class MuzikAudioApplication extends StatelessWidget {
         BlocProvider<Languages>(
           create: (BuildContext context) => Languages(),
         ),
-        BlocProvider<Styles>(
-          create: (BuildContext context) => Styles(),
+        BlocProvider<SettingCubit>(
+          create: (BuildContext context) => SettingCubit(),
         ),
+
       ],
       child: const MyApp(),
     );
@@ -127,17 +129,17 @@ class _MyAppState extends State<MyApp> {
       //Permission.camera,
       //Permission.locationAlways,
     ].request();
-    print("storage Permission :"+statuses[Permission.storage].toString());
+    debugPrint("storage Permission :"+statuses[Permission.storage].toString());
   }
 
   @override
   Widget build(BuildContext context) {
 
-    return BlocBuilder<Styles, ThemeData>(builder: (_, theme) {
+    return BlocBuilder<StyleBloc, StyleState>(builder: (_, style) {
       return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Muzik Audio Player',
-        theme: theme,
+        theme: style.theme,
         localizationsDelegates: const [
           AppLocalizations.delegate, // Add this line
           GlobalMaterialLocalizations.delegate,
@@ -185,8 +187,8 @@ class MaterialAppProvider extends StatelessWidget {
         BlocProvider<Languages>(
           create: (BuildContext context) => Languages(),
         ),
-        BlocProvider<Styles>(
-          create: (BuildContext context) => Styles(),
+        BlocProvider<StyleBloc>(
+          create: (BuildContext context) => StyleBloc(),
         ),
       ],
       child: const MaterialApp(
