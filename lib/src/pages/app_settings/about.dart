@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:flutter/services.dart';
-import 'package:package_info/package_info.dart';
+
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutWidget extends StatefulWidget{
@@ -70,14 +71,14 @@ class AboutState extends State<AboutWidget>{
                 title: AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(
-                      'Music',
+                      'Music P',
                       speed: const Duration(milliseconds: 150),
                       curve: Curves.bounceIn,
                       textStyle:  TextStyle(color: textWhiteColor, fontSize: 24),
                     ),
                     //TyperAnimatedText(text)
                     TyperAnimatedText(
-                      'Muzik Audio Player',
+                      'Muzik Player',
                       speed:  const Duration(milliseconds: 150),
                       curve: Curves.easeInCirc,
                       textStyle:  TextStyle(color: textWhiteColor, fontSize: 24),
@@ -93,7 +94,7 @@ class AboutState extends State<AboutWidget>{
                 ), /*Text(
                   "M'ziki Audio Player",
                   style: TextStyle(color: textWhiteColor, fontSize: 24),),*/
-                subtitle: const Text("@lordyhas7",style:  TextStyle(color: Colors.white54),),
+                subtitle: const Text("@lordyhas",style:  TextStyle(color: Colors.white54),),
 
               ),
               ListTile(
@@ -129,12 +130,12 @@ class AboutState extends State<AboutWidget>{
               ),
               ListTile(
                 leading: const Icon(Icons.sync),
-                title: Text("Check for Update",style: primaryTextStyle20,),
+                title: Text("Vérifier la mise à jour",style: primaryTextStyle20,),
                 onTap: _defaultOnTap,
               ),
               ListTile(
                 leading: const Icon(Icons.turned_in_not),
-                title: Text("Licence",style: primaryTextStyle20,),
+                title: Text("Licences",style: primaryTextStyle20,),
                 onTap: () async {
                   PackageInfo packageInfo = await PackageInfo.fromPlatform();
                   return showAboutDialog(
@@ -164,9 +165,14 @@ class AboutState extends State<AboutWidget>{
               ListTile(
                 leading: const Icon(FontAwesomeIcons.user),
                 title: Text("Hassan K.",style: primaryTextStyle20,),
-                subtitle: Text("@lordyhas7",style:  TextStyle(color: Theme.of(context).primaryColor)),
+                subtitle: Text("@lordyhas",style:  TextStyle(color: Theme.of(context).primaryColor)),
                 // haspro@gmail.com
-                onTap: _defaultOnTap,
+                onTap: () async {
+                  final Uri url = Uri.parse("https://linktr.ee/hassankajila");
+                  if (!await launchUrl(url)) {
+                    throw 'Could not launch $url';
+                  }
+                },
               ),
               ListTile(
                 leading: const Icon(FontAwesomeIcons.googlePlay),
@@ -174,11 +180,10 @@ class AboutState extends State<AboutWidget>{
                 onTap: () async {
                   PackageInfo packageInfo = await PackageInfo.fromPlatform();
                   String appPackageName = packageInfo.packageName;
-                  final url = "https://play.google.com/store/apps/details?id=" + appPackageName;
-                  if (await canLaunch(url)) {
-                  await launch(url);
-                  } else {
-                  throw 'Could not launch $url';
+                  final link = "https://play.google.com/store/apps/details?id=" + appPackageName;
+                  final Uri url = Uri.parse(link);
+                  if (!await launchUrl(url)) {
+                    throw 'Could not launch $url';
                   }
                 },
               ),
@@ -202,7 +207,8 @@ class AboutState extends State<AboutWidget>{
               ),
               ListTile(
                 leading: const Icon(Icons.location_on),
-                title: Text("Address : None",style: primaryTextStyle20,),
+                title: Text("Address",style: primaryTextStyle20,),
+                subtitle: Text("None ",style:  TextStyle(color: Theme.of(context).primaryColor)),
               ),
 
             ],

@@ -24,8 +24,7 @@ class _SongListScreenState extends State<SongListScreen> {
               sortType: SongSortType.TITLE,
               orderType: OrderType.ASC_OR_SMALLER,
               uriType: UriType.EXTERNAL,
-            )
-            .asStream(),
+            ).asStream(),
         builder: (context, item) {
 
           if (item.data == null) {
