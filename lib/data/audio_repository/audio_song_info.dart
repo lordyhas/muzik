@@ -4,15 +4,15 @@ import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:muzik_audio_player/objectbox.g.dart';
-import 'package:objectbox/objectbox.dart';
+//import 'package:muzik_audio_player/objectbox.g.dart';
+//import 'package:objectbox/objectbox.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-@Entity()
+//@Entity()
 class SongInfo {
 
   Uri? artUri;
-  @Id()
+  //@Id()
   int uid = 0;
   int id;
   String title;
@@ -25,8 +25,9 @@ class SongInfo {
   String? fileExtension;
   bool? isMusic;
 
-  @Transient()
-  final _map;
+  //@Transient()
+  //final _map;
+
 
 
   SongInfo({
@@ -41,11 +42,10 @@ class SongInfo {
     this.fileExtension,
     this.isMusic,
     this.artUri,
-    Map? map,
-  }): _duration = duration.inMinutes, _map = map;
+  }): _duration = duration.inMinutes;
 
   factory SongInfo.fromModel(SongModel songModel) => SongInfo(
-    map: songModel.getMap,
+    //map: songModel.getMap,
     id: songModel.id,
     title: songModel.title,
     filePath: songModel.data,
@@ -56,20 +56,13 @@ class SongInfo {
     //artUri: Uri.parse(_dUri),
   );
 
-  factory SongInfo.fromJson(Map map) => SongInfo(
-    //todo: finish implementation
-      id: map['id'],
-      title: map['title'],
-      duration: map['duration'],
-      filePath: map['data'],
-      album: map['album'],
-      artist: map['artist'],
-  );
+
 
   Duration get duration => Duration(seconds: _duration);
   set duration(Duration duration) => _duration = duration.inSeconds;
 
   //String get path => songInfo.data;
+
   /// convert byte as [Uint8List] to file as [File]
 
   File _byteToFile(Uint8List bytes) {
@@ -80,31 +73,141 @@ class SongInfo {
     return Uri.dataFromBytes(bytes);
 
   }
+  //Map<String, dynamic> toMap() => toJson();
 
-  final String _dUri = "https://upload.wikimedia.org/wikipedia/"
-      "commons/e/e8/Music_01754.jpg";
-
-  MediaItem get mediaItem =>
-      MediaItem(
-        id: "$id",
-        title: title,
-        displayTitle: displayName,
-        album: album,
-        artist: artist,
-        duration: duration,
-        artUri: Uri.parse(_dUri),
-        //genre: songInfo.
-      );
-
-  Map<String, dynamic> get toMap => _map;
-  Map<String, dynamic> toJson() => toMap;
 
   //@override
   //List<Object?> get props => [id, title, filePath, duration,];
 
+  MediaItem get mediaItem => MediaItem(
+    id: "$id",
+    title: title,
+    displayTitle: displayName,
+    album: album,
+    artist: artist,
+    duration: duration,
+    artUri: Uri.parse(MediaSample.wikiUri),
+    //genre: songInfo.
+  );
+
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SongInfo &&
+          runtimeType == other.runtimeType &&
+          artUri == other.artUri &&
+          id == other.id &&
+          title == other.title &&
+          displayName == other.displayName &&
+          size == other.size &&
+          album == other.album &&
+          artist == other.artist &&
+          _duration == other._duration &&
+          filePath == other.filePath &&
+          fileExtension == other.fileExtension &&
+          isMusic == other.isMusic);
+
+  @override
+  int get hashCode =>
+      artUri.hashCode ^
+      id.hashCode ^
+      title.hashCode ^
+      displayName.hashCode ^
+      size.hashCode ^
+      album.hashCode ^
+      artist.hashCode ^
+      _duration.hashCode ^
+      filePath.hashCode ^
+      fileExtension.hashCode ^
+      isMusic.hashCode;
+
+  @override
+  String toString() {
+    return 'SongInfo('
+        ' artUri: $artUri,'
+        ' id: $id,'
+        ' title: $title,'
+        ' displayName: $displayName,'
+        ' size: $size,'
+        ' album: $album,'
+        ' artist: $artist,'
+        ' _duration: $_duration,'
+        ' filePath: $filePath,'
+        ' fileExtension: $fileExtension,'
+        ' isMusic: $isMusic,'
+        ')';
+  }
+
+  SongInfo copyWith({
+    Uri? artUri,
+    int? id,
+    String? title,
+    String? displayName,
+    int? size,
+    String? album,
+    String? artist,
+    Duration? duration,
+    String? filePath,
+    String? fileExtension,
+    bool? isMusic,
+  }) {
+    return SongInfo(
+      artUri: artUri ?? this.artUri,
+      id: id ?? this.id,
+      title: title ?? this.title,
+      displayName: displayName ?? this.displayName,
+      size: size ?? this.size,
+      album: album ?? this.album,
+      artist: artist ?? this.artist,
+      duration: duration ?? Duration(minutes: _duration),
+      filePath: filePath ?? this.filePath,
+      fileExtension: fileExtension ?? this.fileExtension,
+      isMusic: isMusic ?? this.isMusic,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'artUri': artUri,
+      'id': id,
+      'title': title,
+      'displayName': displayName,
+      'size': size,
+      'album': album,
+      'artist': artist,
+      '_duration': _duration,
+      'filePath': filePath,
+      'fileExtension': fileExtension,
+      'isMusic': isMusic,
+    };
+  }
+
+  factory SongInfo.fromMap(Map<String, dynamic> map) {
+    return SongInfo(
+      artUri: map['artUri'] as Uri,
+      id: map['id'] as int,
+      title: map['title'] as String,
+      displayName: map['displayName'] as String,
+      size: map['size'] as int,
+      album: map['album'] as String,
+      artist: map['artist'] as String,
+      duration: Duration(minutes: map['_duration'] as int),
+      filePath: map['filePath'] as String,
+      fileExtension: map['fileExtension'] as String,
+      isMusic: map['isMusic'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() => toMap();
+  factory SongInfo.fromJson(Map<String, dynamic> map) => SongInfo.fromMap(map);
+
+//</editor-fold>
 }
 
 class MediaSample {
+  static const String wikiUri = "https://upload.wikimedia.org/wikipedia/"
+      "commons/e/e8/Music_01754.jpg";
   static int _nextMediaId = 0;
   static final ConcatenatingAudioSource playlist =
   ConcatenatingAudioSource(children: [

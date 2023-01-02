@@ -275,13 +275,14 @@ class _SettingsState extends State<SettingPage> {
                                               .of<StyleBloc>(context)
                                               .switchThemeTo(ThemeModeState
                                               .values[index]);
-                                          Navigator.of(context).pop();
 
                                           SystemChrome.setSystemUIOverlayStyle(
                                               SystemUiOverlayStyle(
                                                 systemNavigationBarDividerColor: BlocProvider
                                                     .of<StyleBloc>(context).state.theme.primaryColor,
                                           ));
+
+                                          Navigator.of(context).pop();
                                           /*Navigator.of(context).pushReplacement(
                                               SettingPage.route()
                                           );*/
