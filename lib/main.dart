@@ -10,10 +10,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:audio_session/audio_session.dart';
 
-import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
 import 'package:muzik_audio_player/src/home_page.dart';
 
-import 'package:muzik_audio_player/data/app_bloc/music_library_bloc/music_library_bloc.dart';
 
 import 'package:muzik_audio_player/data/values.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -62,6 +60,9 @@ class MuzikAudioApplication extends StatelessWidget {
         ),
         BlocProvider<SettingCubit>(
           create: (BuildContext context) => SettingCubit(),
+        ),
+        BlocProvider<NavigationController>(
+          create: (BuildContext context) => NavigationController(),
         ),
 
       ],
@@ -161,10 +162,10 @@ class _MyAppState extends State<MyApp> {
 }
 
 
-class MaterialAppProvider extends StatelessWidget {
+class _MaterialAppProvider extends StatelessWidget {
   final List<DeviceOrientation> deviceOrientations;
 
-  const MaterialAppProvider({
+  const _MaterialAppProvider({
     this.deviceOrientations = const <DeviceOrientation>[],
     Key? key,
   }) : super(key: key);
