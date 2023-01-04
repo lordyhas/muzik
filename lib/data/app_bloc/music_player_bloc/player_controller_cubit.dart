@@ -16,7 +16,8 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
   AudioPlayer get player => state.player;
   Playlist<SongInfo> get currentPlaylist => state.currentPlaylist;
   Playlist<SongInfo> get queue => currentPlaylist;
-  int? get currentIndex =>  state.player.currentIndex;
+  int get currentIndex =>  state.songIndex;
+  SongInfo get currentSong => currentPlaylist[state.songIndex];
 
 
   Future<void> loadPlaylist(Playlist<SongInfo> songs) async {
@@ -43,7 +44,7 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
   Future<void> next() async {
 
     state.player.seekToNext();
-    //state.songIndex++;
+    state.songIndex++;
     emit(state);
   }
 
@@ -52,7 +53,9 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
       state.player.seek(Duration.zero);
     } else {
       state.player.seekToPrevious();
+      state.songIndex--;
     }
+    emit(state);
   }
 
   Future<void> changeDuration(Duration duration) async {
@@ -108,6 +111,8 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
       initialIndex: initialIndex,
     )..songIndex = initialIndex );
 
+    //state..player.set
+
     //objectBoxManager.addSongsInActualPlaylist(songs);
 
   }
@@ -124,5 +129,13 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
   //Future<void> shuffle() async {}
 
   void setIndex(int index) => emit(state..songIndex = index);
+
+  void addNext({required SongModel song, required int index}) =>
+      emit(state..player.sequence?.insert(
+          index+1,
+          AudioSource.uri(Uri.file(song.data)))
+      );
+
+
 }
 

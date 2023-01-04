@@ -16,13 +16,13 @@ class SongInfo {
   int uid = 0;
   int id;
   String title;
-  String? displayName;
+  String displayName;
   int? size;
   String album;
   String artist;
   int _duration;
   String filePath;
-  String? fileExtension;
+  String fileExtension;
   bool? isMusic;
 
   //@Transient()
@@ -34,12 +34,12 @@ class SongInfo {
     required this.id,
     required this.title,
     required this.filePath,
+    required this.displayName,
+    required this.fileExtension,
     Duration duration = const Duration(),
     this.album = 'Unknown album',
     this.artist = 'Unknown artist',
-    this.displayName,
     this.size,
-    this.fileExtension,
     this.isMusic,
     this.artUri,
   }): _duration = duration.inMinutes;
@@ -53,6 +53,7 @@ class SongInfo {
     album: songModel.album ?? 'Unknown album',
     artist: songModel.artist ?? 'Unknown artist',
     duration: Duration(minutes: songModel.duration!),
+    fileExtension: songModel.fileExtension,
     //artUri: Uri.parse(_dUri),
   );
 
