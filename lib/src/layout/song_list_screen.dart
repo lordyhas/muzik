@@ -117,7 +117,16 @@ class SongListWidget extends StatelessWidget {
                 itemBuilder: (BuildContext context) {
                   return <PopupMenuEntry>[
                     PopupMenuItem(
-                        onTap: () {},
+                        onTap: () async {
+                          await musicController
+                              .setListSong(songs: songList, initialIndex: index)
+                              .then((value) {
+                            musicController.play();
+                            onTapCallBack!();
+                            //Get.to(() => const MusicPlayerPage());
+                            Navigator.push(context, MusicPlayerPage.route());
+                          });
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: const [
@@ -169,7 +178,6 @@ class SongListWidget extends StatelessWidget {
                         )),
                     const PopupMenuDivider(),
                     PopupMenuItem(
-                      onTap: null,
                       child: StreamBuilder<List<dynamic>>(
                           stream: OnAudioQuery().queryWithFilters(
                                 songList[index].album ?? "",
@@ -178,7 +186,7 @@ class SongListWidget extends StatelessWidget {
                               ).asStream(),
                           builder: (context, snapshot) {
 
-                            return PopupMenuItem(
+                            return InkWell(
                                 onTap: () {
                                   if (snapshot.hasData) {
                                     final List<AlbumModel> albums = snapshot.data!.toAlbumModel();
@@ -201,7 +209,7 @@ class SongListWidget extends StatelessWidget {
                           }),
                     ),
                     PopupMenuItem(
-                      onTap: null,
+
                       child: StreamBuilder<List<dynamic>>(
                           stream: OnAudioQuery().queryWithFilters(
                                 songList[index].artist ?? "",
@@ -209,7 +217,7 @@ class SongListWidget extends StatelessWidget {
                                 //args: ArtistsArgs.ARTIST,
                               ).asStream(),
                           builder: (context, snapshot) {
-                            return PopupMenuItem(
+                            return InkWell(
                                 onTap: () {
                                   if (snapshot.hasData) {
                                     final List<ArtistModel> artists = snapshot.data!.toArtistModel();
@@ -227,22 +235,28 @@ class SongListWidget extends StatelessWidget {
                                     Text("Go to artist"),
                                   ],
                                 ));
-                          }),
+                          },
+                      ),
                     ),
                     const PopupMenuDivider(),
                     PopupMenuItem(
-                        onTap: () {
-                          ShowOver.musicInfo(context, song: songList[index]);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Icon(CupertinoIcons.info),
-                            SizedBox(
-                              width: 4.0,
-                            ),
-                            Text("Details"),
-                          ],
+
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                            ShowOver.musicInfo(context,
+                                song: SongInfo.fromModel(songList[index]));
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: const [
+                              Icon(CupertinoIcons.info),
+                              SizedBox(
+                                width: 4.0,
+                              ),
+                              Text("Details"),
+                            ],
+                          ),
                         ),
                     ),
                   ];

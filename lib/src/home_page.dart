@@ -7,15 +7,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:just_audio/just_audio.dart';
+
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
-import 'package:muzik_audio_player/data/audio_repository/audio_song_info.dart';
+
 import 'package:muzik_audio_player/src/pages/app_settings/about.dart';
 import 'package:muzik_audio_player/src/pages/app_settings/settings_pages.dart';
 import 'package:muzik_audio_player/src/search/search_activity.dart';
 import 'package:muzik_audio_player/src/widget_model/mini_player.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:muzik_audio_player/src/music_player_page.dart';
+
 import 'package:muzik_audio_player/src/layout/music_layout.dart';
 import 'package:muzik_audio_player/res.dart';
 
@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage>
             orderType: OrderType.ASC_OR_SMALLER,
             uriType: UriType.EXTERNAL,
           ).asStream(),
-          builder: (context, searchSnapshot) {
+          builder: (ctx, searchSnapshot) {
             return Scaffold(
 
               //backgroundColor: const Color(0xffF8F9FB),

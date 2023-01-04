@@ -139,8 +139,8 @@ class GetImageCoverItem extends StatelessWidget {
               ),
             );
           }
-
-          return Container(
+          return Image.memory(snapshot.data!, filterQuality: FilterQuality.high);
+          /*return Container(
             height: 55,
             width: 55,
             decoration: BoxDecoration(
@@ -149,7 +149,7 @@ class GetImageCoverItem extends StatelessWidget {
                   fit: fit
               ),
             ),
-          );
+          );*/
 
         }
     );

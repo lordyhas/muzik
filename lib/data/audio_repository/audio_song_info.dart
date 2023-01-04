@@ -20,6 +20,7 @@ class SongInfo {
   int? size;
   String album;
   String artist;
+  String? genre;
   int _duration;
   String filePath;
   String fileExtension;
@@ -27,8 +28,6 @@ class SongInfo {
 
   //@Transient()
   //final _map;
-
-
 
   SongInfo({
     required this.id,
@@ -42,6 +41,7 @@ class SongInfo {
     this.size,
     this.isMusic,
     this.artUri,
+    this.genre,
   }): _duration = duration.inMinutes;
 
   factory SongInfo.fromModel(SongModel songModel) => SongInfo(
@@ -52,8 +52,10 @@ class SongInfo {
     displayName: songModel.displayName,
     album: songModel.album ?? 'Unknown album',
     artist: songModel.artist ?? 'Unknown artist',
+    genre: songModel.genre ?? 'Unknown artist',
     duration: Duration(minutes: songModel.duration!),
     fileExtension: songModel.fileExtension,
+    size: songModel.size,
     //artUri: Uri.parse(_dUri),
   );
 

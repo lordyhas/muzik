@@ -11,7 +11,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:muzik_audio_player/data/app_bloc/app_bloc.dart';
-import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
 import 'package:muzik_audio_player/data/audio_repository/audio_playlist_type.dart';
 import 'package:muzik_audio_player/data/audio_repository/audio_song_info.dart';
 import 'package:muzik_audio_player/src/widget_model/boolean_builder.dart';
@@ -124,7 +123,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               ),
               StreamBuilder<List<dynamic>>(
                 stream: OnAudioQuery().queryWithFilters(
-                  context.read<PlayerControllerBloc>().currentSong.artist ?? "",
+                  context.read<PlayerControllerBloc>().currentSong.artist,
                   WithFiltersType.ARTISTS,
                   //args: ArtistsArgs.ARTIST,
                   ).asStream(),
@@ -214,11 +213,16 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                               'Song Details',
                               style: primaryTextStyle20sp,
                             ),
-                            onTap: null, //() => ShowOver.musicInfo(context, song: );
+                            onTap: () {
+                              Navigator.pop(context);
+                              ShowOver.musicInfo(context,
+                                song: context.read<PlayerControllerBloc>()
+                                    .currentSong,
+                              );
+
+                            }
                           ),
-                        ]
-                            .map((menuItem) => PopupMenuItem(child: menuItem))
-                            .toList(),
+                        ].map((item) => PopupMenuItem(child: item)).toList(),
                   );
                 }
               ),
@@ -229,7 +233,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               Stack(
                 children: [
                   if(BlocProvider.of<SettingCubit>(context).state.coverBehind)
-                    Container(
+                    SizedBox(
                       child: StreamBuilder<SequenceState?>(
                         stream: _player.sequenceStateStream,
                         builder: (context, snapshot) {
@@ -290,8 +294,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                             if (state?.sequence.isEmpty ?? true) {
                               return const SizedBox();
                             }
-                            final metadata =
-                            state?.currentSource!.tag as MediaItem;
+                            final MediaItem metadata = state?.currentSource!.tag as MediaItem;
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
@@ -313,20 +316,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                         OnAudioQuery().queryArtwork(
                                           int.parse(metadata.id),
                                           ArtworkType.AUDIO,
+                                          size: 500,
                                         ),
-                                      ), /*(metadata.albumArtwork != null)
-                                    GetImageCover(
-                                    futureResource: playerBloc.audioQuery
-                                        .getArtwork(type: ResourceType.SONG, id: metadata.id),
-                                  ), */ /*(metadata.albumArtwork != null)
-                                        ?Image.file(File(metadata.albumArtwork),
-                                      fit: BoxFit.cover,
-                                      gaplessPlayback: false,
-                                    )
-                                        : Image.asset("assets/no_cover4.png",
-                                      fit: BoxFit.cover,
-                                      gaplessPlayback: false,
-                                    ),*/
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -389,7 +381,6 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                         ),
                       ),
                       const Spacer(),
-
                       const SizedBox(height: 8.0),
                       Container(
                         height: 35,
@@ -468,86 +459,13 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                       const ControlButtons(),
                       //const SizedBox(height: 8.0),
                       const Spacer(),
-                      const SizedBox(
-                        height: 60.0,
-                      )
-
-                      /*ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
-                    ),
-                    child: Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      height: 50.0,
-                      child: StreamBuilder<SequenceState?>(
-                        stream: _player.sequenceStateStream,
-                        builder: (context, snapshot) {
-                          final state = snapshot.data;
-                          final sequence = state?.sequence ?? [];
-                          return Container( /// ---- Playlist and Add icon ----
-                            margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                IconButton(
-                                  icon: Icon(Icons.playlist_play_outlined, size: 30, color: iconWhiteColor),
-                                  onPressed: sequence.isEmpty ?
-                                  null : () {
-                                    /*showModalBottomSheet(
-                                        isScrollControlled: true,
-                                        enableDrag: true,
-                                        context: context,
-                                        // _buildPlaylistBottomSheet(context),
-                                        builder: (context){
-                                          if(!snapshot.hasData) {
-                                            return const CircularProgressIndicator();
-                                          }
-                                          return _buildPlaylist(context, snapshot.data!);
-                                        }
-
-                                    );*/
-                                    /*if(snapshot.hasData) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                                          Scaffold(
-                                            body: _buildPlaylist(context, snapshot.data!),
-                                          )
-                                      ));
-                                    }*/
-                                  },
-                                  iconSize: 20,
-                                ),
-
-                                Container(
-                                  height: 5,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    //shape: BoxShape.circle, //const CircleBorder(),
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-
-                                IconButton(
-                                  icon: const Icon(Icons.library_add),
-                                  color: iconWhiteColor,
-                                  onPressed: null, //() => _addToPlaylist(),
-                                  iconSize: 20,
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),*/
+                      const SizedBox(height: 60.0,),
                     ],
                   ),
                 ],
               ),
               QueueBottomSheetUI(
-                color: Theme
-                    .of(context)
-                    .scaffoldBackgroundColor,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 child: const QueueSongList(),
               ),
             ],
@@ -562,12 +480,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       ..hideCurrentSnackBar()
       ..showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.white70,
           content: Text('En développment | Soon :) ')));
   }
-
-
-
-
 }
 
 
@@ -617,28 +532,6 @@ class _QueueSongListState extends State<QueueSongList> {
 
           child: Column(
             children: [
-              /*ClipRRect(
-            //borderRadius: BorderRadius.circular(15),
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(15.0),
-                topRight: Radius.circular(15.0)),
-            child: AppBar(
-              //automaticallyImplyLeading: false,
-              backgroundColor: Theme.of(context).primaryColorDark.withOpacity(0.2),
-              centerTitle: true,
-              leading: IconButton(
-                icon: const Icon(CupertinoIcons.chevron_down),
-                onPressed: Navigator.of(context).pop,
-              ),
-              title: const Text("Playlist ● En attente"),
-            ),
-          ),*/
-
-              /*Container(
-            color: Colors.grey,
-            height: 1,
-          ),*/
-
               Expanded(
                 child: IgnorePointer(
                   ignoring: ignorePointer,
@@ -669,11 +562,8 @@ class _QueueSongListState extends State<QueueSongList> {
                           },
                           child: Container(
                             color: i == currentIndex
-                                ? Theme
-                                .of(context)
-                                .primaryColor
-                                .withOpacity(0.5)
-                                : null,
+                                ?Theme.of(context).primaryColor.withOpacity(0.5)
+                                :null,
                             margin: const EdgeInsets.symmetric(vertical: 0.0),
                             child: Column(
                               children: [
@@ -690,8 +580,7 @@ class _QueueSongListState extends State<QueueSongList> {
                                           onTap: () {
                                             BlocProvider
                                                 .of<PlayerControllerBloc>(
-                                                context)
-                                                .playAt(index: i);
+                                                context).playAt(index: i);
                                             //state.player.seek(Duration.zero,index: i);
                                             setState(() {});
                                           },
@@ -702,15 +591,15 @@ class _QueueSongListState extends State<QueueSongList> {
                                           leading: ClipRRect(
                                             borderRadius: BorderRadius.circular(
                                                 5),
-                                            child: SizedBox(
-                                              height: 40,
-                                              width: 40,
+                                            child: SizedBox.square(
+                                              dimension: 40,
                                               child: GetImageCoverItem(
                                                 //fit: BoxFit.fitWidth,
                                                 futureResource:
                                                 OnAudioQuery().queryArtwork(
                                                   queue[i].id,
                                                   ArtworkType.AUDIO,
+                                                  //size: 300,
                                                 ),
                                               ),
                                             ),

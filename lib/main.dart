@@ -21,7 +21,7 @@ import 'package:muzik_audio_player/data/database/database_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ObjectBoxManager.init();
+  //ObjectBoxManager.init();
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     //androidNotificationChannelName: 'Muzik Audio playback',
@@ -88,9 +88,10 @@ class _MyAppState extends State<MyApp> {
     await session.configure(const AudioSessionConfiguration.music());
     // Listen to errors during playback.
     _player.playbackEventStream.listen((event) {},
-        onError: (Object e, StackTrace stackTrace) {
-      debugPrint('A stream error occurred: $e');
-    });
+      onError: (Object e, StackTrace stackTrace) {
+        debugPrint('A stream error occurred: $e');
+      },
+    );
     try {
       //await _player.setAudioSource(MediaSample.playlist);
     } catch (e, stackTrace) {

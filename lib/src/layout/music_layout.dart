@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:muzik_audio_player/data/values.dart';
 
 import 'package:muzik_audio_player/src/layout/details_content_screen.dart';
@@ -14,6 +13,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
+import '../../data/audio_repository/audio_song_info.dart';
 import '../music_player_page.dart';
 import '../widget_model/dialog_widget.dart';
 
