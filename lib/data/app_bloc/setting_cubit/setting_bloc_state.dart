@@ -1,5 +1,7 @@
 part of 'setting_bloc_cubit.dart';
 
+
+
 class SettingState {
   double speed;
   Duration sleep;
@@ -7,6 +9,7 @@ class SettingState {
   bool mono;
   bool notification;
   bool displayAsGrid;
+  bool coverBehind;
   dynamic syncMode;
 
   SettingState._({
@@ -16,6 +19,7 @@ class SettingState {
     this.mono = false,
     this.notification = false,
     this.displayAsGrid = true,
+    this.coverBehind = false,
     this.syncMode,
   });
 
@@ -29,6 +33,7 @@ class SettingState {
       'mono': mono,
       'notification': notification,
       'displayAsGrid': displayAsGrid,
+      'showCoverInBackground': coverBehind,
       'syncMode': syncMode,
     };
   }
@@ -41,6 +46,7 @@ class SettingState {
       mono: map['mono'] as bool,
       notification: map['notification'] as bool,
       displayAsGrid: map['displayAsGrid'] as bool,
+      coverBehind: map['showCoverInBackground'] as bool,
       syncMode: map['syncMode'] as dynamic,
     );
   }

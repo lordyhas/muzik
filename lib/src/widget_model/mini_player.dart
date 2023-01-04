@@ -37,7 +37,7 @@ class BottomPlayerView extends StatelessWidget {
         builder: (context, snapshot){
           //var a =snapshot.data.isEmpty;
 
-          if (!snapshot.hasData) return Container();
+          if (!snapshot.hasData) return const SizedBox.shrink();
           final sequenceState = snapshot.data!;
           final sequence = sequenceState.sequence;
           int i = sequenceState.currentIndex;
@@ -46,27 +46,26 @@ class BottomPlayerView extends StatelessWidget {
           //final metadata = sequenceState.currentSource!.tag as MediaItem;
 
           return InkWell(
-            onTap: () => Get.to(() => const MusicPlayerPage()),
+            onTap: () => Navigator.push(context, MusicPlayerPage.route(),),
             child: Container(
-              height: 65,
+              height: 50,
               width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(4.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).appBarTheme.backgroundColor!.withOpacity(.95),
-                border: Border.all(color: Colors.blue, width: 2.0),
-                borderRadius: BorderRadius.circular(15.0),
-
+                border: Border.all(color: Colors.teal.shade400, width: 2.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                    margin: const EdgeInsets.only(right: 8.0),
+                  const SizedBox(width: 4,),
+                  SizedBox.square(
+                    dimension: 40,
+                    //margin: const EdgeInsets.only(right: 8.0),
+
                     child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(50.0),
-                          bottom: Radius.circular(50.0),
-                        ),
+                        borderRadius: BorderRadius.circular(100.0),
                         child: SizedBox(
                           //width: 50,
                           child: GetImageCoverItem(
