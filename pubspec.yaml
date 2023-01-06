@@ -2,7 +2,7 @@ name: muzik_audio_player
 description: Music Audio Player.
 
 publish_to: 'none'
-version: 0.4.11+4
+version: 0.4.11+5
 environment:
   sdk: ">=2.12.0 <3.0.0"
 

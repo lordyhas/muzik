@@ -612,8 +612,7 @@ class _QueueSongListState extends State<QueueSongList> {
                                             artistName(queue[i]) + ' ● ' +
                                                 fromDuration(queue[i].duration),
                                             //Duration(milliseconds: int.parse(sequence[i].duration!.inMinutes.toString()))
-                                            style: const TextStyle(
-                                                fontSize: 12),
+                                            style: const TextStyle(fontSize:12),
                                           ),
                                           trailing: (i == currentIndex)
                                               ? const Icon(Icons.play_arrow)

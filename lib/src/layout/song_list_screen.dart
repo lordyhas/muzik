@@ -81,14 +81,11 @@ class SongListWidget extends StatelessWidget {
                   //trailing: const Icon(CupertinoIcons.play_arrow ),
 
                   leading: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(50.0),
-                        bottom: Radius.circular(50.0),
-                      ),
+                      borderRadius: BorderRadius.circular(100.0,),
                       child: SizedBox(
                         //width: 50,
                         child: GetImageCoverItem(
-                          //fit: BoxFit.fitWidth,
+                          fit: BoxFit.cover,
                           futureResource: OnAudioQuery().queryArtwork(
                             songList[index].id,
                             ArtworkType.AUDIO,

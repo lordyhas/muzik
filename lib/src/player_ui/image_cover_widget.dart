@@ -109,7 +109,6 @@ class GetImageCoverItem extends StatelessWidget {
   final String defaultValue;
   final BoxFit fit;
   final String? songId;
-
   const GetImageCoverItem({
     required this.futureResource,
     this.defaultValue = "assets/no_cover4.png",
@@ -120,36 +119,20 @@ class GetImageCoverItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    //futureResource = futureResource ?? playerBloc.audioQuery.getArtwork(type: ResourceType.SONG, id: songId);
     return FutureBuilder<Uint8List?>(
-      //future: playerBloc.audioQuery.getArtwork(type: ResourceType.SONG, id: actualMusic.id),
         future: futureResource,
-        //initialData: ,
         builder: (_, snapshot) {
           if (snapshot.hasError || snapshot.data == null || snapshot.data!.lengthInBytes == 0) {
-            return Container(
-              width: 55,
-              height: 55,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(defaultValue),
-                  fit: fit,
-                ),
-              ),
+            return SizedBox.square(
+              dimension: 55,
+              child: Image.asset(defaultValue, fit: fit,),
             );
           }
-          return Image.memory(snapshot.data!, filterQuality: FilterQuality.high);
-          /*return Container(
-            height: 55,
-            width: 55,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: MemoryImage(snapshot.data!,),
-                  fit: fit
-              ),
-            ),
-          );*/
+          return SizedBox.square(
+              dimension: 55,
+              child: Image.memory(snapshot.data!, fit: fit,)
+          );
+
 
         }
     );
