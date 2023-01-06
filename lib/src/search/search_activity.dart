@@ -8,6 +8,8 @@ import 'package:muzik_audio_player/src/music_player_page.dart';
 import 'package:muzik_audio_player/src/widget_model/widgets.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
+import '../../data/audio_repository/audio_song_info.dart';
+
 
 class ResearchDelegate extends SearchDelegate<SongModel?>{
   final List<SongModel> songs;
@@ -71,7 +73,13 @@ class MusicSearchDelegate extends SearchDelegate<SongModel?> {
   MusicSearchDelegate(List<SongModel> words, {history = const <SongModel>[]})
       : _words = words,
         _history = history,
-        super(searchFieldStyle: const TextStyle(color: Colors.black38),);
+        super(
+        searchFieldStyle: const TextStyle(color: Colors.white70),
+        searchFieldDecorationTheme: const InputDecorationTheme(
+          hintStyle: TextStyle(color: Colors.white30),
+          labelStyle: TextStyle(color: Colors.white),
+        )
+      );
 
 
   SongModel? _productFind;
@@ -149,6 +157,7 @@ class MusicSearchDelegate extends SearchDelegate<SongModel?> {
   // Action buttons at the right of search bar.
   @override
   List<Widget> buildActions(BuildContext context) {
+
     return <Widget>[
       if (query.isEmpty)
         IconButton(
@@ -166,24 +175,39 @@ class MusicSearchDelegate extends SearchDelegate<SongModel?> {
             query = '';
             showSuggestions(context);
           },
-        )
+        ),
     ];
   }
 
   @override
   ThemeData appBarTheme(BuildContext context) {
     //super.appBarTheme(context);
-    return Theme.of(context);
-    /*return ThemeData(
-      primaryColor: Colors.deepPurpleAccent,
-      primaryIconTheme: IconThemeData(
-        color: Colors.white,
+    final ThemeData theme = ThemeData.dark();
+    return theme.copyWith(
+      primaryColor: theme.primaryColor,
+      primaryIconTheme: theme.primaryIconTheme,
+      primaryColorBrightness: theme.primaryColorBrightness,
+      primaryTextTheme: theme.primaryTextTheme,
+        textTheme: theme.textTheme.copyWith(subtitle1: theme.textTheme.subtitle1?.copyWith(color: theme.primaryTextTheme.subtitle1?.  color))
+    );
+
+    /*
+    return Theme.of(context).copyWith(
+
+      inputDecorationTheme: const InputDecorationTheme(
+        hintStyle: TextStyle(color: Colors.white30),
+        labelStyle: TextStyle(color: Colors.white),
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        hintStyle:
-        Theme.of(context).textTheme.title.copyWith(color: Colors.white),
+      hintColor: Colors.black54,
+      textTheme: const TextTheme(
+        headline6: TextStyle(
+          color: Colors.white,
+          fontSize: 18.0,
+        ),
+
       ),
     );*/
+
   }
 
   @override
@@ -206,17 +230,22 @@ class _SuggestionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme.subtitle1;
+    final textTheme2 = Theme.of(context).textTheme.subtitle2?.copyWith(
+      fontWeight: FontWeight.normal,
+      color: Colors.white70
+
+    );
     return ListView.builder(
       itemCount: suggestions!.length,
       itemBuilder: (BuildContext context, int i) {
-        final SongModel suggestion = suggestions![i];
+        final SongInfo suggestedSong = SongInfo.fromModel(suggestions![i]) ;
         return query!.isEmpty
             ? ListTile(
                 leading: const Icon(Icons.history) ,
                 // Highlight the substring that matched the query.
                 title: RichText(
                   text: TextSpan(
-                    text: suggestion.title,
+                    text: suggestedSong.title,
                     style: textTheme!.copyWith(fontWeight: FontWeight.bold),
                     children: const <TextSpan>[
                       /*TextSpan(
@@ -227,13 +256,13 @@ class _SuggestionList extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  onSelected!(suggestion);
+                  onSelected!(suggestions![i]);
                 },
               )
             : Card(
                 child: InkWell(
                   onTap: () {
-                    onSelected!(suggestion);
+                    onSelected!(suggestions![i]);
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -241,27 +270,23 @@ class _SuggestionList extends StatelessWidget {
                       children: [
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                          height: 80,
-                          width: 80,
+                          height: 50,
+                          width: 50,
                           decoration: BoxDecoration(
                             border: Border.all(
                               //width: 2.0,
                               color:Theme.of(context).primaryColorLight,
                             ),
                             borderRadius: BorderRadius.circular(5),
-                            /*image: DecorationImage(
-                              image: MemoryImage(suggestion.artUri!.bytes),
-                              //AssetImage('assets/img/p1/product_${i+ 1}.png'),
-                            ),*/
 
                           ),
 
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(5),
                             child: GetImageCoverItem(
-                              //fit: BoxFit.fitWidth,
+                              fit: BoxFit.cover,
                               futureResource: OnAudioQuery().queryArtwork(
-                                suggestion.id,
+                                suggestedSong.id,
                                 ArtworkType.AUDIO,
                               ),
                             ),
@@ -269,20 +294,26 @@ class _SuggestionList extends StatelessWidget {
                         ),
                         Expanded(
                           child: SizedBox(
-                            height: 80,
+                            height: 60,
                             child: ListTile(
                               title: RichText(
                                 text: TextSpan(
-                                  text: suggestion.title,
+                                  text: suggestedSong.title.length < 27
+                                      ? suggestedSong.title
+                                      : suggestedSong.title.substring(0,27)+"...",
                                   style: textTheme!.copyWith(fontWeight: FontWeight.bold),
                                   children: <TextSpan>[
                                     TextSpan(
-                                      text: "\n${suggestion.album}",
-                                      style: textTheme,
+                                      text: suggestedSong.album.length < 27
+                                          ? "\n${suggestedSong.album}"
+                                          : "\n${suggestedSong.album.substring(0,20)}...",
+                                      style: textTheme2,
                                     ),
                                     TextSpan(
-                                      text: "\n${suggestion.artist}",
-                                      style: textTheme,
+                                      text: suggestedSong.artist.length < 27
+                                          ? "\n${suggestedSong.artist}"
+                                          : "\n${suggestedSong.artist.substring(0,20)}...",
+                                      style: textTheme2,
                                     ),
                                     /*TextSpan(
                                       text: "\n${suggestion.} en Stock",
