@@ -2,7 +2,7 @@ name: muzik_audio_player
 description: Music Audio Player.
 
 publish_to: 'none'
-version: 0.4.11+5
+version: 0.4.11+6
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
@@ -69,7 +69,7 @@ dependencies:
 
   flutter_launcher_icons: ^0.10.0
 
-  get: ^4.6.5
+  #get: ^4.6.5
   indexed_list_view: ^2.0.1
   permission_handler: ^10.2.0
   #permission_handler: ^10.0.1

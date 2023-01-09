@@ -55,35 +55,41 @@ class StyleBloc extends Cubit<StyleState> {
 
 class Themes {
 
-  static final ThemeData themePurple = ThemeData(
+  static final ThemeData _generalTheme = ThemeData(
+    brightness: Brightness.dark,
+    //primarySwatch: Colors.blue,
+    //fontFamily: "ubuntu",
+    textTheme: const TextTheme(
+      bodyText1: TextStyle(
+        fontSize: 20,
+        color: Colors.white,
+      ),
+    ),
+    appBarTheme: AppBarTheme(
+      titleTextStyle: const TextStyle(color: Colors.white, fontSize: 18),
+      backgroundColor: Colors.grey[800],
+      iconTheme: const IconThemeData(
+        color: Colors.white,
+      ),
+    ),
+    colorScheme: ColorScheme.fromSwatch().copyWith(
       brightness: Brightness.dark,
-      //primarySwatch: Colors.blue,
-      //fontFamily: "ubuntu",
-      textTheme: const TextTheme(
-        bodyText1: TextStyle(
-          fontSize: 20,
-          color: Colors.white,
-        ),
-      ),
-      appBarTheme: AppBarTheme(
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 18),
-        backgroundColor: Colors.grey[800],
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-      ),
-      colorScheme: ColorScheme.fromSwatch().copyWith(
-        secondary: Colors.deepPurpleAccent,
-        brightness: Brightness.dark,
-      ),
-      backgroundColor: Colors.grey[900],
-      primaryColor: Colors.deepPurple,
-      primaryColorDark: Colors.deepPurple.shade600,
-      primaryColorLight: Colors.white,
-      iconTheme: const IconThemeData(color: Colors.white),
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: Colors.transparent,
-      ),
+    ),
+    backgroundColor: Colors.grey[900],
+
+    primaryColorLight: Colors.white,
+    iconTheme: const IconThemeData(color: Colors.white),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: Colors.transparent,
+    ),
+  );
+
+  static final ThemeData themePurple = _generalTheme.copyWith(
+    primaryColor: Colors.deepPurple,
+    primaryColorDark: Colors.deepPurple.shade600,
+    colorScheme: const ColorScheme.dark().copyWith(
+      secondary: Colors.deepPurpleAccent,
+    )
   );
 
   static final ThemeData themeOrange = ThemeData(

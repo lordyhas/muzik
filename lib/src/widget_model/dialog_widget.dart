@@ -2,7 +2,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:muzik_audio_player/data/audio_repository/audio_song_info.dart';
 import 'package:muzik_audio_player/data/values.dart';
 import 'package:on_audio_query/on_audio_query.dart';

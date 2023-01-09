@@ -6,13 +6,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:marquee/marquee.dart';
 import 'package:muzik_audio_player/data/app_bloc/app_bloc.dart';
 import 'package:muzik_audio_player/data/audio_repository/audio_playlist_type.dart';
 import 'package:muzik_audio_player/data/audio_repository/audio_song_info.dart';
+import 'package:muzik_audio_player/data/values.dart';
 import 'package:muzik_audio_player/src/widget_model/boolean_builder.dart';
 import 'package:muzik_audio_player/src/widget_model/dialog_widget.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -34,15 +34,13 @@ class MusicPlayerPage extends StatefulWidget {
 
 
   @override
-  _MusicPlayerPageState createState() => _MusicPlayerPageState();
+  State<MusicPlayerPage> createState() => _MusicPlayerPageState();
 }
 
 class _MusicPlayerPageState extends State<MusicPlayerPage> {
   //final ScrollController _scrollController = ScrollController();
 
-  bool isMute = false,
-      isShuffle = false,
-      isRepeat = false;
+  bool isMute = false, isShuffle = false, isRepeat = false;
 
   @override
   void initState() {
@@ -71,6 +69,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
+    setSystemUiOverlayStyle();
     AudioPlayer _player = BlocProvider
         .of<PlayerControllerBloc>(context)
         .player;
@@ -84,150 +83,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
           //primary: false,
           extendBodyBehindAppBar: true,
           backgroundColor: Colors.grey.shade800,
-          appBar: AppBar(
-            elevation: 0.0,
-            backgroundColor: Colors.transparent,
-            leading: IconButton(
-              onPressed: Get.back,
-              icon: const Icon(CupertinoIcons.xmark),
-            ),
-            centerTitle: true,
-            title: const Text(
-              "",
-              style: TextStyle(fontSize: 24, color: Colors.white),
-            ),
-
-            /**
-             * FontAwesomeIcons.volumeDown
-             * FontAwesomeIcons.volumeUp .volumeOff
-             * FontAwesomeIcons.chevronDown
-             * */
-            actions: <Widget>[
-              //BlocBuilder<PlayerController,>(builder: builder)
-              IconButton(
-                icon: (isMute)
-                    ? const Icon(CupertinoIcons.volume_off)
-                    : const Icon(CupertinoIcons.volume_up), //Icon(Icons.volume_of),
-                color: iconWhiteColor,
-                onPressed: () {
-                  ShowOver.of(context).sliderVolume(
-                    title: "Adjust volume",
-                    divisions: 10,
-                    min: 0.0,
-                    max: 1.0,
-                    stream: _player.volumeStream,
-                    onChanged: _player.setVolume,
-                  );
-                },
-                iconSize: iSize2,
-              ),
-              StreamBuilder<List<dynamic>>(
-                stream: OnAudioQuery().queryWithFilters(
-                  context.read<PlayerControllerBloc>().currentSong.artist,
-                  WithFiltersType.ARTISTS,
-                  //args: ArtistsArgs.ARTIST,
-                  ).asStream(),
-                builder: (context, snapshot) {
-
-                  return PopupMenuButton(
-                    color: Theme.of(context).backgroundColor.withOpacity(0.9),
-                    icon: const Icon(CupertinoIcons.ellipsis_vertical,),
-                    //onSelected: (index) => Navigator.of(context).pop(),
-                    itemBuilder: (BuildContext context) =>
-                        <Widget>[
-                          ListTile(
-                            leading: Icon(
-                                CupertinoIcons.arrowshape_turn_up_right,
-                                color: iconWhiteColor),
-                            title: Text('Share', style: primaryTextStyle20sp),
-                            onTap: _defaultOnTap,
-                          ),
-                          ListTile(
-                            leading: Icon(CupertinoIcons.text_badge_plus,
-                                color: iconWhiteColor),
-                            title: Text('Add to playlist',
-                              style: primaryTextStyle20sp,
-                            ),
-                            onTap: null, //() => _addToPlaylist(),
-                          ),
-                          ListTile(
-                            leading: Icon(
-                              CupertinoIcons.clock,
-                              color: iconWhiteColor,
-                            ),
-                            title: Text('Delay', style: primaryTextStyle20sp),
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          if (snapshot.hasData)
-                          ListTile(
-                            leading:
-                            Icon(CupertinoIcons.person_crop_rectangle,
-                                color: iconWhiteColor),
-                            title: Text('See artist',
-                              style: primaryTextStyle20sp,
-                            ),
-                            onTap: (){
-                              var artists = snapshot.data!.toArtistModel();
-                              Navigator.push(context,
-                                  SingleArtistScreen.route(
-                                    artist: artists.first,
-                                  ),
-                              );
-                            }, //() => _openArtistPage(actualMusic),
-                          ),
-                          ListTile(
-                            leading: Icon(CupertinoIcons.collections,
-                              color: iconWhiteColor,
-                            ),
-                            title: Text('Cover Behind : ${BlocProvider
-                                .of<SettingCubit>(context)
-                                .state
-                                .coverBehind ? "On" : "Off"} ',
-                              style: primaryTextStyle20sp,
-                            ),
-                            onTap: () {
-                              //_player.stop();
-                              BlocProvider.of<SettingCubit>(context).save(
-                                  setting..coverBehind = !setting.coverBehind);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            leading:
-                            Icon(CupertinoIcons.slider_horizontal_3,
-                              color: iconWhiteColor,
-                            ),
-                            title: Text(
-                                'Equalizer',
-                                style: primaryTextStyle20sp,
-                            ),
-                            onTap: _defaultOnTap,
-                          ),
-                          ListTile(
-                            leading: Icon(CupertinoIcons.info_circle_fill,
-                              color: iconWhiteColor,
-                            ),
-                            title: Text(
-                              'Song Details',
-                              style: primaryTextStyle20sp,
-                            ),
-                            onTap: () {
-                              Navigator.pop(context);
-                              ShowOver.musicInfo(context,
-                                song: context.read<PlayerControllerBloc>()
-                                    .currentSong,
-                              );
-
-                            }
-                          ),
-                        ].map((item) => PopupMenuItem(child: item)).toList(),
-                  );
-                }
-              ),
-            ],
-          ),
+          //appBar:
           body: Stack(
             children: [
               Stack(
@@ -279,8 +135,152 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                     children: [
 
                       /// The AppBar
-                      SizedBox(
+                      /*SizedBox(
                         height: AppBar().preferredSize.height,
+                      ),*/
+                      AppBar(
+                        elevation: 0.0,
+                        backgroundColor: Colors.transparent,
+                        leading: IconButton(
+                          onPressed: Navigator.of(context).pop,
+                          icon: const Icon(CupertinoIcons.xmark),
+                        ),
+                        centerTitle: true,
+                        title: const Text(
+                          "",
+                          style: TextStyle(fontSize: 24, color: Colors.white),
+                        ),
+
+                        /**
+                         * FontAwesomeIcons.volumeDown
+                         * FontAwesomeIcons.volumeUp .volumeOff
+                         * FontAwesomeIcons.chevronDown
+                         * */
+                        actions: <Widget>[
+                          //BlocBuilder<PlayerController,>(builder: builder)
+                          IconButton(
+                            icon: (isMute)
+                                ? const Icon(CupertinoIcons.volume_off)
+                                : const Icon(CupertinoIcons.volume_up), //Icon(Icons.volume_of),
+                            color: iconWhiteColor,
+                            onPressed: () {
+                              ShowOver.of(context).sliderVolume(
+                                title: "Adjust volume",
+                                divisions: 10,
+                                min: 0.0,
+                                max: 1.0,
+                                stream: _player.volumeStream,
+                                onChanged: _player.setVolume,
+                              );
+                            },
+                            iconSize: iSize2,
+                          ),
+                          StreamBuilder<List<dynamic>>(
+                              stream: OnAudioQuery().queryWithFilters(
+                                context.read<PlayerControllerBloc>().currentSong.artist,
+                                WithFiltersType.ARTISTS,
+                                //args: ArtistsArgs.ARTIST,
+                              ).asStream(),
+                              builder: (context, snapshot) {
+
+                                return PopupMenuButton(
+                                  color: Theme.of(context).backgroundColor.withOpacity(0.9),
+                                  icon: const Icon(CupertinoIcons.ellipsis_vertical,),
+                                  //onSelected: (index) => Navigator.of(context).pop(),
+                                  itemBuilder: (BuildContext context) =>
+                                      <Widget>[
+                                        ListTile(
+                                          leading: Icon(
+                                              CupertinoIcons.arrowshape_turn_up_right,
+                                              color: iconWhiteColor),
+                                          title: Text('Share', style: primaryTextStyle20sp),
+                                          onTap: _defaultOnTap,
+                                        ),
+                                        ListTile(
+                                          leading: Icon(CupertinoIcons.text_badge_plus,
+                                              color: iconWhiteColor),
+                                          title: Text('Add to playlist',
+                                            style: primaryTextStyle20sp,
+                                          ),
+                                          onTap: null, //() => _addToPlaylist(),
+                                        ),
+                                        ListTile(
+                                          leading: Icon(
+                                            CupertinoIcons.clock,
+                                            color: iconWhiteColor,
+                                          ),
+                                          title: Text('Delay', style: primaryTextStyle20sp),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        if (snapshot.hasData)
+                                          ListTile(
+                                            leading:
+                                            Icon(CupertinoIcons.person_crop_rectangle,
+                                                color: iconWhiteColor),
+                                            title: Text('See artist',
+                                              style: primaryTextStyle20sp,
+                                            ),
+                                            onTap: (){
+                                              var artists = snapshot.data!.toArtistModel();
+                                              Navigator.push(context,
+                                                SingleArtistScreen.route(
+                                                  artist: artists.first,
+                                                ),
+                                              );
+                                            }, //() => _openArtistPage(actualMusic),
+                                          ),
+                                        ListTile(
+                                          leading: Icon(CupertinoIcons.collections,
+                                            color: iconWhiteColor,
+                                          ),
+                                          title: Text('Cover Behind : ${BlocProvider
+                                              .of<SettingCubit>(context)
+                                              .state
+                                              .coverBehind ? "On" : "Off"} ',
+                                            style: primaryTextStyle20sp,
+                                          ),
+                                          onTap: () {
+                                            //_player.stop();
+                                            BlocProvider.of<SettingCubit>(context).save(
+                                                setting..coverBehind = !setting.coverBehind);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading:
+                                          Icon(CupertinoIcons.slider_horizontal_3,
+                                            color: iconWhiteColor,
+                                          ),
+                                          title: Text(
+                                            'Equalizer',
+                                            style: primaryTextStyle20sp,
+                                          ),
+                                          onTap: _defaultOnTap,
+                                        ),
+                                        ListTile(
+                                            leading: Icon(CupertinoIcons.info_circle_fill,
+                                              color: iconWhiteColor,
+                                            ),
+                                            title: Text(
+                                              'Song Details',
+                                              style: primaryTextStyle20sp,
+                                            ),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                              ShowOver.musicInfo(context,
+                                                song: context.read<PlayerControllerBloc>()
+                                                    .currentSong,
+                                              );
+
+                                            }
+                                        ),
+                                      ].map((item) => PopupMenuItem(child: item)).toList(),
+                                );
+                              }
+                          ),
+                        ],
                       ),
                       //const SizedBox(height: 10,),
                       const Spacer(),
@@ -502,10 +502,10 @@ class _QueueSongListState extends State<QueueSongList> {
   }
 
   String artistName(SongInfo song) {
-    if (song.artist.length <= 10) {
+    if (song.artist.length <= 20) {
       return song.artist;
     } else {
-      return song.artist.substring(0, 10) + "...";
+      return song.artist.substring(0, 20) + "...";
     }
   }
 
@@ -518,13 +518,14 @@ class _QueueSongListState extends State<QueueSongList> {
 
     return BlocBuilder<PlayerControllerBloc, PlayerControllerState>(
       builder: (context, state) {
-        final currentIndex = state.player.currentIndex;
+        final currentIndex = state.songIndex;
         final Playlist queue = state.currentPlaylist;
 
         /*scrollController = ScrollController(
             initialScrollOffset: currentIndex.toDouble()*73);*/
 
         if (queue.isEmpty) return Container();
+        //queue.removeRange(0, currentIndex);
         return Expanded(
           //margin:const EdgeInsets.only(top: 32.0),
           //height: MediaQuery.of(context).size.height,
@@ -537,10 +538,10 @@ class _QueueSongListState extends State<QueueSongList> {
                   ignoring: ignorePointer,
                   child: ReorderableListView(
                     scrollController: ScrollController(
-                        initialScrollOffset: currentIndex!.toDouble() * 73),
+                        initialScrollOffset: currentIndex.toDouble() * 73),
                     onReorder: (int oldIndex, int newIndex) {
                       if (oldIndex < newIndex) newIndex--;
-                      //sequence.move(oldIndex, newIndex);
+
 
                       //sequence.
                       //sequence.toAlbumModel()
@@ -558,6 +559,11 @@ class _QueueSongListState extends State<QueueSongList> {
                             ),
                           ),
                           onDismissed: (dismissDirection) {
+                            BlocProvider
+                                .of<PlayerControllerBloc>(
+                                context).removeAt(index: i);
+
+                            setState(() {});
                             //sequence.removeAt(i);
                           },
                           child: Container(
@@ -608,9 +614,7 @@ class _QueueSongListState extends State<QueueSongList> {
                                             queue[i].title,
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                          subtitle: Text(
-                                            artistName(queue[i]) + ' ● ' +
-                                                fromDuration(queue[i].duration),
+                                          subtitle: Text(artistName(queue[i])+"", //+ ' ● ' + fromDuration(queue[i].duration),
                                             //Duration(milliseconds: int.parse(sequence[i].duration!.inMinutes.toString()))
                                             style: const TextStyle(fontSize:12),
                                           ),
@@ -630,8 +634,9 @@ class _QueueSongListState extends State<QueueSongList> {
                                 Container(
                                   color: Colors.white60,
                                   height: 1,
-                                  margin:
-                                  const EdgeInsets.symmetric(horizontal: 24),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                  ),
                                 )
                               ],
                             ),

@@ -20,6 +20,11 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
   SongInfo get currentSong => currentPlaylist[state.songIndex];
 
 
+  void removeAt({required int index}){
+    state.currentPlaylist.removeAt(index);
+    state.player.sequence?.removeAt(index);
+    emit(state);
+  }
   Future<void> loadPlaylist(Playlist<SongInfo> songs) async {
     emit(state..currentPlaylist = songs);
   }

@@ -57,7 +57,7 @@ class ElevatedDrawer extends StatelessWidget {
               title: const Text("Artist",
                 style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
               ),
-              leading: const Icon(CupertinoIcons.rectangle_stack_person_crop),
+              leading: const ImageIcon(AssetImage("assets/icon/artist.png")),
               trailing: const Icon(CupertinoIcons.chevron_right),
               onTap: (){
                 onTapItem!();

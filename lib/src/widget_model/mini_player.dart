@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-import '../music_player_page.dart';
+import 'package:muzik_audio_player/src/music_player_page.dart';
 
 class BottomPlayerView extends StatelessWidget {
   const BottomPlayerView({Key? key}) : super(key: key);
@@ -31,7 +30,36 @@ class BottomPlayerView extends StatelessWidget {
     //MusicPlayerState status;
     String imagePath;
     return Container(
-      //color: Colors.transparent,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent,
+            Colors.transparent,
+            Colors.transparent,
+            Colors.transparent,
+            Colors.transparent,
+            Theme.of(context).backgroundColor.withOpacity(0.1),
+            Theme.of(context).backgroundColor.withOpacity(0.2),
+            Theme.of(context).backgroundColor.withOpacity(0.3),
+            Theme.of(context).backgroundColor.withOpacity(0.4),
+            Theme.of(context).backgroundColor.withOpacity(0.5),
+            Theme.of(context).backgroundColor.withOpacity(0.6),
+            Theme.of(context).backgroundColor.withOpacity(0.7),
+            Theme.of(context).backgroundColor.withOpacity(0.8),
+            Theme.of(context).backgroundColor.withOpacity(0.9),
+            Theme.of(context).backgroundColor,
+            Theme.of(context).backgroundColor,
+            Theme.of(context).backgroundColor,
+            Theme.of(context).backgroundColor,
+            Theme.of(context).backgroundColor,
+            Theme.of(context).backgroundColor,
+            Theme.of(context).backgroundColor,
+            Theme.of(context).backgroundColor,
+          ],
+        ),
+      ),
       child: StreamBuilder<SequenceState?>(
         stream: _player.sequenceStateStream,
         builder: (context, snapshot){

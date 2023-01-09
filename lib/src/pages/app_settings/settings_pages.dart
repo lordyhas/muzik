@@ -108,20 +108,29 @@ class _SettingsState extends State<SettingPage> {
                   Card(
                     child: Column(
                       children: [
-                        ListTile(title: Text("Préférence", style: textSettingsStyle())),
+                        ListTile(
+                          title: Text("Préférence", style: textSettingsStyle()),
+                        ),
                         ListTile(
                           title: Text(
                             "Mise en veille",
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
-                            "desative",
+                            "Desativé",
                             style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                           onTap: () {
                             //DateTime now = DateTime.now();
                             //Duration duration = const Duration();
-                            showTimer();
+                            //showBottomSheet(context: context, builder: builder);
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => Container(
+                                height: 300,
+                                child: Placeholder(),
+                              ),
+                            );
                           },
                         ),
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
@@ -134,12 +143,11 @@ class _SettingsState extends State<SettingPage> {
                             activeColor: Theme.of(context).primaryColor,
                             min: 0.0,
                             max: 100.0,
-                            divisions: 4,
-                            label: "${sliderVal.round() / 50}",
+                            divisions: 5,
+                            label: "${setting.speed}",
                             onChanged: (double value) => BlocProvider
                                 .of<SettingCubit>(context)
                                 .save(setting..speed=value),
-
                             value: setting.speed,
                           ),
                         ),
@@ -162,7 +170,7 @@ class _SettingsState extends State<SettingPage> {
                         //Divider(indent: 15, endIndent: 15, color: Colors.white30,),
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
 
-                        CheckboxListTile(
+                        SwitchListTile(
                           activeColor: Theme.of(context).primaryColorDark,
                           value: _checkVal,
                           onChanged: (bool? value) {
@@ -179,7 +187,7 @@ class _SettingsState extends State<SettingPage> {
                         ),
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
 
-                        CheckboxListTile(
+                        SwitchListTile(
                           activeColor: Theme.of(context).primaryColorDark,
                           value: _autoPlay,
                           onChanged: (bool? value) {
@@ -210,16 +218,34 @@ class _SettingsState extends State<SettingPage> {
 
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
 
-                        CheckboxListTile(
+                        SwitchListTile(
                           activeColor: Theme.of(context).primaryColorDark,
                           value: setting.displayAsGrid,
-                          onChanged: (value) => BlocProvider.of<SettingCubit>(context).save(setting..displayAsGrid = value!),
+                          onChanged: (value) => BlocProvider
+                              .of<SettingCubit>(context)
+                              .save(setting..displayAsGrid = value),
                           title: Text(
                             "Grid Album",
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
                             'Afficher Artistes et Albums en ${(_isGrid) ? "Grille" : "Liste"}',
+                            style: TextStyle(color: Theme.of(context).primaryColor),
+                          ),
+                        ),
+
+                        SwitchListTile(
+                          activeColor: Theme.of(context).primaryColorDark,
+                          value: setting.coverBehind,
+                          onChanged: (value) =>
+                              BlocProvider
+                                  .of<SettingCubit>(context)
+                                  .save(setting..coverBehind = value),
+                          title: Text(
+                            "Player Background",
+                            style: primaryTextStyle20,
+                          ),
+                          subtitle: Text('Song Cover Behind : ${setting.coverBehind ? "On" : "Off"} ',
                             style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                         ),
@@ -276,11 +302,11 @@ class _SettingsState extends State<SettingPage> {
                                               .switchThemeTo(ThemeModeState
                                               .values[index]);
 
-                                          SystemChrome.setSystemUIOverlayStyle(
+                                          /*SystemChrome.setSystemUIOverlayStyle(
                                               SystemUiOverlayStyle(
                                                 systemNavigationBarDividerColor: BlocProvider
                                                     .of<StyleBloc>(context).state.theme.primaryColor,
-                                          ));
+                                          ));*/
 
                                           Navigator.of(context).pop();
                                           /*Navigator.of(context).pushReplacement(

@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
 import 'package:muzik_audio_player/src/layout/music_layout.dart';
 import 'package:muzik_audio_player/src/music_player_page.dart';
@@ -192,7 +191,7 @@ class SheetHeader extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  'Playlist ● En attente',
+                  'Playlist',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: fontSize,

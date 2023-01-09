@@ -150,7 +150,7 @@ class SingleAlbumScreen extends StatelessWidget {
                       onTap: () => _defaultOnTap(context),
                     ),
                     ListTile(
-                      leading:
+                      leading: //ImageIcon(AssetImage("assets/icon/artist.png")),
                       Icon(CupertinoIcons.person_crop_rectangle, color: iconWhiteColor),
                       title: Text('See artist', style: primaryTextStyle20sp),
                       onTap: () => Navigator.push(
@@ -236,7 +236,7 @@ class SingleAlbumScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
                                     child: FutureBuilder<List<SongModel>>(
                                         future: OnAudioQuery()
                                             .queryAudiosFrom(AudiosFromType.ALBUM, album.album),
@@ -261,8 +261,8 @@ class SingleAlbumScreen extends StatelessWidget {
                                                     .then((value) {
                                                   musicController.play();
                                                   //onSongTap!();
-                                                  Get.to(const MusicPlayerPage());
-                                                  //Navigator.push(context, MusicPlayerPage.route());
+                                                  //Get.to(const MusicPlayerPage());
+                                                  Navigator.push(context, MusicPlayerPage.route());
                                                 });
                                               },
                                             );

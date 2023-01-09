@@ -5,11 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
-
+import 'package:muzik_audio_player/data/values.dart';
 import 'package:muzik_audio_player/src/pages/app_settings/about.dart';
 import 'package:muzik_audio_player/src/pages/app_settings/settings_pages.dart';
 import 'package:muzik_audio_player/src/search/search_activity.dart';
@@ -69,27 +66,19 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark,
-      systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
-      systemNavigationBarDividerColor:Theme.of(context).primaryColor,
-      systemNavigationBarIconBrightness: Brightness.light,
-    ));
-
-
+    setSystemUiOverlayStyle();
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         key: _scaffoldKey,
         //extendBodyBehindAppBar: true,
         extendBody: true,
-        bottomNavigationBar: const BottomAppBar(
+        bottomNavigationBar: BottomAppBar(
           color: Colors.transparent,
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 1.0),
-            child: BottomPlayerView(),
+          child: Container(
+
+            //padding: const EdgeInsets.only(bottom: 1.0),
+            child: const BottomPlayerView(),
           ),
         ),
         body: StreamBuilder<List<SongModel>>(
@@ -133,7 +122,7 @@ class _HomePageState extends State<HomePage>
                                     icon: const Icon(CupertinoIcons.xmark),
                                     onPressed: (){
                                       closeDrawer();
-                                      Get.back();
+                                      Navigator.pop(context);
                                     },
                                   ),
                                   title: const Text('MyZIK'),
@@ -281,20 +270,6 @@ class _HomePageState extends State<HomePage>
                       );
                     },
                   ),
-                  /*StreamBuilder<SequenceState?>(
-                      stream: musicController.player.sequenceStateStream,
-                      builder: (context, snapshot) {
-                        if(snapshot.data?.sequence.isEmpty ?? true) {
-                          return const SizedBox();
-                        }
-                        return  IconButton(
-                          onPressed: () => Navigator.push(
-                              context, MusicPlayerPage.route(),
-                          ),
-                          icon: const Icon(CupertinoIcons.arrowtriangle_right_square),
-                        );
-                      }),*/
-
                 ],
                 bottom: TabBar(
                   indicatorColor: Theme.of(context).primaryColor.withOpacity(.8),

@@ -77,7 +77,10 @@ class SongListWidget extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  subtitle: Text(songList[index].artist ?? "Unknown Artist"),
+                  subtitle: Text(
+                    songList[index].artist ?? "Unknown Artist",
+                    maxLines: 1,
+                  ),
                   //trailing: const Icon(CupertinoIcons.play_arrow ),
 
                   leading: ClipRRect(
@@ -330,8 +333,9 @@ class SongListWithoutScrollingWidget extends StatelessWidget {
                         .then((value) {
                       musicController.play();
                       onTapCallBack!();
+                      Navigator.push(context, MusicPlayerPage.route());
 
-                      Get.to(() => const MusicPlayerPage());
+                      //Get.to(() => const MusicPlayerPage());
                       //Navigator.push(context, MusicPlayerPage.route());
                     });
                   },

@@ -233,11 +233,13 @@ class SingleArtistScreen extends StatelessWidget {
                               ),
                             ),
                             trailing: InkWell(
-                              onTap: () => Get.to(QuickSongListPage(
-                                onSongTap: onSongTap,
-                                artist: artist,
-                                songList: snapshotSong.data!,
-                              )),
+                              onTap: () => Navigator.push(context,
+                                  MaterialPageRoute(
+                                      builder: (context) => QuickSongListPage(
+                                        onSongTap: onSongTap,
+                                        artist: artist,
+                                        songList: snapshotSong.data!,
+                                      ))),
                               child: Text(
                                 'SEE ALL',
                                 style: TextStyle(

@@ -43,6 +43,7 @@ class MuzikAudioApplication extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown
     ]);
+    setSystemUiOverlayStyle();
 
     return MultiBlocProvider(
       providers: [
@@ -138,7 +139,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
 
     return BlocBuilder<StyleBloc, StyleState>(builder: (_, style) {
-      return GetMaterialApp(
+      return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Muzik Audio Player',
         theme: style.theme,
