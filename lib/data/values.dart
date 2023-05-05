@@ -24,6 +24,6 @@ void setSystemUiOverlayStyle() => SystemChrome.setSystemUIOverlayStyle(SystemUiO
   statusBarIconBrightness: Brightness.light,
   statusBarBrightness: Brightness.dark,
   systemNavigationBarColor: Colors.grey.shade900,
-  //systemNavigationBarDividerColor:Theme.of(context).primaryColor,
+  systemNavigationBarDividerColor: Colors.deepPurpleAccent,
   systemNavigationBarIconBrightness: Brightness.light,
 ));

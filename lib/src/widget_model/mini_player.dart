@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
+import 'package:marquee/marquee.dart';
 import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 import 'package:muzik_audio_player/src/music_player_page.dart';
+
+import 'package:muzik_audio_player/src/widget_model/boolean_builder.dart';
 
 class BottomPlayerView extends StatelessWidget {
   const BottomPlayerView({Key? key}) : super(key: key);
@@ -21,14 +25,8 @@ class BottomPlayerView extends StatelessWidget {
     var _player = BlocProvider.of<PlayerControllerBloc>(context).player;
     //SongModel song = _player.c;
 
-    Color iconColor1 = Colors.white;
-
-    double iSizeNB = 30;
-    double iSizeP = 30;
-
-    double sw = MediaQuery.of(context).size.width;
+    //double sw = MediaQuery.of(context).size.width;
     //MusicPlayerState status;
-    String imagePath;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -67,9 +65,17 @@ class BottomPlayerView extends StatelessWidget {
 
           if (!snapshot.hasData) return const SizedBox.shrink();
           final sequenceState = snapshot.data!;
-          final sequence = sequenceState.sequence;
-          int i = sequenceState.currentIndex;
+          final queue = sequenceState.sequence;
 
+          int i = sequenceState.currentIndex;
+          final media = queue[i].tag as MediaItem;
+
+          String artist(){
+            if(media.artist == null ) return "Unknown artist";
+            String name = media.artist!;
+            if(name.length >= 20  ) return name.substring(0,20);
+            return name;
+          }
 
           //final metadata = sequenceState.currentSource!.tag as MediaItem;
 
@@ -99,75 +105,115 @@ class BottomPlayerView extends StatelessWidget {
                           child: GetImageCoverItem(
                             //fit: BoxFit.fitWidth,
                             futureResource: OnAudioQuery().queryArtwork(
-                              int.parse(sequence[i].tag.id),
+                              int.parse(media.id),
                               ArtworkType.AUDIO,
                             ),
                           ),
-                        )),
+                        ),
+                    ),
                   ),
 
                   Expanded(
                     //flex: 2,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
                       //width: 90,
+                      alignment: Alignment.centerLeft,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          Text((!snapshot.hasData)
+                          Row(
+                            children: [
+                              const SizedBox(width: 8.0,),
+                              SizedBox(
+                                height: 17,
+                                //width: 200,
+                                child: BooleanBuilder(
+                                  check: media.title.length < 28,
+                                  ifTrue: Text(
+                                    media.title,
+                                    maxLines: 1,
+                                    style: primaryTextStyle,
+                                  ),
+                                  ifFalse: Expanded(
+                                    //width: 190,
+                                    child: Marquee(
+                                      text: media.title,
+                                      style: primaryTextStyle,
+                                      fadingEdgeStartFraction: 0.2,
+                                      fadingEdgeEndFraction: 0.2,
+                                      blankSpace: 50,
+                                      //onDone: (){},
+                                      //numberOfRounds: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          /*Text((!snapshot.hasData)
                               ? "Music Player Song"
                               : sequence[i].tag.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: primaryTextStyle,),
-                          Text((!snapshot.hasData) ?"Unknown artist": "by ${sequence[i].tag.artist}",
-                            maxLines: 1,style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold),),
+                            style: primaryTextStyle,
+                          ),*/
+                          Row(
+                            children: [
+                              const SizedBox(width: 8.0,),
+                              Text(artist(),
+                                //maxLines: 1,
+                                textAlign : TextAlign.start,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  Container(
-                    //width: sw * 0.467,
-                    child: Row(
-                      children: <Widget>[
-                        StreamBuilder<bool>(
-                          stream: _player.playingStream,
-                          builder: (context, playingSnap) {
-                            if(!playingSnap.hasData) {
-                              return IconButton(
-                                icon: (!_player.playing)
-                                    ? const Icon(CupertinoIcons.play_arrow )
-                                    : const Icon(CupertinoIcons.pause),
-                                color: Colors.white,
-                                onPressed: () {},
-                              );
-                            }
+                  Row(
+                    children: <Widget>[
+                      StreamBuilder<bool>(
+                        stream: _player.playingStream,
+                        builder: (context, playingSnap) {
+                          if(!playingSnap.hasData) {
                             return IconButton(
-                              icon: (!playingSnap.data!)
+                              icon: (!_player.playing)
                                   ? const Icon(CupertinoIcons.play_arrow )
                                   : const Icon(CupertinoIcons.pause),
                               color: Colors.white,
-                              onPressed: () {
-                                if(playingSnap.data!) {
-                                  musicController.pause();
-                                } else {
-                                  musicController.play();
-                                }
-
-                              },
+                              onPressed: () {},
                             );
                           }
-                        ),
+                          return IconButton(
+                            icon: (!playingSnap.data!)
+                                ? const Icon(CupertinoIcons.play_arrow )
+                                : const Icon(CupertinoIcons.pause),
+                            color: Colors.white,
+                            onPressed: () {
+                              if(playingSnap.data!) {
+                                musicController.pause();
+                              } else {
+                                musicController.play();
+                              }
 
-                        IconButton(
-                          icon: const Icon(CupertinoIcons.forward_end,),
-                          color: Colors.white,
-                          //onPressed: forward,
-                          //iconSize: iSizeNB,
-                          onPressed: () => musicController.next() ,
-                        ),
-                      ],
-                    ),
+                            },
+                          );
+                        }
+                      ),
+
+                      IconButton(
+                        icon: const Icon(CupertinoIcons.forward_end,),
+                        color: Colors.white,
+                        //onPressed: forward,
+                        //iconSize: iSizeNB,
+                        onPressed: () => musicController.next() ,
+                      ),
+                    ],
                   ),
                 ],
               ),
