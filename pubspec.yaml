@@ -2,9 +2,10 @@ name: muzik_audio_player
 description: Music Audio Player.
 
 publish_to: 'none'
-version: 0.5.0+0
+version: 0.5.0+1
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  #sdk: ">=2.12.0 <3.0.0"
+  sdk: '>=3.1.4 <4.0.0'
 
 #  Run build task -> flutter packages pub run build_runner build
 #  Run build task -> dart pub run build_runner build
@@ -18,7 +19,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-
+  intl: ^0.18.1
   cupertino_icons: ^1.0.5
   font_awesome_flutter: any
 
@@ -57,18 +58,20 @@ dependencies:
 
   #on_audio_query: ^2.3.1
   #on_audio_query: ^2.6.1
-  on_audio_query: ^2.8.1
+  #on_audio_query: ^2.8.1
+  on_audio_query: ^2.9.0
 
   on_audio_room: ^2.2.1+1
+
   #music: ^1.0.3
   marquee: ^2.2.0
-  animated_text_kit: ^4.2.1
+  animated_text_kit: any
 
   objectbox: ^2.0.0
   objectbox_flutter_libs: ^2.0.0
   #objectbox_flutter_libs: any
 
-  intl: ^0.17.0
+
 
   #flutter_launcher_icons: ^0.10.0
   flutter_launcher_icons: ^0.13.1
