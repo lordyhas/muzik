@@ -151,7 +151,7 @@ class _MyAppState extends State<MyApp> {
         ],
         supportedLocales: const [
           Locale('en', ''), // English, no country code
-          Locale('es', ''), // Spanish, no country code
+          Locale('fr', ''), // Spanish, no country code
         ],
         home: BlocBuilder<PlayerControllerBloc, PlayerControllerState>(
             builder: (_, player) {

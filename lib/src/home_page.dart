@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:muzik_audio_player/data/app_bloc/music_player_bloc/player_controller_cubit.dart';
 import 'package:muzik_audio_player/data/values.dart';
 import 'package:muzik_audio_player/src/pages/app_settings/about.dart';
 import 'package:muzik_audio_player/src/pages/app_settings/settings_pages.dart';
@@ -44,7 +43,6 @@ class _HomePageState extends State<HomePage>
     musicController = BlocProvider.of<PlayerControllerBloc>(context);
     setMusic();
 
-
   }
   //PlayerController get state =>  BlocProvider.of<PlayerController>(context);
   void _onShowBottomPlayer(){
@@ -73,13 +71,9 @@ class _HomePageState extends State<HomePage>
         key: _scaffoldKey,
         //extendBodyBehindAppBar: true,
         extendBody: true,
-        bottomNavigationBar: BottomAppBar(
+        bottomNavigationBar: const BottomAppBar(
           color: Colors.transparent,
-          child: Container(
-
-            //padding: const EdgeInsets.only(bottom: 1.0),
-            child: const BottomPlayerView(),
-          ),
+          child: BottomPlayerView(),
         ),
         body: StreamBuilder<List<SongModel>>(
           stream: OnAudioQuery()

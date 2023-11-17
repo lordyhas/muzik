@@ -89,7 +89,8 @@ class Themes {
     primaryColorDark: Colors.deepPurple.shade600,
     colorScheme: const ColorScheme.dark().copyWith(
       secondary: Colors.deepPurpleAccent,
-    )
+    ),
+    useMaterial3: true,
   );
 
   static final ThemeData themeOrange = ThemeData(

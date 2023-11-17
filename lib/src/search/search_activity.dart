@@ -186,7 +186,7 @@ class MusicSearchDelegate extends SearchDelegate<SongModel?> {
     return theme.copyWith(
       primaryColor: theme.primaryColor,
       primaryIconTheme: theme.primaryIconTheme,
-      primaryColorBrightness: theme.primaryColorBrightness,
+      //primaryColorBrightness: theme.primaryColorBrightness,
       primaryTextTheme: theme.primaryTextTheme,
         textTheme: theme.textTheme.copyWith(subtitle1: theme.textTheme.subtitle1?.copyWith(color: theme.primaryTextTheme.subtitle1?.  color))
     );
