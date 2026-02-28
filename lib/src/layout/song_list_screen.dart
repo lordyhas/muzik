@@ -109,7 +109,7 @@ class SongListWidget extends StatelessWidget {
                 ),
               ),
               PopupMenuButton(
-                color: Theme.of(context).backgroundColor.withOpacity(0.9),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                 icon: const Icon(
                   CupertinoIcons.ellipsis_vertical,
                 ),
@@ -343,7 +343,7 @@ class SongListWithoutScrollingWidget extends StatelessWidget {
               ),
               InkWell(
                   child: PopupMenuButton(
-                    color: Theme.of(context).backgroundColor.withOpacity(0.9),
+                    color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                     icon: const Icon(
                       CupertinoIcons.ellipsis_vertical,
                     ),

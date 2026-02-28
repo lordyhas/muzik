@@ -185,7 +185,7 @@ class _DialogContext {
   }) => showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Theme.of(context).backgroundColor.withOpacity(0.9),
+        backgroundColor: Theme.of(context).colorScheme.surface.withOpacity(0.9),
         title: Text(title, textAlign: TextAlign.center),
         content: StreamBuilder<double>(
           stream: stream,

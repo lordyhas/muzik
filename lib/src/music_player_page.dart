@@ -184,7 +184,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                               builder: (context, snapshot) {
 
                                 return PopupMenuButton(
-                                  color: Theme.of(context).backgroundColor.withOpacity(0.9),
+                                  color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                                   icon: const Icon(CupertinoIcons.ellipsis_vertical,),
                                   //onSelected: (index) => Navigator.of(context).pop(),
                                   itemBuilder: (BuildContext context) =>
