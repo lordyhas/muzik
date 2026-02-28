@@ -1,9 +1,8 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:muzik_audio_player/data/audio_repository/audio_song_info.dart';
-import 'package:muzik_audio_player/data/values.dart';
+
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:muzik_audio_player/src/music_player_page.dart';
 
@@ -15,7 +14,7 @@ class _DialogContext {
   String _fromDuration(Duration duration) {
     int min = duration.inSeconds~/60;
     int sec = ((duration.inSeconds/60) - min).toInt();
-    return "$min:$sec";
+    return '$min:$sec';
   }
 
   void musicInfo({required SongInfo song}) => showDialog(
@@ -79,7 +78,7 @@ class _DialogContext {
                             children: [
                               Text(
                                 music.title,
-                                style: Theme.of(context).textTheme.bodyText1,
+                                style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Text(music.artist),
                             ],
@@ -94,12 +93,12 @@ class _DialogContext {
                             children: [
                               ListTile(
                                 title: Text(
-                                  "Album",
-                                  style: Theme.of(context).textTheme.bodyText2,
+                                  'Album',
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 subtitle: Text(
                                   music.album,
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 minVerticalPadding: 0.0,
                                 horizontalTitleGap: 0.0,
@@ -107,12 +106,12 @@ class _DialogContext {
                               ),
                               ListTile(
                                 title: Text(
-                                  "Album artist",
-                                  style: Theme.of(context).textTheme.bodyText2,
+                                  'Album artist',
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 subtitle: Text(
                                   music.artist,
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 minVerticalPadding: 0.0,
                                 horizontalTitleGap: 0.0,
@@ -120,12 +119,12 @@ class _DialogContext {
                               ),
                               ListTile(
                                 title: Text(
-                                  "Genre",
-                                  style: Theme.of(context).textTheme.bodyText2,
+                                  'Genre',
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 subtitle: Text(
-                                  music.genre ?? "Unknown",
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  music.genre ?? 'Unknown',
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 minVerticalPadding: 0.0,
                                 horizontalTitleGap: 0.0,
@@ -133,26 +132,26 @@ class _DialogContext {
                               ),
                               ListTile(
                                 title: Text(
-                                  "Track length",
-                                  style: Theme.of(context).textTheme.bodyText2,
+                                  'Track length',
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 subtitle: Text(_fromDuration(music.duration),
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 minVerticalPadding: 0.0,
                                 onTap: (){},
                               ),
                               ListTile(
                                 title: Text(
-                                  "Path",
-                                  style: Theme.of(context).textTheme.bodyText2,
+                                  'Path',
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 subtitle: Text(
                                   music.filePath
                                     .replaceAll(
-                                        "/storage/emulated/0/", "/Internal Storage/")
-                                    .replaceAll(music.displayName, "*"),
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                        '/storage/emulated/0/', '/Internal Storage/',)
+                                    .replaceAll(music.displayName, '*'),
+                                  style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 minVerticalPadding: 0.0,
                                 onTap: (){},
@@ -172,7 +171,7 @@ class _DialogContext {
             ),
           ),
         );
-      });
+      },);
 
   void sliderVolume({
     required String title,

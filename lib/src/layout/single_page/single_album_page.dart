@@ -13,7 +13,7 @@ class SingleAlbumScreen extends StatelessWidget {
           album.id,
           ArtworkType.ALBUM,
         ),
-        defaultValue: "assets/no_cover.png",
+        defaultValue: 'assets/no_cover.png',
       ),
     ),
   );
@@ -32,8 +32,8 @@ class SingleAlbumScreen extends StatelessWidget {
     this.appBarBackgroundImage,
     this.cover,
     this.onSongTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
 
 
@@ -41,7 +41,7 @@ class SingleAlbumScreen extends StatelessWidget {
   final TextStyle primaryTextStyle20sp = const TextStyle(
       color: Colors.white,
       fontSize: 20,
-      fontFamily: "ubuntu"
+      fontFamily: 'ubuntu',
   );
 
   var iconWhiteColor = Colors.white;
@@ -50,7 +50,7 @@ class SingleAlbumScreen extends StatelessWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
-          content: Text('En développment | Soon :) ')));
+          content: Text('En développment | Soon :) '),),);
   }
 
   void __openArtisPage(context, final ArtistModel artist) {
@@ -118,7 +118,7 @@ class SingleAlbumScreen extends StatelessWidget {
         //backgroundColor: Colors.transparent,
         leading: IconButton(
             onPressed: Navigator.of(context).pop,
-            icon: const Icon(Icons.arrow_back)
+            icon: const Icon(Icons.arrow_back),
         ),
         actions: [
           IconButton(
@@ -129,14 +129,14 @@ class SingleAlbumScreen extends StatelessWidget {
           StreamBuilder<List<dynamic>>(
               stream: OnAudioQuery()
                   .queryWithFilters(
-                album.artist ?? "",
+                album.artist ?? '',
                 WithFiltersType.ARTISTS,
                 args: AlbumsArgs.ARTIST,
               ).asStream(),
             builder: (context, snapshot) {
               return PopupMenuButton(
                 color: Theme.of(context)
-                    .backgroundColor
+                    .colorScheme.background
                     .withOpacity(0.7),
                 icon: const Icon(
                   CupertinoIcons.ellipsis_vertical,
@@ -155,7 +155,7 @@ class SingleAlbumScreen extends StatelessWidget {
                       title: Text('See artist', style: primaryTextStyle20sp),
                       onTap: () => Navigator.push(
                         context,
-                        SingleArtistScreen.route(artist: snapshot.data?.first)
+                        SingleArtistScreen.route(artist: snapshot.data?.first),
                       ), //_openArtisPage(context, snapshot.data?.first),
                     ),
                     ListTile(
@@ -172,15 +172,15 @@ class SingleAlbumScreen extends StatelessWidget {
                     ),
                     ListTile(
                       leading: Icon(CupertinoIcons.arrowshape_turn_up_right,
-                          color: iconWhiteColor),
+                          color: iconWhiteColor,),
                       title: Text('Share', style: primaryTextStyle20sp),
                       onTap: () => _defaultOnTap(context),
                     ),
                   ];
                   return list.map((e) => PopupMenuItem(child: e)).toList();
-                }
+                },
               );
-            }
+            },
           ),
         ],
       ),
@@ -202,7 +202,7 @@ class SingleAlbumScreen extends StatelessWidget {
                               color: Theme.of(context).appBarTheme.backgroundColor,
                               borderRadius: const BorderRadius.only(
                                 //left: Radius.zero,
-                                  bottomRight: Radius.circular(75))
+                                  bottomRight: Radius.circular(75),),
                           ),
                         ),
                         SizedBox(
@@ -216,7 +216,7 @@ class SingleAlbumScreen extends StatelessWidget {
                                   title: Text(album.album,
                                     style: const TextStyle(
                                         fontSize: 20,
-                                        fontWeight: FontWeight.bold),),
+                                        fontWeight: FontWeight.bold,),),
                                   subtitle: Text(album.artist ?? 'unknown artist'),
                                 ),
                               ),
@@ -252,12 +252,12 @@ class SingleAlbumScreen extends StatelessWidget {
                                                   child: const Icon(
                                                     CupertinoIcons.play_fill, size: 32,
                                                     color: Colors.white,
-                                                  )
+                                                  ),
                                               ),
                                               onPressed: () async {
                                                 await musicController
                                                     .setListSong(
-                                                    songs: snapshot.data!, initialIndex: 0)
+                                                    songs: snapshot.data!, initialIndex: 0,)
                                                     .then((value) {
                                                   musicController.play();
                                                   //onSongTap!();
@@ -267,8 +267,8 @@ class SingleAlbumScreen extends StatelessWidget {
                                               },
                                             );
                                           }
-                                        }),
-                                  )
+                                        },),
+                                  ),
                                 ],
                               ),
                             ],
@@ -313,7 +313,7 @@ class SingleAlbumScreen extends StatelessWidget {
                   //length: length,
                 );
               }
-            }),
+            },),
       ),
 
       );

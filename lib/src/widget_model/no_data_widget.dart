@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 class NoDataWidget extends StatelessWidget {
   final String title;
 
-  const NoDataWidget({required this.title, Key? key}) : super(key: key);
+  const NoDataWidget({required this.title, super.key});
 
   //const NoDataWidget({this.title});
 

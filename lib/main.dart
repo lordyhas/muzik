@@ -99,7 +99,7 @@ class _MyAppState extends State<MyApp> {
           title: 'Muzik Audio Player',
           theme: style.theme,
           localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
-            AppLocalizations.delegate,
+            //AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,

@@ -13,8 +13,8 @@ extension MusicOlny on List<SongModel>{
 
   List<SongModel> get musicOnly {
     removeWhere((element) =>
-    element.fileExtension == "opus" ||
-        element.fileExtension == "ogg");
+    element.fileExtension == 'opus' ||
+        element.fileExtension == 'ogg',);
     return this;
   }
 }
@@ -26,4 +26,4 @@ void setSystemUiOverlayStyle() => SystemChrome.setSystemUIOverlayStyle(SystemUiO
   systemNavigationBarColor: Colors.grey.shade900,
   systemNavigationBarDividerColor: Colors.deepPurpleAccent,
   systemNavigationBarIconBrightness: Brightness.light,
-));
+),);

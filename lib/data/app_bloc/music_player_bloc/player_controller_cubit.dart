@@ -22,7 +22,7 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
 
   void removeAt({required int index}){
     state.currentPlaylist.removeAt(index);
-    state.player.sequence?.removeAt(index);
+    state.player.sequence.removeAt(index);
     emit(state);
   }
   Future<void> loadPlaylist(Playlist<SongInfo> songs) async {
@@ -104,17 +104,17 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
 
     Playlist<SongInfo> playlist = Playlist(songs
         .map((song) => SongInfo.fromModel(song))
-        .toList());
+        .toList(),);
 
     loadPlaylist(playlist);
     emit(state..player.setAudioSource(
       ConcatenatingAudioSource(
           children: playlist
               .map((song) => AudioSource.uri(Uri.file(song.filePath),
-              tag: song.mediaItem
-          )).toList()),
+              tag: song.mediaItem,
+          ),).toList(),),
       initialIndex: initialIndex,
-    )..songIndex = initialIndex );
+    )..songIndex = initialIndex, );
 
     //state..player.set
 
@@ -136,9 +136,9 @@ class PlayerControllerBloc extends Cubit<PlayerControllerState> {
   void setIndex(int index) => emit(state..songIndex = index);
 
   void addNext({required SongModel song, required int index}) =>
-      emit(state..player.sequence?.insert(
+      emit(state..player.sequence.insert(
           index+1,
-          AudioSource.uri(Uri.file(song.data)))
+          AudioSource.uri(Uri.file(song.data)),),
       );
 
 

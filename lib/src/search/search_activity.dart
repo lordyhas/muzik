@@ -8,7 +8,7 @@ import 'package:muzik_audio_player/src/music_player_page.dart';
 import 'package:muzik_audio_player/src/widget_model/widgets.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-import '../../data/audio_repository/audio_song_info.dart';
+import 'package:muzik_audio_player/data/audio_repository/audio_song_info.dart';
 
 
 class ResearchDelegate extends SearchDelegate<SongModel?>{
@@ -22,7 +22,7 @@ class ResearchDelegate extends SearchDelegate<SongModel?>{
       IconButton(
         icon: const Icon(Icons.clear),
         onPressed: (){
-            query = "";
+            query = '';
         },
       ),
     ];
@@ -40,7 +40,7 @@ class ResearchDelegate extends SearchDelegate<SongModel?>{
         onPressed: (){
           close(context, null);
         },
-        icon: const Icon(Icons.arrow_back));
+        icon: const Icon(Icons.arrow_back),);
   }
 
   @override
@@ -78,7 +78,7 @@ class MusicSearchDelegate extends SearchDelegate<SongModel?> {
         searchFieldDecorationTheme: const InputDecorationTheme(
           hintStyle: TextStyle(color: Colors.white30),
           labelStyle: TextStyle(color: Colors.white),
-        )
+        ),
       );
 
 
@@ -188,7 +188,7 @@ class MusicSearchDelegate extends SearchDelegate<SongModel?> {
       primaryIconTheme: theme.primaryIconTheme,
       //primaryColorBrightness: theme.primaryColorBrightness,
       primaryTextTheme: theme.primaryTextTheme,
-        textTheme: theme.textTheme.copyWith(subtitle1: theme.textTheme.subtitle1?.copyWith(color: theme.primaryTextTheme.subtitle1?.  color))
+        textTheme: theme.textTheme.copyWith(titleMedium: theme.textTheme.titleMedium?.copyWith(color: theme.primaryTextTheme.titleMedium?.  color)),
     );
 
     /*
@@ -210,13 +210,6 @@ class MusicSearchDelegate extends SearchDelegate<SongModel?> {
 
   }
 
-  @override
-  void showResults(BuildContext context) {
-    super.showResults(context);
-    //if(!this._history.contains(this._productFind) && this.query.isNotEmpty)
-      //this._history.insert(0, this._productFind);
-
-  }
 }
 
 // Suggestions list widget displayed in the search page.
@@ -229,10 +222,10 @@ class _SuggestionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme.subtitle1;
-    final textTheme2 = Theme.of(context).textTheme.subtitle2?.copyWith(
+    final textTheme = Theme.of(context).textTheme.titleMedium;
+    final textTheme2 = Theme.of(context).textTheme.titleSmall?.copyWith(
       fontWeight: FontWeight.normal,
-      color: Colors.white70
+      color: Colors.white70,
 
     );
     return ListView.builder(
@@ -300,19 +293,19 @@ class _SuggestionList extends StatelessWidget {
                                 text: TextSpan(
                                   text: suggestedSong.title.length < 27
                                       ? suggestedSong.title
-                                      : suggestedSong.title.substring(0,27)+"...",
+                                      : "${suggestedSong.title.substring(0,27)}...",
                                   style: textTheme!.copyWith(fontWeight: FontWeight.bold),
                                   children: <TextSpan>[
                                     TextSpan(
                                       text: suggestedSong.album.length < 27
-                                          ? "\n${suggestedSong.album}"
-                                          : "\n${suggestedSong.album.substring(0,20)}...",
+                                          ? '\n${suggestedSong.album}'
+                                          : '\n${suggestedSong.album.substring(0,20)}...',
                                       style: textTheme2,
                                     ),
                                     TextSpan(
                                       text: suggestedSong.artist.length < 27
-                                          ? "\n${suggestedSong.artist}"
-                                          : "\n${suggestedSong.artist.substring(0,20)}...",
+                                          ? '\n${suggestedSong.artist}'
+                                          : '\n${suggestedSong.artist.substring(0,20)}...',
                                       style: textTheme2,
                                     ),
                                     /*TextSpan(
@@ -322,7 +315,7 @@ class _SuggestionList extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                            )
+                            ),
                           ),
                         ),
                       ],

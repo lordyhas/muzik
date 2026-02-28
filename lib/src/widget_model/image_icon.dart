@@ -10,8 +10,7 @@ class IconAsset extends StatelessWidget {
 
     this.color,
     this.size,
-    Key? key,})
-      : super(key: key);
+    super.key,});
 
   @override
   Widget build(BuildContext context) {

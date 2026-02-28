@@ -12,7 +12,7 @@ class SingleArtistScreen extends StatelessWidget {
         builder: (context) => SingleArtistScreen(
           appBarBackgroundImage: null,
           cover: GetImageCover(
-            defaultValue: "assets/no_cover.png",
+            defaultValue: 'assets/no_cover.png',
             futureResource: OnAudioQuery().queryArtwork(
               artist.id,
               ArtworkType.ALBUM,
@@ -30,8 +30,8 @@ class SingleArtistScreen extends StatelessWidget {
     this.appBarBackgroundImage,
     this.cover,
     this.onSongTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -103,9 +103,9 @@ class SingleArtistScreen extends StatelessWidget {
                       Container(
                         //height: 50, //🎶
                         child: Text(
-                          "${artist.numberOfAlbums} Albums ● "
-                          "${artist.numberOfTracks} Songs ● "
-                          "${Duration(minutes: 3 * (artist.numberOfTracks ?? 0)).toString().substring(0, 9)}",
+                          '${artist.numberOfAlbums} Albums ● '
+                          '${artist.numberOfTracks} Songs ● '
+                          '${Duration(minutes: 3 * (artist.numberOfTracks ?? 0)).toString().substring(0, 9)}',
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 18,
@@ -128,7 +128,7 @@ class SingleArtistScreen extends StatelessWidget {
                                 );
                               }
                               if (snapshotAlbum.data!.isEmpty) {
-                                return const NoDataWidget(title: "No Albums found");
+                                return const NoDataWidget(title: 'No Albums found');
                               }
 
                               final List<AlbumModel> albums = snapshotAlbum.data!.toAlbumModel();
@@ -140,7 +140,7 @@ class SingleArtistScreen extends StatelessWidget {
                                   children: [
                                     const ListTile(
                                       title: Text(
-                                        "Albums",
+                                        'Albums',
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
                                           fontSize: 20.0,
@@ -170,7 +170,7 @@ class SingleArtistScreen extends StatelessWidget {
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
-                                                                              18.0),
+                                                                              18.0,),
                                                                   child:
                                                                       GetImageCover(
                                                                     height: 130,
@@ -198,7 +198,7 @@ class SingleArtistScreen extends StatelessWidget {
                                                                               .play_circle_fill,
                                                                           color:
                                                                               Colors.grey,
-                                                                        )),
+                                                                        ),),
                                                                     onTap:
                                                                         () {},
                                                                   ),
@@ -210,24 +210,24 @@ class SingleArtistScreen extends StatelessWidget {
                                                         Container(
                                                             //height:50,
                                                             margin: const EdgeInsets.symmetric(vertical: 4.0),
-                                                            child: Text((album.album.length > 12) ? album.album.substring(0, 10) + "..." : album.album,))
+                                                            child: Text((album.album.length > 12) ? "${album.album.substring(0, 10)}..." : album.album,),),
                                                       ],
                                                     ),
-                                                  )).toList(),
+                                                  ),).toList(),
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
                               );
-                            }),
+                            },),
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           ListTile(
                             title: const Text(
-                              "Songs",
+                              'Songs',
                               style: TextStyle(
                                 fontSize: 20.0,
                               ),
@@ -239,11 +239,11 @@ class SingleArtistScreen extends StatelessWidget {
                                         onSongTap: onSongTap,
                                         artist: artist,
                                         songList: snapshotSong.data!,
-                                      ))),
+                                      ),),),
                               child: Text(
                                 'SEE ALL',
                                 style: TextStyle(
-                                    color: Theme.of(context).primaryColor),
+                                    color: Theme.of(context).primaryColor,),
                               ),
                             ),
                           ),
@@ -259,7 +259,7 @@ class SingleArtistScreen extends StatelessWidget {
                   ),
                 );
               }
-            }),
+            },),
       ),
     );
   }

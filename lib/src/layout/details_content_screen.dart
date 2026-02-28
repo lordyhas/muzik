@@ -25,7 +25,7 @@ part 'single_page/quick_song_list_page.dart';
 class QueueBottomSheetUI extends StatefulWidget {
   final Widget? child;
   final Color color;
-  const QueueBottomSheetUI({required this.color, this.child, Key? key,}) : super(key: key);
+  const QueueBottomSheetUI({required this.color, this.child, super.key,});
 
   @override
   _QueueBottomSheetUIState createState() => _QueueBottomSheetUIState();
@@ -61,7 +61,7 @@ class _QueueBottomSheetUIState extends State<QueueBottomSheetUI>
 
   double iconTopMargin(int index) =>
       lerp(iconStartMarginTop,
-          iconEndMarginTop + index * (iconsVerticalSpacing + iconEndSize)) +
+          iconEndMarginTop + index * (iconsVerticalSpacing + iconEndSize),) +
           headerTopMargin;
 
   double iconLeftMargin(int index) =>
@@ -140,7 +140,9 @@ class _QueueBottomSheetUIState extends State<QueueBottomSheetUI>
 
   void _handleDragEnd(DragEndDetails details) {
     if (_controller.isAnimating ||
-        _controller.status == AnimationStatus.completed) return;
+        _controller.status == AnimationStatus.completed) {
+      return;
+    }
 
     final double flingVelocity =
         details.velocity.pixelsPerSecond.dy / maxHeight;
@@ -161,8 +163,8 @@ class SheetHeader extends StatelessWidget {
   const SheetHeader({
     required this.fontSize,
     required this.topMargin,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +188,7 @@ class SheetHeader extends StatelessWidget {
                   width: MediaQuery.of(context).size.width*0.10,
                   decoration: const BoxDecoration(
                       color: Colors.grey,
-                      borderRadius: BorderRadius.all(Radius.circular(50))
+                      borderRadius: BorderRadius.all(Radius.circular(50)),
                   ),
                 ),
                 const Spacer(),
@@ -209,7 +211,7 @@ class SheetHeader extends StatelessWidget {
             const SizedBox(width: 4.0,),
 
           ],
-        )
+        ),
     );
   }
 }

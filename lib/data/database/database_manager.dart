@@ -6,7 +6,7 @@ import 'package:objectbox/objectbox.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'data_model.dart';
+import 'package:muzik_audio_player/data/database/data_model.dart';
 
 abstract class DatabaseManager {
   const DatabaseManager();
@@ -52,7 +52,7 @@ class ObjectBoxManager extends DatabaseManager {
 
     //boxPlaylistItem.putMany().toList());
 
-    print("#### Added :" + songs.toString());
+    print("#### Added :$songs");
 
     store.close();
 
@@ -68,11 +68,11 @@ class ObjectBoxManager extends DatabaseManager {
       return  const[];
     }
 
-    print("##########  length : ${boxPlaylistItem.getAll().length}");
-    print("########## songInfo test : ${boxPlaylistItem.getAll()[200].songs}");
+    print('##########  length : ${boxPlaylistItem.getAll().length}');
+    print('########## songInfo test : ${boxPlaylistItem.getAll()[200].songs}');
     int i = 0;
     boxPlaylistItem.getAll().forEach((e) {
-      print("########## songInfo ${i++} : ${e.songs}");
+      print('########## songInfo ${i++} : ${e.songs}');
 
     });
 
@@ -140,26 +140,6 @@ class XDatabaseManager {
   //DatabaseManager();
   XDatabaseManager.empty();
 
-  /*XDatabaseManager.initStore(){
-    //this.storeManager = storeBox;
-
-    this.openStoreBox().then((store) {
-      final box = store.box<SettingAppData>();
-      if(box.isEmpty()){
-        final settingAppData = SettingAppData(
-            createAt: new DateTime.now().toString(),
-            os: Platform.operatingSystem,
-            osVersion: Platform.operatingSystemVersion,
-            phoneModel: 'SmartPhone not checked');
-        final id = box.put(settingAppData);      // note: sets note.id and also returns it
-        print("*** *** *** *** *** ***");
-        print('new note got id=$id, which is the same as note.id=${settingAppData.id}');
-        print('re-read note: ${box.get(id)}');
-        print('Set tingAppData Added Once : ${box.get(id)?.toDisplay()} ###########');
-
-      }
-    });
-  }*/
 
   Future<void> openStoreBox() async {
     Directory dir = await getApplicationDocumentsDirectory();
@@ -169,110 +149,5 @@ class XDatabaseManager {
     //return Store(getObjectBoxModel(), directory: dir.path + '/objectbox');
 
   }
-
-//Store? get storeManager => this._storeManager;
-
-/*SettingAppData initStoreBoxSetting(){
-    final Store store =  openStoreBox();
-    final box = store.box<SettingAppData>();
-
-    if(box.isEmpty()){
-      final settingAppData = SettingAppData(
-          createAt: new DateTime.now().toString(),
-          os: Platform.operatingSystem,
-          osVersion: Platform.operatingSystemVersion,
-          phoneModel: 'SmartPhone not checked');
-      final id = box.put(settingAppData);      // note: sets note.id and also returns it
-
-      print('new note got id=$id, which is the same as note.id=${settingAppData.id}');
-      print('re-read note: ${box.get(id)}');
-      print('Set tingAppData Added Once : ${box.get(id)?.toDisplay()} ###########');
-
-    }
-    var settingQuery = box.query().build();
-
-    SettingAppData? settingData = settingQuery.findFirst();
-    settingQuery.close();
-
-    return settingData ?? SettingAppData();
-  }*/
-/*
-
-  Future<SettingAppData?> get getSettingDataBox async {
-    Store store = await openStoreBox();
-    //final box = store.box<SettingAppData>();
-    final settingData = store.box<SettingAppData>()
-        .query().build().findFirst();
-    //settingData?..theme = themeState.index;
-    //final id = box.put(settingData!, mode: PutMode.update);
-    store.close();
-    return settingData;
-  }
-
-  Future<bool> updateSettingData(SettingAppData settingAppData) async {
-    bool value = false;
-    Store store = await openStoreBox();
-    final id = store.box<SettingAppData>()
-        .put(settingAppData, mode: PutMode.update);
-    if(id != settingAppData.id) value = true;
-    store.close();
-    return value;
-  }
-
-
-  Future<bool> updateTheme(StylesThemeState themeState) async {
-    bool value = false;
-    Store store = await openStoreBox();
-    final box = store.box<SettingAppData>();
-    final settingData = box.query().build().findFirst();
-    settingData?..theme = themeState.index;
-    final id = box.put(settingData!, mode: PutMode.update);
-    if(id != settingData.id) value = true;
-
-    store.close();
-    return value;
-
-  }
-
-  Future<bool> updateLanguage(LangState langState) async {
-    bool value = false;
-    Store store = await openStoreBox();
-    final box = store.box<SettingAppData>();
-    final settingData = box.query(SettingAppData_.createAt.notNull())
-        .build().findFirst();
-    settingData?..language = langState.index;
-    final id = box.put(settingData!, mode: PutMode.update);
-    if(id != settingData.id) value = true;
-
-    store.close();
-    return value;
-
-  }
-
-  Future<bool> update_() async {
-    bool value = false;
-    Store store = await openStoreBox();
-
-    store.close();
-    return value;
-
-  }
-  Future<bool> add() async {
-    bool value = false;
-    Store store = await openStoreBox();
-
-    store.close();
-    return value;
-
-  }
-  Future<void> get_() async {
-    bool value = false;
-    Store store = await openStoreBox();
-
-    store.close();
-
-
-  }
-*/
 
 }

@@ -12,6 +12,6 @@ class Log {
 }
 
 class AppConstant{
-  static const appName = "";
-  static const appFullName = "";
+  static const appName = '';
+  static const appFullName = '';
 }

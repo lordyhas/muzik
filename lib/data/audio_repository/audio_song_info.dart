@@ -83,7 +83,7 @@ class SongInfo {
   //List<Object?> get props => [id, title, filePath, duration,];
 
   MediaItem get mediaItem => MediaItem(
-    id: "$id",
+    id: '$id',
     title: title,
     displayTitle: displayName,
     album: album,
@@ -209,8 +209,8 @@ class SongInfo {
 }
 
 class MediaSample {
-  static const String wikiUri = "https://upload.wikimedia.org/wikipedia/"
-      "commons/e/e8/Music_01754.jpg";
+  static const String wikiUri = 'https://upload.wikimedia.org/wikipedia/'
+      'commons/e/e8/Music_01754.jpg';
   static int _nextMediaId = 0;
   static final ConcatenatingAudioSource playlist =
   ConcatenatingAudioSource(children: [
@@ -218,45 +218,45 @@ class MediaSample {
       start: const Duration(seconds: 60),
       end: const Duration(seconds: 90),
       child: AudioSource.uri(Uri.parse(
-          "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3")),
+          'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',),),
       tag: MediaItem(
         id: '${_nextMediaId++}',
-        album: "Science Friday",
-        title: "A Salute To Head-Scratching Science (30 seconds)",
+        album: 'Science Friday',
+        title: 'A Salute To Head-Scratching Science (30 seconds)',
         artUri: Uri.parse(
-            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
+            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg',),
       ),
     ),
     AudioSource.uri(
       Uri.parse(
-          "https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3"),
+          'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',),
       tag: MediaItem(
         id: '${_nextMediaId++}',
-        album: "Science Friday",
-        title: "A Salute To Head-Scratching Science",
+        album: 'Science Friday',
+        title: 'A Salute To Head-Scratching Science',
         artUri: Uri.parse(
-            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
+            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg',),
       ),
     ),
     AudioSource.uri(
-      Uri.parse("https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3"),
+      Uri.parse('https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3'),
       tag: MediaItem(
         id: '${_nextMediaId++}',
-        album: "Science Friday",
-        title: "From Cat Rheology To Operatic Incompetence",
+        album: 'Science Friday',
+        title: 'From Cat Rheology To Operatic Incompetence',
         artUri: Uri.parse(
-            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
+            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg',),
       ),
     ),
     AudioSource.uri(
-      Uri.parse("asset:///audio/nature.mp3"),
+      Uri.parse('asset:///audio/nature.mp3'),
       tag: MediaItem(
         id: '${_nextMediaId++}',
-        album: "Public Domain",
-        title: "Nature Sounds",
+        album: 'Public Domain',
+        title: 'Nature Sounds',
         artUri: Uri.parse(
-            "https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg"),
+            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg',),
       ),
     ),
-  ]);
+  ],);
 }

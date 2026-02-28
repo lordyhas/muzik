@@ -1,9 +1,9 @@
-part of music.layout;
+part of 'music_layout.dart';
 
 class SongListScreen extends StatefulWidget {
   final void Function()? onTapCallBack;
 
-  const SongListScreen({Key? key, this.onTapCallBack}) : super(key: key);
+  const SongListScreen({super.key, this.onTapCallBack});
 
   @override
   _SongListScreenState createState() => _SongListScreenState();
@@ -28,7 +28,7 @@ class _SongListScreenState extends State<SongListScreen> {
           }
 
           if (item.data!.isEmpty) {
-            return const NoDataWidget(title: "No Songs Found");
+            return const NoDataWidget(title: 'No Songs Found');
           }
 
           // You can use [item.data!] direct or you can create a:
@@ -55,8 +55,8 @@ class SongListWidget extends StatelessWidget {
   const SongListWidget({
     required this.songList,
     this.onTapCallBack,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,23 +78,26 @@ class SongListWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(
-                    songList[index].artist ?? "Unknown Artist",
+                    songList[index].artist ?? 'Unknown Artist',
                     maxLines: 1,
                   ),
                   //trailing: const Icon(CupertinoIcons.play_arrow ),
 
                   leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(100.0,),
-                      child: SizedBox(
-                        //width: 50,
-                        child: GetImageCoverItem(
-                          fit: BoxFit.cover,
-                          futureResource: OnAudioQuery().queryArtwork(
-                            songList[index].id,
-                            ArtworkType.AUDIO,
-                          ),
+                    borderRadius: BorderRadius.circular(
+                      100.0,
+                    ),
+                    child: SizedBox(
+                      //width: 50,
+                      child: GetImageCoverItem(
+                        fit: BoxFit.cover,
+                        futureResource: OnAudioQuery().queryArtwork(
+                          songList[index].id,
+                          ArtworkType.AUDIO,
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
 
                   onTap: () async {
                     await musicController
@@ -117,151 +120,169 @@ class SongListWidget extends StatelessWidget {
                 itemBuilder: (BuildContext context) {
                   return <PopupMenuEntry>[
                     PopupMenuItem(
-                        onTap: () async {
-                          await musicController
-                              .setListSong(songs: songList, initialIndex: index)
-                              .then((value) {
-                            musicController.play();
-                            onTapCallBack!();
-                            //Get.to(() => const MusicPlayerPage());
-                            Navigator.push(context, MusicPlayerPage.route());
-                          });
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Icon(CupertinoIcons.play_arrow),
-                            SizedBox(
-                              width: 4.0,
-                            ),
-                            Text("Play"),
-                          ],
-                        )),
+                      onTap: () async {
+                        await musicController
+                            .setListSong(songs: songList, initialIndex: index)
+                            .then((value) {
+                          musicController.play();
+                          onTapCallBack!();
+                          //Get.to(() => const MusicPlayerPage());
+                          Navigator.push(context, MusicPlayerPage.route());
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const [
+                          Icon(CupertinoIcons.play_arrow),
+                          SizedBox(
+                            width: 4.0,
+                          ),
+                          Text('Play'),
+                        ],
+                      ),
+                    ),
                     PopupMenuItem(
+                      onTap: () {
+                        musicController.addNext(
+                          song: songList[index],
+                          index: index,
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const [
+                          Icon(CupertinoIcons.arrow_uturn_right),
+                          SizedBox(
+                            width: 4.0,
+                          ),
+                          Text('Play next'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      onTap: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const [
+                          Icon(CupertinoIcons.text_append),
+                          SizedBox(
+                            width: 4.0,
+                          ),
+                          Text('Add to playing queue'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      onTap: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: const [
+                          Icon(CupertinoIcons.plus_square_fill_on_square_fill),
+                          SizedBox(width: 4.0),
+                          Text('Add to playlist'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuDivider(),
+                    PopupMenuItem(
+                      child: StreamBuilder<List<dynamic>>(
+                        stream: OnAudioQuery()
+                            .queryWithFilters(
+                              songList[index].album ?? '',
+                              WithFiltersType.ALBUMS,
+                              args: AlbumsArgs.ALBUM,
+                            )
+                            .asStream(),
+                        builder: (context, snapshot) {
+                          return InkWell(
+                            onTap: () {
+                              if (snapshot.hasData) {
+                                final List<AlbumModel> albums =
+                                    snapshot.data!.toAlbumModel();
+                                Navigator.push(
+                                  context,
+                                  SingleAlbumScreen.route(
+                                    album: albums.first,
+                                  ),
+                                );
+                              }
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: const [
+                                Icon(CupertinoIcons.music_albums),
+                                SizedBox(
+                                  width: 4.0,
+                                ),
+                                Text('Go to album'),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    PopupMenuItem(
+                      child: StreamBuilder<List<dynamic>>(
+                        stream: OnAudioQuery()
+                            .queryWithFilters(
+                              songList[index].artist ?? '',
+                              WithFiltersType.ARTISTS,
+                              //args: ArtistsArgs.ARTIST,
+                            )
+                            .asStream(),
+                        builder: (context, snapshot) {
+                          return InkWell(
+                            onTap: () {
+                              if (snapshot.hasData) {
+                                final List<ArtistModel> artists =
+                                    snapshot.data!.toArtistModel();
+                                Navigator.push(
+                                  context,
+                                  SingleArtistScreen.route(
+                                    artist: artists.first,
+                                  ),
+                                );
+                              }
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: const [
+                                Icon(CupertinoIcons.person_crop_circle),
+                                SizedBox(
+                                  width: 4.0,
+                                ),
+                                Text('Go to artist'),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const PopupMenuDivider(),
+                    PopupMenuItem(
+                      child: InkWell(
                         onTap: () {
-                          musicController.addNext(
-                            song: songList[index],
-                            index: index,
+                          Navigator.pop(context);
+                          ShowOver.musicInfo(
+                            context,
+                            song: SongInfo.fromModel(songList[index]),
                           );
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: const [
-                            Icon(CupertinoIcons.arrow_uturn_right),
+                            Icon(CupertinoIcons.info),
                             SizedBox(
                               width: 4.0,
                             ),
-                            Text("Play next"),
+                            Text('Details'),
                           ],
-                        )),
-                    PopupMenuItem(
-                        onTap: () {},
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Icon(CupertinoIcons.text_append),
-                            SizedBox(
-                              width: 4.0,
-                            ),
-                            Text("Add to playing queue"),
-                          ],
-                        )),
-                    PopupMenuItem(
-                        onTap: () {},
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Icon(CupertinoIcons.plus_square_fill_on_square_fill),
-                            SizedBox(width: 4.0),
-                            Text("Add to playlist"),
-                          ],
-                        )),
-                    const PopupMenuDivider(),
-                    PopupMenuItem(
-                      child: StreamBuilder<List<dynamic>>(
-                          stream: OnAudioQuery().queryWithFilters(
-                                songList[index].album ?? "",
-                                WithFiltersType.ALBUMS,
-                                args: AlbumsArgs.ALBUM,
-                              ).asStream(),
-                          builder: (context, snapshot) {
-
-                            return InkWell(
-                                onTap: () {
-                                  if (snapshot.hasData) {
-                                    final List<AlbumModel> albums = snapshot.data!.toAlbumModel();
-                                    Navigator.push(
-                                        context,
-                                        SingleAlbumScreen.route(
-                                            album: albums.first));
-                                  }
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: const [
-                                    Icon(CupertinoIcons.music_albums),
-                                    SizedBox(
-                                      width: 4.0,
-                                    ),
-                                    Text("Go to album"),
-                                  ],
-                                ));
-                          }),
-                    ),
-                    PopupMenuItem(
-
-                      child: StreamBuilder<List<dynamic>>(
-                          stream: OnAudioQuery().queryWithFilters(
-                                songList[index].artist ?? "",
-                                WithFiltersType.ARTISTS,
-                                //args: ArtistsArgs.ARTIST,
-                              ).asStream(),
-                          builder: (context, snapshot) {
-                            return InkWell(
-                                onTap: () {
-                                  if (snapshot.hasData) {
-                                    final List<ArtistModel> artists = snapshot.data!.toArtistModel();
-                                    Navigator.push(context, SingleArtistScreen
-                                        .route(artist: artists.first,));
-                                  }
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: const [
-                                    Icon(CupertinoIcons.person_crop_circle),
-                                    SizedBox(
-                                      width: 4.0,
-                                    ),
-                                    Text("Go to artist"),
-                                  ],
-                                ));
-                          },
-                      ),
-                    ),
-                    const PopupMenuDivider(),
-                    PopupMenuItem(
-
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                            ShowOver.musicInfo(context,
-                                song: SongInfo.fromModel(songList[index]));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: const [
-                              Icon(CupertinoIcons.info),
-                              SizedBox(
-                                width: 4.0,
-                              ),
-                              Text("Details"),
-                            ],
-                          ),
                         ),
+                      ),
                     ),
                   ];
                 },
-              )
+              ),
             ],
           );
         },
@@ -279,8 +300,8 @@ class SongListWithoutScrollingWidget extends StatelessWidget {
     required this.songList,
     required this.length,
     this.onTapCallBack,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -303,24 +324,25 @@ class SongListWithoutScrollingWidget extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  subtitle: Text(song.artist ?? "Unknown Artist"),
+                  subtitle: Text(song.artist ?? 'Unknown Artist'),
                   //trailing: const Icon(CupertinoIcons.play_arrow ),
 
                   leading: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(50.0),
-                        bottom: Radius.circular(50.0),
-                      ),
-                      child: SizedBox(
-                        //width: 50,
-                        child: GetImageCoverItem(
-                          //fit: BoxFit.fitWidth,
-                          futureResource: OnAudioQuery().queryArtwork(
-                            song.id,
-                            ArtworkType.AUDIO,
-                          ),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(50.0),
+                      bottom: Radius.circular(50.0),
+                    ),
+                    child: SizedBox(
+                      //width: 50,
+                      child: GetImageCoverItem(
+                        //fit: BoxFit.fitWidth,
+                        futureResource: OnAudioQuery().queryArtwork(
+                          song.id,
+                          ArtworkType.AUDIO,
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                   /*QueryArtworkWidget(
                               id: item.data![index].id,
                               type: ArtworkType.AUDIO,
@@ -328,8 +350,9 @@ class SongListWithoutScrollingWidget extends StatelessWidget {
                   onTap: () async {
                     await musicController
                         .setListSong(
-                            songs: songList,
-                            initialIndex: songList.indexOf(song))
+                      songs: songList,
+                      initialIndex: songList.indexOf(song),
+                    )
                         .then((value) {
                       musicController.play();
                       onTapCallBack!();
@@ -342,109 +365,117 @@ class SongListWithoutScrollingWidget extends StatelessWidget {
                 ),
               ),
               InkWell(
-                  child: PopupMenuButton(
-                    color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
-                    icon: const Icon(
-                      CupertinoIcons.ellipsis_vertical,
-                    ),
-                    onSelected: (index) => Navigator.of(context).pop(),
-                    itemBuilder: (BuildContext context) {
-                      return <PopupMenuEntry>[
-                        PopupMenuItem(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Icon(CupertinoIcons.play_arrow),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
-                                Text("Play"),
-                              ],
-                            )),
-                        PopupMenuItem(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Icon(CupertinoIcons.arrow_uturn_right),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
-                                Text("Play next"),
-                              ],
-                            )),
-                        PopupMenuItem(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Icon(
-                                    CupertinoIcons.plus_square_fill_on_square_fill),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
-                                Text("Add to playing queue"),
-                              ],
-                            )),
-                        PopupMenuItem(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Icon(CupertinoIcons.text_badge_plus),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
-                                Text("Add to playlist"),
-                              ],
-                            )),
-                        const PopupMenuDivider(),
-                        PopupMenuItem(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Icon(CupertinoIcons.music_albums),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
-                                Text("Go to album"),
-                              ],
-                            )),
-                        PopupMenuItem(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Icon(CupertinoIcons.person_crop_circle),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
-                                Text("Go to album"),
-                              ],
-                            )),
-                        const PopupMenuDivider(),
-                        PopupMenuItem(
-                            onTap: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: const [
-                                Icon(CupertinoIcons.info),
-                                SizedBox(
-                                  width: 4.0,
-                                ),
-                                Text("Details"),
-                              ],
-                            )),
-                      ];
-                    },
-                  )
+                child: PopupMenuButton(
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
+                  icon: const Icon(
+                    CupertinoIcons.ellipsis_vertical,
+                  ),
+                  onSelected: (index) => Navigator.of(context).pop(),
+                  itemBuilder: (BuildContext context) {
+                    return <PopupMenuEntry>[
+                      PopupMenuItem(
+                        onTap: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(CupertinoIcons.play_arrow),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text('Play'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        onTap: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(CupertinoIcons.arrow_uturn_right),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text('Play next'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        onTap: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(
+                              CupertinoIcons.plus_square_fill_on_square_fill,
+                            ),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text('Add to playing queue'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        onTap: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(CupertinoIcons.text_badge_plus),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text('Add to playlist'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuDivider(),
+                      PopupMenuItem(
+                        onTap: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(CupertinoIcons.music_albums),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text('Go to album'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        onTap: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(CupertinoIcons.person_crop_circle),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text('Go to album'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuDivider(),
+                      PopupMenuItem(
+                        onTap: () {},
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: const [
+                            Icon(CupertinoIcons.info),
+                            SizedBox(
+                              width: 4.0,
+                            ),
+                            Text('Details'),
+                          ],
+                        ),
+                      ),
+                    ];
+                  },
+                ),
                 /*const Icon(CupertinoIcons.ellipsis_vertical),
                           onTap: () {
                             ;
                           },*/
-              )
+              ),
             ],
           );
         }).toList()
@@ -456,8 +487,8 @@ class SongListWithoutScrollingWidget extends StatelessWidget {
 
 String durationStr(Duration dur) {
   String two(int n) {
-    if (n >= 10) return "$n";
-    return "0$n";
+    if (n >= 10) return '$n';
+    return '0$n';
   }
 
   int hour = dur.inHours;

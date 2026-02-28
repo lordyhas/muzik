@@ -4,8 +4,7 @@ class ControlButtons extends StatelessWidget {
 
   //final List<Song> _songInfo;
 
-  const ControlButtons({Key? key})
-      : super(key: key);
+  const ControlButtons({super.key});
 
   //const ControlButtons(this.player, this.songInfo);
 
@@ -34,7 +33,7 @@ class ControlButtons extends StatelessWidget {
             return IconButton(
               icon: shuffleModeEnabled
                   ? Icon(CupertinoIcons.shuffle,
-                      color: Theme.of(context).primaryColorLight)
+                      color: Theme.of(context).primaryColorLight,)
                   : const Icon(CupertinoIcons.shuffle, color: Colors.grey),
               onPressed: () async {
                 final enable = !shuffleModeEnabled;
@@ -136,7 +135,7 @@ class ControlButtons extends StatelessWidget {
                   iconSize: 64.0,
                   onPressed: () => musicController.setPosition(
                       Duration.zero,
-                      index: musicController.player.effectiveIndices!.first),
+                      index: musicController.player.effectiveIndices.first,),
                 );
               }
             },
@@ -175,7 +174,7 @@ class ControlButtons extends StatelessWidget {
               icon: icons[index],
               onPressed: () {
                 musicController.player.setLoopMode(cycleModes[
-                    (cycleModes.indexOf(loopMode) + 1) % cycleModes.length]);
+                    (cycleModes.indexOf(loopMode) + 1) % cycleModes.length],);
               },
             );
           },
@@ -214,7 +213,7 @@ class SeekBar extends StatefulWidget {
       required this.position,
       this.onChanged,
       this.onChangeEnd,
-      Key? key}) : super(key: key);
+      super.key,});
 
   @override
   _SeekBarState createState() => _SeekBarState();
@@ -248,7 +247,7 @@ class _SeekBarState extends State<SeekBar> {
           min: 0.0,
           max: widget.duration.inMilliseconds.toDouble(),
           value: min(_dragValue ?? widget.position.inMilliseconds.toDouble(),
-              widget.duration.inMilliseconds.toDouble()),
+              widget.duration.inMilliseconds.toDouble(),),
           onChanged: (value) {
             setState(() {
               _dragValue = value;
@@ -338,7 +337,7 @@ class SliderDialog {
                     style: const TextStyle(
                         fontFamily: 'Fixed',
                         fontWeight: FontWeight.bold,
-                        fontSize: 24.0)),
+                        fontSize: 24.0,),),
                 Slider(
                   divisions: divisions,
                   min: min,

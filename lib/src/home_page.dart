@@ -18,7 +18,7 @@ import 'package:muzik_audio_player/res.dart';
 part 'elevated_drawer.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -138,7 +138,7 @@ class _HomePageState extends State<HomePage>
                                       Ink(
                                         decoration: const BoxDecoration(
                                             color: Colors.grey,
-                                            shape: BoxShape.circle),
+                                            shape: BoxShape.circle,),
                                         child: IconButton(
                                           //color: Colors.black.withOpacity(.7),
                                           tooltip: 'Settings',
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage>
                                           onPressed: () {
                                             //HapticFeedback.lightImpact();
                                             Navigator.push(
-                                                context, SettingPage.route());
+                                                context, SettingPage.route(),);
                                             // Navigator.push(context,
                                             //MaterialPageRoute(builder: (context) => settingsPage()));
                                           },
@@ -162,7 +162,7 @@ class _HomePageState extends State<HomePage>
                                       Ink(
                                         decoration: const BoxDecoration(
                                             color: Colors.grey,
-                                            shape: BoxShape.circle),
+                                            shape: BoxShape.circle,),
                                         child: IconButton(
                                           //color: Colors.black.withOpacity(.7),
                                           tooltip: 'Settings',
@@ -174,7 +174,7 @@ class _HomePageState extends State<HomePage>
                                           onPressed: () {
                                             //HapticFeedback.lightImpact();
                                             Navigator.push(
-                                                context, AboutWidget.route());
+                                                context, AboutWidget.route(),);
                                             // Navigator.push(context,
                                             //     MaterialPageRoute(builder: (context) => settingsPage()));
                                           },
@@ -186,15 +186,15 @@ class _HomePageState extends State<HomePage>
                                       Ink(
                                         decoration: const BoxDecoration(
                                             color: Colors.grey,
-                                            shape: BoxShape.circle),
+                                            shape: BoxShape.circle,),
                                         child: IconButton(
                                             onPressed: Navigator.of(context).pop,
                                             icon: const Icon(
-                                                CupertinoIcons.square_arrow_right)),
+                                                CupertinoIcons.square_arrow_right,),),
                                       ),
                                       const SizedBox(
                                         width: 8.0,
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage>
                               ],
                             ),
                           );
-                        });
+                        },);
                   },
 
                 ),
@@ -259,8 +259,8 @@ class _HomePageState extends State<HomePage>
                                 : <SongModel>[...searchSnapshot.data! ],
                             history: !searchSnapshot.hasData
                                 ? <SongModel>[ ]
-                                : <SongModel>[...searchSnapshot.data!.getRange(0, 3).toList() ],
-                          )
+                                : <SongModel>[...searchSnapshot.data!.getRange(0, 3) ],
+                          ),
                       );
                     },
                   ),
@@ -308,7 +308,7 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
             );
-          }
+          },
         ),
       ),
     );

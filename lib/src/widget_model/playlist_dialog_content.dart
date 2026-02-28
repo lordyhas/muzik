@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../pages/app_settings/settings_pages.dart';
+import 'package:muzik_audio_player/src/pages/app_settings/settings_pages.dart';
 
 typedef OnSelected = void Function(int index);
 
@@ -14,8 +14,8 @@ class PlaylistDialogContent extends StatefulWidget {
     required this.options,
     required this.initialIndexSelected,
     this.onSelected,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   _PlaylistDialogContentState createState() => _PlaylistDialogContentState();
@@ -48,8 +48,8 @@ class _PlaylistDialogContentState extends State<PlaylistDialogContent> {
                     selectedIndex = value!;
                   });
                   if (widget.onSelected != null) widget.onSelected!(selectedIndex);
-                });
-          }),
+                },);
+          },),
     );
   }
 }

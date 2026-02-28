@@ -17,11 +17,11 @@ class TextThemeOption {
 //import 'package:flutter/cupertino.dart';
 
 class SettingPage extends StatefulWidget {
-  const SettingPage({Key? key, this.title}) : super(key: key);
+  const SettingPage({super.key, this.title});
   final String? title;
 
   static Route route() => MaterialPageRoute(
-      builder: (BuildContext context) => const SettingPage());
+      builder: (BuildContext context) => const SettingPage(),);
 
   @override
   _SettingsState createState() => _SettingsState();
@@ -33,7 +33,7 @@ class _SettingsState extends State<SettingPage> {
   var timeUpdate = DateTime.now();
   var textWhiteColor = Colors.white;
 
-  String version = "0.4.1";
+  String version = '0.4.1';
 
   final bool _checkVal = true;
   final bool _isGrid = true;
@@ -53,7 +53,7 @@ class _SettingsState extends State<SettingPage> {
       ..hideCurrentSnackBar()
       ..showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
-          content: Text('En développment | Soon :) ')));
+          content: Text('En développment | Soon :) '),),);
   }
 
 
@@ -67,7 +67,7 @@ class _SettingsState extends State<SettingPage> {
 
     Future<void> showTimer() => showTimePicker(
           context: context,
-          confirmText: "CHANGE",
+          confirmText: 'CHANGE',
           initialTime: const TimeOfDay(
             hour: 0,
             minute: 0,
@@ -80,7 +80,7 @@ class _SettingsState extends State<SettingPage> {
               SnackBar(
                 content: Text(value.format(context)),
                 action: SnackBarAction(
-                  label: "UNDO",
+                  label: 'UNDO',
                   onPressed: showTimer,
                 ),
               ),
@@ -94,7 +94,7 @@ class _SettingsState extends State<SettingPage> {
         centerTitle: true,
         //elevation: 5.0,
         //backgroundColor: background,
-        title: Text(widget.title ?? "Settings"),
+        title: Text(widget.title ?? 'Settings'),
         //leading: Icon(Icons.home),
       ),
       body: SingleChildScrollView(
@@ -109,15 +109,15 @@ class _SettingsState extends State<SettingPage> {
                     child: Column(
                       children: [
                         ListTile(
-                          title: Text("Préférence", style: textSettingsStyle()),
+                          title: Text('Préférence', style: textSettingsStyle()),
                         ),
                         ListTile(
                           title: Text(
-                            "Mise en veille",
+                            'Mise en veille',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
-                            "Desativé",
+                            'Desativé',
                             style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                           onTap: () {
@@ -126,7 +126,7 @@ class _SettingsState extends State<SettingPage> {
                             //showBottomSheet(context: context, builder: builder);
                             showModalBottomSheet(
                               context: context,
-                              builder: (context) => Container(
+                              builder: (context) => SizedBox(
                                 height: 300,
                                 child: Placeholder(),
                               ),
@@ -136,7 +136,7 @@ class _SettingsState extends State<SettingPage> {
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
                         ListTile(
                           title: Text(
-                            "Vitesse de lecture",
+                            'Vitesse de lecture',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Slider(
@@ -144,7 +144,7 @@ class _SettingsState extends State<SettingPage> {
                             min: 0.0,
                             max: 100.0,
                             divisions: 5,
-                            label: "${setting.speed}",
+                            label: '${setting.speed}',
                             onChanged: (double value) => BlocProvider
                                 .of<SettingCubit>(context)
                                 .save(setting..speed=value),
@@ -154,11 +154,11 @@ class _SettingsState extends State<SettingPage> {
 
                         ListTile(
                           title: Text(
-                            "Fondu de lecture",
+                            'Fondu de lecture',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
-                            "Controlez comment la lecture doit changer le morceaux",
+                            'Controlez comment la lecture doit changer le morceaux',
                             style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                           onTap: _defaultOnTap,
@@ -171,13 +171,13 @@ class _SettingsState extends State<SettingPage> {
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
 
                         SwitchListTile(
-                          activeColor: Theme.of(context).primaryColorDark,
+                          activeThumbColor: Theme.of(context).primaryColorDark,
                           value: _checkVal,
                           onChanged: (bool? value) {
                             ///setState(() {this._checkVal = value;});
                           },
                           title: Text(
-                            "Notification",
+                            'Notification',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
@@ -188,17 +188,17 @@ class _SettingsState extends State<SettingPage> {
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
 
                         SwitchListTile(
-                          activeColor: Theme.of(context).primaryColorDark,
+                          activeThumbColor: Theme.of(context).primaryColorDark,
                           value: _autoPlay,
                           onChanged: (bool? value) {
                             ///setState(() {this._autoPlay = value;});
                           },
                           title: Text(
-                            "Reprendre la lecture",
+                            'Reprendre la lecture',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
-                            "Reprendre la lorsque le casque est branché",
+                            'Reprendre la lorsque le casque est branché',
                             style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                         ),
@@ -207,7 +207,7 @@ class _SettingsState extends State<SettingPage> {
 
                         ListTile(
                           title: Text(
-                            "Gestion de la bibliothèque",
+                            'Gestion de la bibliothèque',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
@@ -219,13 +219,13 @@ class _SettingsState extends State<SettingPage> {
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
 
                         SwitchListTile(
-                          activeColor: Theme.of(context).primaryColorDark,
+                          activeThumbColor: Theme.of(context).primaryColorDark,
                           value: setting.displayAsGrid,
                           onChanged: (value) => BlocProvider
                               .of<SettingCubit>(context)
                               .save(setting..displayAsGrid = value),
                           title: Text(
-                            "Grid Album",
+                            'Grid Album',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
@@ -235,14 +235,14 @@ class _SettingsState extends State<SettingPage> {
                         ),
 
                         SwitchListTile(
-                          activeColor: Theme.of(context).primaryColorDark,
+                          activeThumbColor: Theme.of(context).primaryColorDark,
                           value: setting.coverBehind,
                           onChanged: (value) =>
                               BlocProvider
                                   .of<SettingCubit>(context)
                                   .save(setting..coverBehind = value),
                           title: Text(
-                            "Player Background",
+                            'Player Background',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text('Song Cover Behind : ${setting.coverBehind ? "On" : "Off"} ',
@@ -254,11 +254,11 @@ class _SettingsState extends State<SettingPage> {
 
                         ListTile(
                           title: Text(
-                            "Changer le theme",
+                            'Changer le theme',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
-                            "Personnalisez la couleur ",
+                            'Personnalisez la couleur ',
                             style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                           onTap: () {
@@ -267,24 +267,24 @@ class _SettingsState extends State<SettingPage> {
                               builder: (_) {
                                 List<TextThemeOption> options = [
                                   TextThemeOption(
-                                    text: "Theme Classic",
+                                    text: 'Theme Classic',
                                     index: ThemeModeState.classic.index,
                                   ),
                                   TextThemeOption(
-                                      text: "Theme Blue",
-                                      index: ThemeModeState.cyan.index),
+                                      text: 'Theme Blue',
+                                      index: ThemeModeState.cyan.index,),
                                   TextThemeOption(
-                                      text: "Theme Orange",
-                                      index: ThemeModeState.orange.index),
+                                      text: 'Theme Orange',
+                                      index: ThemeModeState.orange.index,),
                                   TextThemeOption(
-                                      text: "Theme Special",
-                                      index: ThemeModeState.special.index),
+                                      text: 'Theme Special',
+                                      index: ThemeModeState.special.index,),
                                   TextThemeOption(
-                                      text: "Theme Cool",
-                                      index: ThemeModeState.cool.index),
+                                      text: 'Theme Cool',
+                                      index: ThemeModeState.cool.index,),
                                   TextThemeOption(
-                                      text: "Theme Random",
-                                      index: ThemeModeState.random.index),
+                                      text: 'Theme Random',
+                                      index: ThemeModeState.random.index,),
                                 ];
 
                                 return AlertDialog(
@@ -294,13 +294,13 @@ class _SettingsState extends State<SettingPage> {
                                         options: options,
                                         initialIndexSelected: options.indexWhere(
                                                 (element) => element
-                                                .index == style.themeMode.index),
+                                                .index == style.themeMode.index,),
                                         onSelected: (index) {
                                           //ctx.bloc<Styles>().
                                           BlocProvider
                                               .of<StyleBloc>(context)
                                               .switchThemeTo(ThemeModeState
-                                              .values[index]);
+                                              .values[index],);
 
                                           /*SystemChrome.setSystemUIOverlayStyle(
                                               SystemUiOverlayStyle(
@@ -336,27 +336,27 @@ class _SettingsState extends State<SettingPage> {
                     child: Column(
                       children: [
                         ListTile(
-                          title: Text("Cloud Option", style: textSettingsStyle()),
+                          title: Text('Cloud Option', style: textSettingsStyle()),
                         ),
 
                         ListTile(
                           title: Text(
-                            "Connexion Mode",
+                            'Connexion Mode',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
-                            "Choisir votre cloud music",
+                            'Choisir votre cloud music',
                             style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                         ),
                         //Divider(indent: indent, endIndent: indent, color: Colors.white30,),
                         ListTile(
                           title: Text(
-                            "Sync Mode",
+                            'Sync Mode',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(
-                            "Synchroniser au cloud music",
+                            'Synchroniser au cloud music',
                             style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                         ),
@@ -384,7 +384,7 @@ class _SettingsState extends State<SettingPage> {
                             color: Colors.white,
                           ),
                           title: Text(
-                            "Version",
+                            'Version',
                             style: primaryTextStyle20,
                           ),
                           subtitle: Text(version),
@@ -400,7 +400,7 @@ class _SettingsState extends State<SettingPage> {
                             style: primaryTextStyle20,
                           ),
                           subtitle:
-                          const Text("Évaluer cette application sur Play Store"),
+                          const Text('Évaluer cette application sur Play Store'),
                           onTap: () {},
                         ),
                         ListTile(
@@ -409,16 +409,16 @@ class _SettingsState extends State<SettingPage> {
                             color: Colors.white,
                           ),
                           title: Text(
-                            "A propos & Licences",
+                            'A propos & Licences',
                             style: primaryTextStyle20,
                           ),
-                          subtitle: const Text("Biblithèques tierces"),
+                          subtitle: const Text('Biblithèques tierces'),
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                    const AboutWidget()));
+                                    const AboutWidget(),),);
                           },
                         ),
                       ],
@@ -428,7 +428,7 @@ class _SettingsState extends State<SettingPage> {
                 ],
               );
             },
-          )
+          ),
         ),
       ),
     );

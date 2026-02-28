@@ -10,14 +10,14 @@ class QuickSongListPage extends StatelessWidget {
     required this.artist,
     required this.songList,
     this.onSongTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Songs of ${artist.artist}"),
+        title: Text('Songs of ${artist.artist}'),
         //centerTitle: true,
       ),
       body: SongListWidget(

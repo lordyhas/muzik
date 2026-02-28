@@ -11,11 +11,11 @@ class GetImageCover extends StatelessWidget {
 
   const GetImageCover({
     required this.futureResource,
-    this.defaultValue = "assets/no_cover4.png",
+    this.defaultValue = 'assets/no_cover4.png',
     this.fit = BoxFit.cover,
-    this.songId,Key? key,
+    this.songId,super.key,
     this.height, this.width,
-  }) : super(key: key);
+  });
 
 
   @override
@@ -43,7 +43,7 @@ class GetImageCover extends StatelessWidget {
             gaplessPlayback: true,
           );
 
-        }
+        },
     );
   }
 
@@ -59,10 +59,10 @@ class GetImageCoverBackground extends StatelessWidget {
 
   const GetImageCoverBackground({
     required this.futureResource,
-    this.defaultValue = "assets/no_cover4.png",
+    this.defaultValue = 'assets/no_cover4.png',
     this.fit = BoxFit.cover,
-    this.songId,Key? key, this.height, this.width,
-  }) : super(key: key);
+    this.songId,super.key, this.height, this.width,
+  });
 
 
   @override
@@ -93,12 +93,12 @@ class GetImageCoverBackground extends StatelessWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                   image: MemoryImage(snapshot.data!),
-                fit: fit
+                fit: fit,
               ),
             ),
           );
 
-        }
+        },
     );
   }
 
@@ -111,10 +111,10 @@ class GetImageCoverItem extends StatelessWidget {
   final String? songId;
   const GetImageCoverItem({
     required this.futureResource,
-    this.defaultValue = "assets/no_cover4.png",
+    this.defaultValue = 'assets/no_cover4.png',
     this.fit = BoxFit.cover,
-    this.songId,Key? key,
-  }) : super(key: key);
+    this.songId,super.key,
+  });
 
 
   @override
@@ -130,11 +130,11 @@ class GetImageCoverItem extends StatelessWidget {
           }
           return SizedBox.square(
               dimension: 55,
-              child: Image.memory(snapshot.data!, fit: fit,)
+              child: Image.memory(snapshot.data!, fit: fit,),
           );
 
 
-        }
+        },
     );
   }
 

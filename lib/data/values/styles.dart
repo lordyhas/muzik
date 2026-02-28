@@ -60,7 +60,7 @@ class Themes {
     //primarySwatch: Colors.blue,
     //fontFamily: "ubuntu",
     textTheme: const TextTheme(
-      bodyText1: TextStyle(
+      bodyLarge: TextStyle(
         fontSize: 20,
         color: Colors.white,
       ),
@@ -72,16 +72,14 @@ class Themes {
         color: Colors.white,
       ),
     ),
-    colorScheme: ColorScheme.fromSwatch().copyWith(
-      brightness: Brightness.dark,
-    ),
-    backgroundColor: Colors.grey[900],
 
     primaryColorLight: Colors.white,
     iconTheme: const IconThemeData(color: Colors.white),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: Colors.transparent,
-    ),
+    ), colorScheme: ColorScheme.fromSwatch().copyWith(
+      brightness: Brightness.dark,
+    ).copyWith(background: Colors.grey[900]),
   );
 
   static final ThemeData themePurple = _generalTheme.copyWith(
@@ -90,7 +88,6 @@ class Themes {
     colorScheme: const ColorScheme.dark().copyWith(
       secondary: Colors.deepPurpleAccent,
     ),
-    useMaterial3: true,
   );
 
   static final ThemeData themeOrange = ThemeData(
@@ -98,7 +95,7 @@ class Themes {
       //primarySwatch: Colors.blue,
       //fontFamily: "ubuntu",
       textTheme: const TextTheme(
-        bodyText1: TextStyle(
+        bodyLarge: TextStyle(
           color: Colors.white,
         ),
       ),
@@ -109,18 +106,16 @@ class Themes {
           color: Colors.white,
         ),
       ),
-      colorScheme: ColorScheme.fromSwatch().copyWith(
-        secondary: Colors.deepOrangeAccent,
-        brightness: Brightness.dark,
-      ),
-      backgroundColor: Colors.grey[900],
       primaryColor: Colors.deepOrange,
       primaryColorDark: Colors.deepOrange.shade600,
       primaryColorLight: Colors.white,
       iconTheme: const IconThemeData(color: Colors.white),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: Colors.transparent,
-      )
+      ), colorScheme: ColorScheme.fromSwatch().copyWith(
+        secondary: Colors.deepOrangeAccent,
+        brightness: Brightness.dark,
+      ).copyWith(background: Colors.grey[900]),
   );
 
 
@@ -129,7 +124,7 @@ class Themes {
       //primarySwatch: Colors.blue,
       //fontFamily: "ubuntu",
       textTheme: const TextTheme(
-        bodyText1: TextStyle(
+        bodyLarge: TextStyle(
           color: Colors.white,
         ),
       ),
@@ -140,18 +135,16 @@ class Themes {
             color: Colors.white,
           ),
       ),
-      colorScheme: ColorScheme.fromSwatch().copyWith(
-        secondary: Colors.cyanAccent,
-        brightness: Brightness.dark,
-      ),
-      backgroundColor: Colors.grey[900],
       primaryColor: Colors.cyan,
       primaryColorDark: Colors.cyan.shade600,
       primaryColorLight: Colors.white,
       iconTheme: const IconThemeData(color: Colors.white),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: Colors.transparent,
-      )
+      ), colorScheme: ColorScheme.fromSwatch().copyWith(
+        secondary: Colors.cyanAccent,
+        brightness: Brightness.dark,
+      ).copyWith(background: Colors.grey[900]),
   );
 
 
@@ -160,7 +153,7 @@ class Themes {
       //primarySwatch: Colors.blue,
       //fontFamily: "ubuntu",
       textTheme: const TextTheme(
-        bodyText1: TextStyle(
+        bodyLarge: TextStyle(
           fontSize: 22,
           color: Colors.white,
         ),
@@ -172,18 +165,16 @@ class Themes {
           color: Colors.white,
         ),
       ),
-      colorScheme: ColorScheme.fromSwatch().copyWith(
-        secondary: Colors.deepPurple.shade600,
-        brightness: Brightness.dark,
-      ),
-      backgroundColor: Colors.grey[900],
       primaryColor: Colors.deepPurpleAccent,
       primaryColorDark: Colors.deepPurple,
       primaryColorLight: Colors.white,
       iconTheme: const IconThemeData(color: Colors.white),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: Colors.transparent,
-      ),
+      ), colorScheme: ColorScheme.fromSwatch().copyWith(
+        secondary: Colors.deepPurple.shade600,
+        brightness: Brightness.dark,
+      ).copyWith(background: Colors.grey[900]),
   );
 }
 
@@ -194,7 +185,7 @@ class HexColor extends Color {
   static int _getColorFromHex(String hexColor) {
     hexColor = hexColor.toUpperCase().replaceAll('#', '');
     if (hexColor.length == 6) {
-      hexColor = 'FF' + hexColor;
+      hexColor = 'FF$hexColor';
     }
     return int.parse(hexColor, radix: 16);
   }

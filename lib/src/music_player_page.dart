@@ -24,7 +24,7 @@ part 'player_ui/player_controllers_ui.dart';
 part 'player_ui/image_cover_widget.dart';
 
 class MusicPlayerPage extends StatefulWidget {
-  const MusicPlayerPage({Key? key}) : super(key: key);
+  const MusicPlayerPage({super.key});
 
   static PageRouteBuilder route() =>
       PageTransition(
@@ -62,7 +62,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   final TextStyle primaryTextStyle20sp = const TextStyle(
       color: Colors.white,
       fontSize: 20,
-      fontFamily: "ubuntu"
+      fontFamily: 'ubuntu',
   );
 
   var iconWhiteColor = Colors.white;
@@ -70,13 +70,13 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   @override
   Widget build(BuildContext context) {
     setSystemUiOverlayStyle();
-    AudioPlayer _player = BlocProvider
+    AudioPlayer player = BlocProvider
         .of<PlayerControllerBloc>(context)
         .player;
 
     double iSize2 = 27;
     TextStyle titleStyle =
-    const TextStyle(color: Colors.white, fontFamily: "ubuntu");
+    const TextStyle(color: Colors.white, fontFamily: 'ubuntu');
     return BlocBuilder<SettingCubit, SettingState>(
       builder: (context, setting) {
         return Scaffold(
@@ -91,7 +91,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                   if(BlocProvider.of<SettingCubit>(context).state.coverBehind)
                     SizedBox(
                       child: StreamBuilder<SequenceState?>(
-                        stream: _player.sequenceStateStream,
+                        stream: player.sequenceStateStream,
                         builder: (context, snapshot) {
                           final state = snapshot.data;
                           if (state?.sequence.isEmpty ?? true) {
@@ -147,7 +147,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                         ),
                         centerTitle: true,
                         title: const Text(
-                          "",
+                          '',
                           style: TextStyle(fontSize: 24, color: Colors.white),
                         ),
 
@@ -165,12 +165,12 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                             color: iconWhiteColor,
                             onPressed: () {
                               ShowOver.of(context).sliderVolume(
-                                title: "Adjust volume",
+                                title: 'Adjust volume',
                                 divisions: 10,
                                 min: 0.0,
                                 max: 1.0,
-                                stream: _player.volumeStream,
-                                onChanged: _player.setVolume,
+                                stream: player.volumeStream,
+                                onChanged: player.setVolume,
                               );
                             },
                             iconSize: iSize2,
@@ -192,13 +192,13 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                         ListTile(
                                           leading: Icon(
                                               CupertinoIcons.arrowshape_turn_up_right,
-                                              color: iconWhiteColor),
+                                              color: iconWhiteColor,),
                                           title: Text('Share', style: primaryTextStyle20sp),
                                           onTap: _defaultOnTap,
                                         ),
                                         ListTile(
                                           leading: Icon(CupertinoIcons.text_badge_plus,
-                                              color: iconWhiteColor),
+                                              color: iconWhiteColor,),
                                           title: Text('Add to playlist',
                                             style: primaryTextStyle20sp,
                                           ),
@@ -218,7 +218,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                           ListTile(
                                             leading:
                                             Icon(CupertinoIcons.person_crop_rectangle,
-                                                color: iconWhiteColor),
+                                                color: iconWhiteColor,),
                                             title: Text('See artist',
                                               style: primaryTextStyle20sp,
                                             ),
@@ -244,7 +244,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                           onTap: () {
                                             //_player.stop();
                                             BlocProvider.of<SettingCubit>(context).save(
-                                                setting..coverBehind = !setting.coverBehind);
+                                                setting..coverBehind = !setting.coverBehind,);
                                             Navigator.pop(context);
                                           },
                                         ),
@@ -274,11 +274,11 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                                     .currentSong,
                                               );
 
-                                            }
+                                            },
                                         ),
                                       ].map((item) => PopupMenuItem(child: item)).toList(),
                                 );
-                              }
+                              },
                           ),
                         ],
                       ),
@@ -288,7 +288,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: StreamBuilder<SequenceState?>(
-                          stream: _player.sequenceStateStream,
+                          stream: player.sequenceStateStream,
                           builder: (context, snapshot) {
                             final state = snapshot.data;
                             if (state?.sequence.isEmpty ?? true) {
@@ -325,7 +325,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                 Center(
                                   child: Container(
                                     margin: const EdgeInsets.symmetric(
-                                        horizontal: 42.0, vertical: 16.0),
+                                        horizontal: 42.0, vertical: 16.0,),
                                     child: Column(
                                       mainAxisAlignment: MainAxisAlignment
                                           .center,
@@ -338,7 +338,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                               metadata.title,
                                               style: titleStyle.copyWith(
                                                   fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
+                                                  fontWeight: FontWeight.bold,),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -346,7 +346,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                               text: metadata.title,
                                               style: titleStyle.copyWith(
                                                   fontSize: 20,
-                                                  fontWeight: FontWeight.bold),
+                                                  fontWeight: FontWeight.bold,),
                                               fadingEdgeStartFraction: 0.2,
                                               fadingEdgeEndFraction: 0.2,
                                               blankSpace: 50,
@@ -365,9 +365,9 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                     ),*/
                                         const SizedBox(height: 4.0,),
                                         Text(
-                                          metadata.artist ?? "Unknown",
+                                          metadata.artist ?? 'Unknown',
                                           style: titleStyle.copyWith(
-                                              color: Colors.white54),
+                                              color: Colors.white54,),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -429,11 +429,11 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                       ),
 
                       StreamBuilder<Duration?>(
-                        stream: _player.durationStream,
+                        stream: player.durationStream,
                         builder: (context, snapshot) {
                           final duration = snapshot.data ?? Duration.zero;
                           return StreamBuilder<Duration>(
-                            stream: _player.positionStream,
+                            stream: player.positionStream,
                             builder: (context, snapshot) {
                               var position = snapshot.data ?? Duration.zero;
                               if (position > duration) {
@@ -446,7 +446,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
                                   duration: duration,
                                   position: position,
                                   onChangeEnd: (newPosition) {
-                                    _player.seek(newPosition);
+                                    player.seek(newPosition);
                                   },
                                 ),
                               );
@@ -481,13 +481,13 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
       ..showSnackBar(const SnackBar(
           behavior: SnackBarBehavior.floating,
           backgroundColor: Colors.white70,
-          content: Text('En développment | Soon :) ')));
+          content: Text('En développment | Soon :) '),),);
   }
 }
 
 
 class QueueSongList extends StatefulWidget {
-  const QueueSongList({Key? key}) : super(key: key);
+  const QueueSongList({super.key});
 
   @override
   State<QueueSongList> createState() => _QueueSongListState();
@@ -505,7 +505,7 @@ class _QueueSongListState extends State<QueueSongList> {
     if (song.artist.length <= 20) {
       return song.artist;
     } else {
-      return song.artist.substring(0, 20) + "...";
+      return "${song.artist.substring(0, 20)}...";
     }
   }
 
@@ -538,7 +538,7 @@ class _QueueSongListState extends State<QueueSongList> {
                   ignoring: ignorePointer,
                   child: ReorderableListView(
                     scrollController: ScrollController(
-                        initialScrollOffset: currentIndex.toDouble() * 73),
+                        initialScrollOffset: currentIndex.toDouble() * 73,),
                     onReorder: (int oldIndex, int newIndex) {
                       if (oldIndex < newIndex) newIndex--;
 
@@ -561,7 +561,7 @@ class _QueueSongListState extends State<QueueSongList> {
                           onDismissed: (dismissDirection) {
                             BlocProvider
                                 .of<PlayerControllerBloc>(
-                                context).removeAt(index: i);
+                                context,).removeAt(index: i);
 
                             setState(() {});
                             //sequence.removeAt(i);
@@ -586,7 +586,7 @@ class _QueueSongListState extends State<QueueSongList> {
                                           onTap: () {
                                             BlocProvider
                                                 .of<PlayerControllerBloc>(
-                                                context).playAt(index: i);
+                                                context,).playAt(index: i);
                                             //state.player.seek(Duration.zero,index: i);
                                             setState(() {});
                                           },
@@ -596,7 +596,7 @@ class _QueueSongListState extends State<QueueSongList> {
                                           //tileColor: Colors.grey,
                                           leading: ClipRRect(
                                             borderRadius: BorderRadius.circular(
-                                                5),
+                                                5,),
                                             child: SizedBox.square(
                                               dimension: 40,
                                               child: GetImageCoverItem(
@@ -614,7 +614,7 @@ class _QueueSongListState extends State<QueueSongList> {
                                             queue[i].title,
                                             overflow: TextOverflow.ellipsis,
                                           ),
-                                          subtitle: Text(artistName(queue[i])+"", //+ ' ● ' + fromDuration(queue[i].duration),
+                                          subtitle: Text("${artistName(queue[i])}", //+ ' ● ' + fromDuration(queue[i].duration),
                                             //Duration(milliseconds: int.parse(sequence[i].duration!.inMinutes.toString()))
                                             style: const TextStyle(fontSize:12),
                                           ),
@@ -637,7 +637,7 @@ class _QueueSongListState extends State<QueueSongList> {
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 24,
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
