@@ -137,15 +137,29 @@ fun MainAppScreen(
     val context = LocalContext.current
     var backPressedTime by remember { mutableLongStateOf(0L) }
 
+    // The tab whose stack is showing: the current route on a tab root, or the tab a
+    // detail screen was opened from, so the bar keeps that tab highlighted
+    val backStack by navController.currentBackStack.collectAsState()
+    val activeTab = backStack.lastOrNull { entry ->
+        NavigationTab.values().any { it.route == entry.destination.route }
+    }?.destination?.route
+
+    // Tabs always land on their root list. restoreState keeps the root's scroll
+    // position, then any detail screens left open in that tab are dropped.
+    fun navigateToTab(tab: NavigationTab) {
+        navController.navigate(tab.route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+        navController.popBackStack(tab.route, inclusive = false)
+    }
+
     fun safePopBack() {
         if (!navController.popBackStack()) {
-            navController.navigate(NavigationTab.HOME.route) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
-            }
+            navigateToTab(NavigationTab.HOME)
         }
     }
 
@@ -170,13 +184,7 @@ fun MainAppScreen(
         enabled = isTopLevelRoute && currentRoute != NavigationTab.HOME.route && !showNowPlaying &&
                 selectedSongForDetails == null && songPendingAddToPlaylist == null
     ) {
-        navController.navigate(NavigationTab.HOME.route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
+        navigateToTab(NavigationTab.HOME)
     }
 
     // On Home tab: double back press to exit application safely
@@ -200,16 +208,6 @@ fun MainAppScreen(
     fun navigateToArtist(artistName: String) {
         val encoded = URLEncoder.encode(artistName, StandardCharsets.UTF_8.toString())
         navController.navigate("artist/$encoded")
-    }
-
-    fun navigateToTab(tab: NavigationTab) {
-        navController.navigate(tab.route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
     }
 
     fun navigateToPlaylist(playlistId: String) {
@@ -260,19 +258,11 @@ fun MainAppScreen(
                                 .navigationBarsPadding()
                         ) {
                             NavigationTab.values().forEach { tab ->
-                                val isSelected = currentRoute == tab.route
+                                val isSelected = activeTab == tab.route
                                 NavigationBarItem(
                                     selected = isSelected,
                                     onClick = {
-                                        if (currentRoute != tab.route) {
-                                            navController.navigate(tab.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        }
+                                        if (currentRoute != tab.route) navigateToTab(tab)
                                     },
                                     icon = {
                                         Icon(
