@@ -58,7 +58,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.lordyhas.muzik.data.model.SmartPlaylistType
@@ -97,6 +96,8 @@ enum class NavigationTab(
 
 private const val PLAYLIST_EDIT_ROUTE = "playlist/{playlistId}/edit"
 
+private val TAB_ROUTES = NavigationTab.entries.map { it.route }.toSet()
+
 @UnstableApi
 @Composable
 fun MainAppScreen(
@@ -131,21 +132,38 @@ fun MainAppScreen(
     var bottomBarHeight by remember { mutableStateOf(0.dp) }
 
     val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val backStack by navController.currentBackStack.collectAsState()
+    val currentRoute = backStack.lastOrNull()?.destination?.route
 
     val context = LocalContext.current
     var backPressedTime by remember { mutableLongStateOf(0L) }
 
+    // The tab whose stack is showing: the current route on a tab root, or the tab a
+    // detail screen was opened from, so the bar keeps that tab highlighted
+    val activeTab = remember(backStack) {
+        backStack.lastOrNull { it.destination.route in TAB_ROUTES }?.destination?.route
+    }
+
+    // Tabs always land on their root list. The tab being left is first popped back to
+    // its root, so only that root (and its scroll position) is saved for restoreState.
+    fun navigateToTab(tab: NavigationTab) {
+        if (tab.route == activeTab) {
+            navController.popBackStack(tab.route, inclusive = false)
+            return
+        }
+        activeTab?.let { navController.popBackStack(it, inclusive = false) }
+        navController.navigate(tab.route) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                saveState = true
+            }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
     fun safePopBack() {
         if (!navController.popBackStack()) {
-            navController.navigate(NavigationTab.HOME.route) {
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
-                }
-                launchSingleTop = true
-                restoreState = true
-            }
+            navigateToTab(NavigationTab.HOME)
         }
     }
 
@@ -154,7 +172,7 @@ fun MainAppScreen(
         return
     }
 
-    val isTopLevelRoute = NavigationTab.values().any { it.route == currentRoute }
+    val isTopLevelRoute = currentRoute in TAB_ROUTES
 
     // Intercept back for overlays: AddToPlaylistSheet & SongDetailsDialog
     BackHandler(enabled = songPendingAddToPlaylist != null && !showCreatePlaylistDialog) {
@@ -170,13 +188,7 @@ fun MainAppScreen(
         enabled = isTopLevelRoute && currentRoute != NavigationTab.HOME.route && !showNowPlaying &&
                 selectedSongForDetails == null && songPendingAddToPlaylist == null
     ) {
-        navController.navigate(NavigationTab.HOME.route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
+        navigateToTab(NavigationTab.HOME)
     }
 
     // On Home tab: double back press to exit application safely
@@ -200,16 +212,6 @@ fun MainAppScreen(
     fun navigateToArtist(artistName: String) {
         val encoded = URLEncoder.encode(artistName, StandardCharsets.UTF_8.toString())
         navController.navigate("artist/$encoded")
-    }
-
-    fun navigateToTab(tab: NavigationTab) {
-        navController.navigate(tab.route) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                saveState = true
-            }
-            launchSingleTop = true
-            restoreState = true
-        }
     }
 
     fun navigateToPlaylist(playlistId: String) {
@@ -260,19 +262,11 @@ fun MainAppScreen(
                                 .navigationBarsPadding()
                         ) {
                             NavigationTab.values().forEach { tab ->
-                                val isSelected = currentRoute == tab.route
+                                val isSelected = activeTab == tab.route
                                 NavigationBarItem(
                                     selected = isSelected,
                                     onClick = {
-                                        if (currentRoute != tab.route) {
-                                            navController.navigate(tab.route) {
-                                                popUpTo(navController.graph.findStartDestination().id) {
-                                                    saveState = true
-                                                }
-                                                launchSingleTop = true
-                                                restoreState = true
-                                            }
-                                        }
+                                        if (currentRoute != tab.route) navigateToTab(tab)
                                     },
                                     icon = {
                                         Icon(
