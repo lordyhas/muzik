@@ -500,6 +500,20 @@ fun MainAppScreen(
                 showLyrics = showLyrics,
                 lyricsState = lyricsState,
                 onToggleLyrics = { viewModel.toggleLyrics() },
+                onAddToPlaylist = { currentSong?.let { viewModel.setSongPendingAddToPlaylist(it) } },
+                onGoToAlbum = {
+                    currentSong?.let {
+                        viewModel.setShowNowPlaying(false)
+                        navigateToAlbum(it.albumId)
+                    }
+                },
+                onGoToArtist = {
+                    currentSong?.let {
+                        viewModel.setShowNowPlaying(false)
+                        navigateToArtist(it.artist)
+                    }
+                },
+                onShowDetails = { currentSong?.let { viewModel.selectSongForDetails(it) } },
                 onDismiss = { viewModel.setShowNowPlaying(false) }
             )
         }

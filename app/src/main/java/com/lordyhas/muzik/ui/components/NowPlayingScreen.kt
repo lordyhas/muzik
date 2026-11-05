@@ -31,7 +31,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
+import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
@@ -39,8 +41,11 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lyrics
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.RepeatOne
@@ -48,6 +53,8 @@ import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -128,6 +135,10 @@ fun NowPlayingScreen(
     showLyrics: Boolean,
     lyricsState: LyricsState,
     onToggleLyrics: () -> Unit,
+    onAddToPlaylist: () -> Unit,
+    onGoToAlbum: () -> Unit,
+    onGoToArtist: () -> Unit,
+    onShowDetails: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -252,15 +263,61 @@ fun NowPlayingScreen(
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             )
                         }
-
-                        CircleIconButton(
+                        // claude do not un comment this.
+                        /*CircleIconButton(
                             icon = Icons.AutoMirrored.Filled.QueueMusic,
                             contentDescription = "Open queue",
                             onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
                             size = 44.dp,
                             iconSize = 22.dp,
                             background = Color.White.copy(alpha = 0.08f)
-                        )
+                        )*/
+
+                        Box {
+                            var isMenuExpanded by remember { mutableStateOf(false) }
+                            CircleIconButton(
+                                icon = Icons.Default.MoreVert,
+                                contentDescription = "More options",
+                                onClick = { isMenuExpanded = true },
+                                size = 44.dp,
+                                iconSize = 22.dp,
+                                background = Color.White.copy(alpha = 0.08f)
+                            )
+
+                            DropdownMenu(
+                                expanded = isMenuExpanded,
+                                onDismissRequest = { isMenuExpanded = false },
+                                modifier = Modifier.background(SurfaceElevated)
+                            ) {
+                                @Composable
+                                fun MenuItem(label: String, icon: ImageVector, tint: Color, action: () -> Unit) {
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                label,
+                                                color = TextPrimary,
+                                                style = MaterialTheme.typography.bodyMedium
+                                            )
+                                        },
+                                        leadingIcon = {
+                                            Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(20.dp))
+                                        },
+                                        onClick = {
+                                            isMenuExpanded = false
+                                            action()
+                                        }
+                                    )
+                                }
+
+                                MenuItem("Add to playlist", Icons.AutoMirrored.Filled.PlaylistAdd, accent, onAddToPlaylist)
+                                MenuItem("Queue", Icons.AutoMirrored.Filled.QueueMusic, accent) {
+                                    coroutineScope.launch { pagerState.animateScrollToPage(1) }
+                                }
+                                MenuItem("Go to album", Icons.Default.Album, TextSecondary, onGoToAlbum)
+                                MenuItem("Go to artist", Icons.Default.Person, TextSecondary, onGoToArtist)
+                                MenuItem("Song details", Icons.Default.Info, TextSecondary, onShowDetails)
+                            }
+                        }
                     }
 
                     // ── Lyrics panel or album art (swipe left/right to skip) ──
