@@ -1,8 +1,25 @@
 # Muzik
 
+[![CI](https://github.com/lordyhas/muzik/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/lordyhas/muzik/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/lordyhas/muzik)](https://github.com/lordyhas/muzik/releases/latest)
+[![Min SDK](https://img.shields.io/badge/minSdk-24-brightgreen)](https://developer.android.com/about/versions/nougat)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+
 **Muzik** is a modern, lightweight local audio player for Android built with Google's recommended stack: **Jetpack Compose**, **Material 3**, and **AndroidX Media3 (ExoPlayer)**.
 
 It provides a seamless, fast, and elegant offline listening experience with zero ads and no internet connection required.
+
+<p align="center">
+  <img src="screenshots/home.png" alt="Home screen" width="250">
+  &nbsp;
+  <img src="screenshots/now-playing.png" alt="Now Playing screen" width="250">
+  &nbsp;
+  <img src="screenshots/lock-screen.png" alt="Lock screen media controls" width="250">
+</p>
+
+## Download
+
+Grab the latest signed APK from the [Releases page](https://github.com/lordyhas/muzik/releases/latest) and install it on your phone (you may need to allow installing apps from unknown sources).
 
 ---
 
@@ -43,13 +60,13 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 - **Track Details & Metadata**:
   - Inspect song information (title, artist, album, track/disc number, duration and file location).
 
--  **Privacy & Permission Handling**:
+- **Privacy & Permission Handling**:
   - 100% offline — your data stays strictly on your device.
   - Full compatibility with modern Android permission models (`READ_MEDIA_AUDIO`, `POST_NOTIFICATIONS` on Android 13+, legacy storage on older versions).
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## Tech Stack & Architecture
 
 | Component | Technology |
 |---|---|
@@ -65,10 +82,10 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 
 ## Requirements
 
-- **Android Studio**: Ladybug / Jellyfish or newer
+- **Android Studio**: Narwhal or newer (Android Gradle Plugin 8.11)
 - **JDK**: Version 11 (Java 11)
 - **Min SDK**: Android 7.0 (API 24)
-- **Target / Compile SDK**: Android 15 (API 36)
+- **Target / Compile SDK**: Android 16 (API 36)
 
 ---
 
@@ -76,8 +93,8 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/lordyhas/music-app.git
-   cd music-app
+   git clone https://github.com/lordyhas/muzik.git
+   cd muzik
    ```
 
 2. **Open the project** in Android Studio.
@@ -87,12 +104,16 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 
 4. **Build and Run**:
    - Via Android Studio: click **Run 'app'** (`Shift + F10`).
-   - Via Command Line (Windows PowerShell):
-     ```powershell
+   - Via the command line:
+     ```bash
+     # macOS / Linux / Git Bash
+     ./gradlew assembleDebug
+
+     # Windows PowerShell
      .\gradlew.bat assembleDebug
      ```
    - The generated debug APK will be located at `app/build/outputs/apk/debug/app-debug.apk`.
-   - Run the unit tests with `.\gradlew.bat testDebugUnitTest`.
+   - Run the unit tests with `./gradlew testDebugUnitTest` (or `.\gradlew.bat testDebugUnitTest` on Windows).
 
 ---
 
@@ -154,4 +175,4 @@ app/src/main/
 
 ## License
 
-This project is licensed under the terms of the repository's open-source license.
+Muzik is free software, licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0). You can use, study, modify and share it; if you distribute a modified version, or make one available to users over a network, you must release its source code under the same license.
