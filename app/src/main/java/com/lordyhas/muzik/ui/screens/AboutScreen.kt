@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Gavel
@@ -51,6 +52,7 @@ fun AboutScreen(
     appVersion: AppVersion,
     onBackClick: () -> Unit,
     onLicensesClick: () -> Unit,
+    onWhatsNewClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
@@ -97,6 +99,16 @@ fun AboutScreen(
                 color = TextMuted,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 10.dp)
+            )
+        }
+
+        SettingsGroup(title = null) {
+            SettingsRow(
+                icon = Icons.Default.AutoAwesome,
+                title = "What's new",
+                subtitle = "See what changed in each version",
+                onClick = onWhatsNewClick,
+                showDivider = false
             )
         }
 
