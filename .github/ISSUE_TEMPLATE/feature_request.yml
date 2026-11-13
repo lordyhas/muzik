@@ -1,0 +1,20 @@
+name: Feature request
+description: Suggest an idea to make Muzik better
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would you like to do?
+      description: Describe what you're trying to do and what's missing or annoying today.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: How should it work?
+      description: Describe the feature as you imagine it. Screenshots from other apps are welcome.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Anything else?

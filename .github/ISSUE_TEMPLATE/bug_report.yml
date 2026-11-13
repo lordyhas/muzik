@@ -1,0 +1,55 @@
+name: Bug report
+description: Something in Muzik doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a bug! The more details you give, the faster it can be fixed.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the problem, and what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open an album
+        2. Swipe a song to the right
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: Muzik version
+      description: Shown in Android settings > Apps > Muzik, or the release you installed.
+      placeholder: "1.5.4"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Phone and Android version
+      placeholder: "Pixel 8, Android 16"
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does it happen?
+      multiple: true
+      options:
+        - In the app
+        - Notification / lock screen controls
+        - Home-screen widget
+        - Android Auto
+        - Bluetooth / headphones
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or anything else
+      description: Screenshots, screen recordings, or details about the audio files (format, where they are stored).
