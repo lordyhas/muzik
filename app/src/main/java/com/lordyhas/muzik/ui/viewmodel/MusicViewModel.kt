@@ -8,6 +8,8 @@ import androidx.media3.common.util.UnstableApi
 import com.lordyhas.muzik.data.AppVersion
 import com.lordyhas.muzik.data.local.PlaylistEntity
 import com.lordyhas.muzik.data.readAppVersion
+import com.lordyhas.muzik.data.model.ReleaseNotes
+import com.lordyhas.muzik.data.repository.WhatsNewRepository
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.data.model.AlbumSort
@@ -104,6 +106,29 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     val appVersion: AppVersion = application.readAppVersion()
+
+    private val whatsNewRepository = WhatsNewRepository(application)
+
+    /** Every release's notes, newest first (About > What's new). */
+    private val _releaseNotes = MutableStateFlow<List<ReleaseNotes>>(emptyList())
+    val releaseNotes: StateFlow<List<ReleaseNotes>> = _releaseNotes.asStateFlow()
+
+    /** Notes to show once after an update; empty once dismissed. */
+    private val _unseenReleaseNotes = MutableStateFlow<List<ReleaseNotes>>(emptyList())
+    val unseenReleaseNotes: StateFlow<List<ReleaseNotes>> = _unseenReleaseNotes.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val all = whatsNewRepository.allReleaseNotes()
+            _releaseNotes.value = all
+            _unseenReleaseNotes.value = whatsNewRepository.unseen(all, appVersion)
+        }
+    }
+
+    fun dismissWhatsNew() {
+        _unseenReleaseNotes.value = emptyList()
+        whatsNewRepository.markSeen(appVersion)
+    }
 
     private val _isPermissionGranted = MutableStateFlow(false)
     val isPermissionGranted: StateFlow<Boolean> = _isPermissionGranted.asStateFlow()

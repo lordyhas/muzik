@@ -72,6 +72,7 @@ import com.lordyhas.muzik.ui.components.MuzikSnackbarHost
 import com.lordyhas.muzik.ui.components.NowPlayingScreen
 import com.lordyhas.muzik.ui.components.PermissionRequestView
 import com.lordyhas.muzik.ui.components.SongDetailsDialog
+import com.lordyhas.muzik.ui.components.WhatsNewSheet
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -100,9 +101,10 @@ private const val PLAYLIST_EDIT_ROUTE = "playlist/{playlistId}/edit"
 private const val SETTINGS_ROUTE = "settings"
 private const val ABOUT_ROUTE = "about"
 private const val LICENSES_ROUTE = "licenses"
+private const val WHATS_NEW_ROUTE = "whatsnew"
 
 /** Screens drawn without the mini player and tab bar under them. */
-private val FULL_SCREEN_ROUTES = setOf(PLAYLIST_EDIT_ROUTE, SETTINGS_ROUTE, ABOUT_ROUTE, LICENSES_ROUTE)
+private val FULL_SCREEN_ROUTES = setOf(PLAYLIST_EDIT_ROUTE, SETTINGS_ROUTE, ABOUT_ROUTE, LICENSES_ROUTE, WHATS_NEW_ROUTE)
 
 private val TAB_ROUTES = NavigationTab.entries.map { it.route }.toSet()
 
@@ -134,6 +136,7 @@ fun MainAppScreen(
     val playbackSpeed by viewModel.playbackSpeed.collectAsState()
     val equalizer by viewModel.equalizer.collectAsState()
     val equalizerInfo by viewModel.equalizerInfo.collectAsState()
+    val unseenReleaseNotes by viewModel.unseenReleaseNotes.collectAsState()
     var showSleepTimerSheet by remember { mutableStateOf(false) }
     var showAudioEffectsSheet by remember { mutableStateOf(false) }
     // Height of mini player + nav bar, so confirmations appear just above them
@@ -477,7 +480,17 @@ fun MainAppScreen(
                         AboutScreen(
                             appVersion = viewModel.appVersion,
                             onBackClick = { safePopBack() },
-                            onLicensesClick = { navController.navigate(LICENSES_ROUTE) }
+                            onLicensesClick = { navController.navigate(LICENSES_ROUTE) },
+                            onWhatsNewClick = { navController.navigate(WHATS_NEW_ROUTE) }
+                        )
+                    }
+
+                    composable(WHATS_NEW_ROUTE) {
+                        val releaseNotes by viewModel.releaseNotes.collectAsState()
+                        ReleaseNotesScreen(
+                            releases = releaseNotes,
+                            currentVersionCode = viewModel.appVersion.code,
+                            onBackClick = { safePopBack() }
                         )
                     }
 
@@ -577,6 +590,18 @@ fun MainAppScreen(
                 onBandLevelChange = { band, level -> viewModel.setEqualizerBandLevel(band, level) },
                 onResetEqualizer = { viewModel.resetEqualizer() },
                 onDismiss = { showAudioEffectsSheet = false }
+            )
+        }
+
+        // "What's new" after an update, once (it waits until Now Playing is closed)
+        if (unseenReleaseNotes.isNotEmpty() && !showNowPlaying) {
+            WhatsNewSheet(
+                releases = unseenReleaseNotes,
+                onSeeAll = {
+                    viewModel.dismissWhatsNew()
+                    navController.navigate(WHATS_NEW_ROUTE)
+                },
+                onDismiss = { viewModel.dismissWhatsNew() }
             )
         }
 
