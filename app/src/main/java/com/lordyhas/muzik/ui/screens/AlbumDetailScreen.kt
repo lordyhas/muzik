@@ -85,6 +85,7 @@ fun AlbumDetailScreen(
                 meta = "${pluralize(songs.size, "song")} • ${formatTotalDuration(totalDuration)}",
                 placeholderIcon = Icons.Default.Album,
                 onPlay = { viewModel.playAlbum(album) },
+                onAddToQueue = { viewModel.addAllToQueue(songs) },
                 onShuffle = {
                     val shuffled = songs.shuffled()
                     if (shuffled.isNotEmpty()) viewModel.playSong(shuffled.first(), shuffled)

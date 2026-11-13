@@ -9,6 +9,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.PlayArrow
@@ -50,6 +52,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -77,6 +80,7 @@ import com.lordyhas.muzik.ui.theme.TextMuted
 import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.theme.TextSecondary
 import com.lordyhas.muzik.ui.theme.rememberArtworkColor
+import kotlinx.coroutines.launch
 
 /** "1 song", "3 songs" */
 fun pluralize(count: Int, singular: String, plural: String = singular + "s"): String =
@@ -160,7 +164,8 @@ fun PlayShuffleButtons(
     onPlay: () -> Unit,
     onShuffle: () -> Unit,
     modifier: Modifier = Modifier,
-    accent: Color = AccentPrimary
+    accent: Color = AccentPrimary,
+    onAddToQueue: (() -> Unit)? = null
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -195,6 +200,18 @@ fun PlayShuffleButtons(
             Icon(Icons.Default.Shuffle, contentDescription = null, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(6.dp))
             Text("Shuffle", style = MaterialTheme.typography.labelLarge)
+        }
+
+        if (onAddToQueue != null) {
+            CircleIconButton(
+                icon = Icons.AutoMirrored.Filled.QueueMusic,
+                contentDescription = "Add all to queue",
+                onClick = onAddToQueue,
+                size = 50.dp,
+                iconSize = 22.dp,
+                background = Color.White.copy(alpha = 0.06f),
+                modifier = Modifier.border(1.dp, TextPrimary.copy(alpha = 0.18f), CircleShape)
+            )
         }
     }
 }
@@ -402,13 +419,22 @@ fun DetailScaffold(
             content = content
         )
 
+        val scope = rememberCoroutineScope()
         AnimatedVisibility(visible = showTopBar, enter = fadeIn(), exit = fadeOut()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    // The bar sits over the list: it must take the taps that land on it (a near
+                    // miss on Back used to play the song scrolled underneath). Tapping it
+                    // scrolls back to the top instead.
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { scope.launch { listState.animateScrollToItem(0) } }
                     .background(BackgroundDark.copy(alpha = 0.96f))
                     .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                    .height(60.dp)
+                    .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.width(52.dp))
@@ -422,15 +448,26 @@ fun DetailScaffold(
             }
         }
 
-        CircleIconButton(
-            icon = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = "Back",
-            onClick = onBack,
-            background = Color.Black.copy(alpha = 0.35f),
+        // A generous touch area around the round Back button, so a slightly off tap still
+        // goes back instead of reaching the list
+        Box(
             modifier = Modifier
                 .statusBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-        )
+                .size(72.dp, 60.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClick = onBack
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            CircleIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Back",
+                onClick = onBack,
+                background = Color.Black.copy(alpha = 0.35f)
+            )
+        }
     }
 }
 
@@ -446,6 +483,7 @@ fun DetailHero(
     onPlay: (() -> Unit)?,
     onShuffle: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    onAddToQueue: (() -> Unit)? = null,
     subtitle: String? = null,
     onSubtitleClick: (() -> Unit)? = null,
     circular: Boolean = false,
@@ -557,7 +595,7 @@ fun DetailHero(
 
             if (onPlay != null && onShuffle != null) {
                 Spacer(modifier = Modifier.height(20.dp))
-                PlayShuffleButtons(onPlay = onPlay, onShuffle = onShuffle, accent = accent)
+                PlayShuffleButtons(onPlay = onPlay, onShuffle = onShuffle, accent = accent, onAddToQueue = onAddToQueue)
             }
         }
     }
