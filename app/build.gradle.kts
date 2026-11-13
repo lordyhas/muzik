@@ -1,20 +1,20 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.aboutlibraries)
 }
 
 android {
     namespace = "com.lordyhas.muzik"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.lordyhas.muzik"
         minSdk = 24
         targetSdk = 36
-        versionCode = 6
-        versionName = "1.5.4"
+        versionCode = 7
+        versionName = "1.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,11 +47,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = true
+    }
+    lint {
+        // Known issues are recorded in lint-baseline.xml, so CI only fails on new ones.
+        // Regenerate it with `./gradlew updateLintBaseline` after fixing old issues.
+        // The SARIF report (uploaded to code scanning by CI) is always generated since AGP 9.
+        baseline = file("lint-baseline.xml")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
 }
 
@@ -75,6 +84,9 @@ dependencies {
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.common)
 
+    // Open-source licenses screen (data generated at build time by the aboutlibraries plugin)
+    implementation(libs.aboutlibraries.compose.m3)
+
     // Coil
     implementation(libs.coil.compose)
 
@@ -84,6 +96,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
+    testImplementation(libs.org.json)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

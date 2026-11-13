@@ -2,12 +2,15 @@ package com.lordyhas.muzik.service
 
 import android.content.Context
 import android.os.SystemClock
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaSession.MediaItemsWithStartPosition
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.model.filteredBy
+import com.lordyhas.muzik.data.model.forVoiceSearch
 import com.lordyhas.muzik.data.model.groupIntoAlbums
 import com.lordyhas.muzik.data.repository.LibraryFilterStore
 import com.lordyhas.muzik.data.repository.LibraryRepository
@@ -30,6 +33,7 @@ import kotlinx.coroutines.flow.first
  * plays the whole album/playlist from that song. Queue items always use the plain song id as
  * mediaId, which the rest of the app relies on.
  */
+@UnstableApi
 class MediaLibraryTree(private val context: Context) {
 
     private val musicRepository = MusicRepository(context)
@@ -111,20 +115,31 @@ class MediaLibraryTree(private val context: Context) {
     suspend fun resolve(items: List<MediaItem>): List<MediaItem> {
         if (items.all { it.localConfiguration != null }) return items
         val s = snapshot()
-        return items.mapNotNull { item ->
-            if (item.localConfiguration != null) item
-            else parseSongId(item.mediaId)?.let { s.songsById[it]?.toMediaItem() }
-                ?: songsOf(item.mediaId, s).firstOrNull()?.toMediaItem()
+        return items.flatMap { item ->
+            val query = item.requestMetadata.searchQuery
+            when {
+                item.localConfiguration != null -> listOf(item)
+                query != null -> s.songs.forVoiceSearch(query).map { it.toMediaItem() }
+                else -> listOfNotNull(
+                    parseSongId(item.mediaId)?.let { s.songsById[it]?.toMediaItem() }
+                        ?: songsOf(item.mediaId, s).firstOrNull()?.toMediaItem()
+                )
+            }
         }
     }
 
     /**
      * Picking one song from a browsed list plays the whole list from that song;
-     * picking a playable folder (e.g. Liked Songs) plays it from the start.
+     * picking a playable folder (e.g. Liked Songs) plays it from the start;
+     * a voice search ("play <query>") plays the matching songs from the first one.
      */
     suspend fun expand(items: List<MediaItem>, startIndex: Int, startPositionMs: Long): MediaItemsWithStartPosition {
         val s = snapshot()
         if (items.size == 1 && items[0].localConfiguration == null) {
+            items[0].requestMetadata.searchQuery?.let { query ->
+                val matches = s.songs.forVoiceSearch(query)
+                return MediaItemsWithStartPosition(matches.map { it.toMediaItem() }, 0, C.TIME_UNSET)
+            }
             val mediaId = items[0].mediaId
             val songId = parseSongId(mediaId)
             val parent = if (songId != null) parentOf(mediaId) else mediaId

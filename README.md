@@ -1,8 +1,25 @@
 # Muzik
 
+[![CI](https://github.com/lordyhas/muzik/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/lordyhas/muzik/actions/workflows/ci.yml)
+[![Latest release](https://img.shields.io/github/v/release/lordyhas/muzik)](https://github.com/lordyhas/muzik/releases/latest)
+[![Min SDK](https://img.shields.io/badge/minSdk-24-brightgreen)](https://developer.android.com/about/versions/nougat)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+
 **Muzik** is a modern, lightweight local audio player for Android built with Google's recommended stack: **Jetpack Compose**, **Material 3**, and **AndroidX Media3 (ExoPlayer)**.
 
 It provides a seamless, fast, and elegant offline listening experience with zero ads and no internet connection required.
+
+<p align="center">
+  <img src="screenshots/home.png" alt="Home screen" width="250">
+  &nbsp;
+  <img src="screenshots/now-playing.png" alt="Now Playing screen" width="250">
+  &nbsp;
+  <img src="screenshots/lock-screen.png" alt="Lock screen media controls" width="250">
+</p>
+
+## Download
+
+Grab the latest signed APK from the [Releases page](https://github.com/lordyhas/muzik/releases/latest) and install it on your phone (you may need to allow installing apps from unknown sources).
 
 ---
 
@@ -21,6 +38,7 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 
 - **Modern & Fluid UI (Jetpack Compose & Material 3)**:
   - Polished dark theme with colors that adapt to the current album artwork.
+  - **Settings & About**: one place for folders, library filters, rescan, sleep timer and audio settings; app version, open-source licenses and quick links to report a bug or get the latest version. Pull down on Home or Songs to rescan your library.
   - **Persistent Mini-Player**: swipe left/right to skip, tap to open the full player.
   - **Fullscreen Now Playing**: blurred artwork backdrop, swipe the cover to skip, like button, "Up next" preview and the queue one swipe away.
   - **Lyrics**: synced lyrics follow the song (tap a line to jump there); plain lyrics scroll. Read from tags embedded in the file (MP3, FLAC, OGG/Opus, M4A) or from a `.lrc` file next to the song.
@@ -43,13 +61,13 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 - **Track Details & Metadata**:
   - Inspect song information (title, artist, album, track/disc number, duration and file location).
 
--  **Privacy & Permission Handling**:
+- **Privacy & Permission Handling**:
   - 100% offline — your data stays strictly on your device.
   - Full compatibility with modern Android permission models (`READ_MEDIA_AUDIO`, `POST_NOTIFICATIONS` on Android 13+, legacy storage on older versions).
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## Tech Stack & Architecture
 
 | Component | Technology |
 |---|---|
@@ -65,10 +83,11 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 
 ## Requirements
 
-- **Android Studio**: Ladybug / Jellyfish or newer
-- **JDK**: Version 11 (Java 11)
+- **Android Studio**: a version that supports Android Gradle Plugin 9.5
+- **JDK**: 17 or newer to run the build (the app itself targets Java 11)
 - **Min SDK**: Android 7.0 (API 24)
-- **Target / Compile SDK**: Android 15 (API 36)
+- **Target SDK**: Android 16 (API 36)
+- **Compile SDK**: API 37
 
 ---
 
@@ -76,8 +95,8 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/lordyhas/music-app.git
-   cd music-app
+   git clone https://github.com/lordyhas/muzik.git
+   cd muzik
    ```
 
 2. **Open the project** in Android Studio.
@@ -87,12 +106,16 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 
 4. **Build and Run**:
    - Via Android Studio: click **Run 'app'** (`Shift + F10`).
-   - Via Command Line (Windows PowerShell):
-     ```powershell
+   - Via the command line:
+     ```bash
+     # macOS / Linux / Git Bash
+     ./gradlew assembleDebug
+
+     # Windows PowerShell
      .\gradlew.bat assembleDebug
      ```
    - The generated debug APK will be located at `app/build/outputs/apk/debug/app-debug.apk`.
-   - Run the unit tests with `.\gradlew.bat testDebugUnitTest`.
+   - Run the unit tests with `./gradlew testDebugUnitTest` (or `.\gradlew.bat testDebugUnitTest` on Windows).
 
 ---
 
@@ -100,10 +123,18 @@ It provides a seamless, fast, and elegant offline listening experience with zero
 
 Two GitHub Actions workflows live in `.github/workflows/`:
 
-- **CI** (`ci.yml`): on every pull request to `main` or `production` and every push to `main`, runs the unit tests and builds the debug APK (downloadable from the run's artifacts).
+- **CI** (`ci.yml`): on every pull request (including PRs stacked on another PR's branch) and every push to `main`, runs the unit tests and builds the debug APK (downloadable from the run's artifacts). A second job runs Android Lint and reports findings in the **Security** tab and on the PR; known issues are listed in `app/lint-baseline.xml`, so only new ones fail the build.
 - **Release** (`release.yml`): on every push to `production` (for example after merging `main` into it), runs the tests, builds a **signed** release APK and publishes it as a GitHub Release tagged `v<versionName>`.
 
-**Shipping a version:** bump `versionCode` and `versionName` in `app/build.gradle.kts`, merge to `main`, then merge `main` into `production`. The release fails on purpose if a release for that `versionName` already exists.
+**Dependabot** (`.github/dependabot.yml`) opens grouped PRs every Monday to update Gradle dependencies and GitHub Actions.
+
+**Shipping a version:**
+
+1. Bump `versionCode` and `versionName` in `app/build.gradle.kts`.
+2. Add an entry for that version at the top of `app/src/main/assets/whatsnew.json`: a few highlights in plain English, written for listeners (`type` is `new`, `improved` or `fixed`). The app shows them once after the update, and they open the GitHub release notes.
+3. Merge to `main`, then open a PR from `main` into `production`.
+
+The **Release check** workflow (`release-check.yml`) runs on that PR, and the `production` ruleset requires it to pass. It fails if the version is the same as (or lower than) the one already on `production`, if a release for that version already exists, or if `whatsnew.json` has no matching entry, and it previews the release notes in the run summary. Once merged, the release workflow publishes `What's new` + install instructions + the list of merged PRs.
 
 **One-time signing setup:** create a keystore once and keep it safe. Every future update must be signed with the same key, or phones will refuse to install it over the old version.
 
@@ -154,4 +185,4 @@ app/src/main/
 
 ## License
 
-This project is licensed under the terms of the repository's open-source license.
+Muzik is free software, licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0). You can use, study, modify and share it; if you distribute a modified version, or make one available to users over a network, you must release its source code under the same license.

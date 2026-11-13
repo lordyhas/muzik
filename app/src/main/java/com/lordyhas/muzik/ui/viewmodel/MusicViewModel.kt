@@ -5,7 +5,12 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
+import com.lordyhas.muzik.data.AppVersion
 import com.lordyhas.muzik.data.local.PlaylistEntity
+import com.lordyhas.muzik.data.readAppVersion
+import com.lordyhas.muzik.data.model.ReleaseNotes
+import com.lordyhas.muzik.data.repository.WhatsNewRepository
+import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.data.model.AlbumSort
 import com.lordyhas.muzik.data.model.ArtistSort
@@ -19,6 +24,7 @@ import com.lordyhas.muzik.data.model.Playlist
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.model.LibraryFilter
 import com.lordyhas.muzik.data.model.filteredBy
+import com.lordyhas.muzik.data.model.forVoiceSearch
 import com.lordyhas.muzik.data.model.groupIntoAlbums
 import com.lordyhas.muzik.data.model.groupIntoFolders
 import com.lordyhas.muzik.data.model.mergeEditedOrder
@@ -94,6 +100,35 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    /** A pull-to-refresh or "Rescan library" in progress; unlike [isLoading] the list stays visible. */
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    val appVersion: AppVersion = application.readAppVersion()
+
+    private val whatsNewRepository = WhatsNewRepository(application)
+
+    /** Every release's notes, newest first (About > What's new). */
+    private val _releaseNotes = MutableStateFlow<List<ReleaseNotes>>(emptyList())
+    val releaseNotes: StateFlow<List<ReleaseNotes>> = _releaseNotes.asStateFlow()
+
+    /** Notes to show once after an update; empty once dismissed. */
+    private val _unseenReleaseNotes = MutableStateFlow<List<ReleaseNotes>>(emptyList())
+    val unseenReleaseNotes: StateFlow<List<ReleaseNotes>> = _unseenReleaseNotes.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            val all = whatsNewRepository.allReleaseNotes()
+            _releaseNotes.value = all
+            _unseenReleaseNotes.value = whatsNewRepository.unseen(all, appVersion)
+        }
+    }
+
+    fun dismissWhatsNew() {
+        _unseenReleaseNotes.value = emptyList()
+        whatsNewRepository.markSeen(appVersion)
+    }
 
     private val _isPermissionGranted = MutableStateFlow(false)
     val isPermissionGranted: StateFlow<Boolean> = _isPermissionGranted.asStateFlow()
@@ -414,11 +449,29 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     fun loadSongs() {
         viewModelScope.launch {
             _isLoading.value = true
-            val loaded = repository.getLocalSongs()
-            _allSongs.value = loaded
-            _songs.value = loaded.filteredBy(LibraryFilterStore.filter.value)
+            reloadSongs()
             _isLoading.value = false
         }
+    }
+
+    /**
+     * Rescans the device while keeping the current list on screen (pull-to-refresh, Settings).
+     * With [announce], confirms the result with a message.
+     */
+    fun refreshLibrary(announce: Boolean = false) {
+        if (_isRefreshing.value || _isLoading.value) return
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            reloadSongs()
+            _isRefreshing.value = false
+            if (announce) showMessage("Library updated · " + pluralize(_songs.value.size, "song"))
+        }
+    }
+
+    private suspend fun reloadSongs() {
+        val loaded = repository.getLocalSongs()
+        _allSongs.value = loaded
+        _songs.value = loaded.filteredBy(LibraryFilterStore.filter.value)
     }
 
     fun updateSearchQuery(query: String) {
@@ -456,6 +509,20 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
             val targetSong = startSong ?: songs.first()
             playSong(targetSong, songs)
             _playingPlaylistId.value = playlist.id
+        }
+    }
+
+    /** Plays the songs matching a voice search ("play <query> on Muzik") once the library and player are ready. */
+    fun playFromSearch(query: String) {
+        viewModelScope.launch {
+            val library = combine(_songs, musicController.isControllerReady) { songs, ready -> songs.takeIf { ready } }
+                .filterNotNull()
+                .first { it.isNotEmpty() }
+            val matches = library.forVoiceSearch(query)
+            if (matches.isNotEmpty()) {
+                _playingPlaylistId.value = null
+                musicController.playSongList(matches, 0)
+            }
         }
     }
 

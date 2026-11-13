@@ -32,7 +32,7 @@ import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -41,6 +41,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -90,6 +91,7 @@ fun HomeScreen(
     onSeeAllAlbums: () -> Unit = {},
     onSeeAllArtists: () -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     onFoldersClick: () -> Unit = {},
     onSmartPlaylistClick: (SmartPlaylistType) -> Unit = {}
 ) {
@@ -98,6 +100,7 @@ fun HomeScreen(
     val recentAlbums by viewModel.recentlyPlayedAlbums.collectAsState()
     val recentArtists by viewModel.recentlyPlayedArtists.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     val hiddenSongCount by viewModel.hiddenSongCount.collectAsState()
     val currentSong by viewModel.currentSong.collectAsState()
     val isPlaying by viewModel.isPlaying.collectAsState()
@@ -118,10 +121,14 @@ fun HomeScreen(
                 )
         )
 
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.refreshLibrary() },
+            modifier = Modifier.fillMaxSize().statusBarsPadding()
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(bottom = 24.dp)
         ) {
@@ -151,10 +158,9 @@ fun HomeScreen(
                         onClick = onSearchClick
                     )
                     CircleIconButton(
-                        icon = Icons.Default.Refresh,
-                        contentDescription = "Refresh library",
-                        onClick = { viewModel.loadSongs() },
-                        tint = TextSecondary
+                        icon = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        onClick = onSettingsClick
                     )
                 }
             }
@@ -177,7 +183,7 @@ fun HomeScreen(
                 songs.isEmpty() -> EmptyState(
                     icon = Icons.Default.LibraryMusic,
                     title = "No music found on this device",
-                    message = "Add some audio files, then tap refresh.",
+                    message = "Add some audio files, then pull down to refresh.",
                     modifier = Modifier.height(320.dp)
                 )
                 else -> {
@@ -305,6 +311,7 @@ fun HomeScreen(
                     }
                 }
             }
+        }
         }
     }
 }

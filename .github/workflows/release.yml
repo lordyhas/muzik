@@ -22,17 +22,12 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Read app version
         id: version
         run: |
-          name=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' app/build.gradle.kts | head -1)
-          code=$(sed -n 's/.*versionCode = \([0-9]*\).*/\1/p' app/build.gradle.kts | head -1)
-          if [ -z "$name" ] || [ -z "$code" ]; then
-            echo "::error::Could not read versionName/versionCode from app/build.gradle.kts"
-            exit 1
-          fi
+          read -r name code < <(.github/scripts/app-version.sh < app/build.gradle.kts)
           echo "name=$name" >> "$GITHUB_OUTPUT"
           echo "code=$code" >> "$GITHUB_OUTPUT"
           echo "tag=v$name" >> "$GITHUB_OUTPUT"
@@ -47,6 +42,13 @@ jobs:
             echo "::error::Release $TAG already exists. Bump versionName and versionCode in app/build.gradle.kts before merging to production."
             exit 1
           fi
+
+      # Same check as the "Release readiness" PR check, in case something reached production another way
+      - name: Read the "What's new" entry
+        env:
+          NAME: ${{ steps.version.outputs.name }}
+          CODE: ${{ steps.version.outputs.code }}
+        run: python3 .github/scripts/whatsnew_notes.py "$CODE" "$NAME" > "$RUNNER_TEMP/whatsnew.md"
 
       - name: Check signing secrets
         env:
@@ -65,12 +67,12 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
 
       - name: Unit tests
         run: ./gradlew testDebugUnitTest
@@ -110,7 +112,7 @@ jobs:
         run: rm -f "$RUNNER_TEMP/release.jks"
 
       - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: muzik-release-apk
           path: ${{ steps.apk.outputs.path }}
@@ -124,8 +126,14 @@ jobs:
           CODE: ${{ steps.version.outputs.code }}
           APK: ${{ steps.apk.outputs.path }}
         run: |
+          # User-facing "What's new" first, then how to install, then GitHub's list of merged PRs
+          {
+            cat "$RUNNER_TEMP/whatsnew.md"
+            echo
+            echo "**Install:** download \`$APK\` below and open it on your phone (version $VERSION, versionCode $CODE)."
+          } > "$RUNNER_TEMP/notes.md"
           gh release create "$TAG" "$APK" \
             --target "$GITHUB_SHA" \
             --title "Muzik $VERSION" \
-            --notes "Version $VERSION (versionCode $CODE). Download $APK below and open it on your phone to install." \
+            --notes-file "$RUNNER_TEMP/notes.md" \
             --generate-notes

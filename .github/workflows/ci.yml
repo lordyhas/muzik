@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  # Every PR, whatever its base: a stacked PR (based on another PR's branch) gets checked
+  # from the start, and since checks belong to the commit, they still count when GitHub
+  # retargets it to main after the PR below is merged (a retarget alone runs no workflow).
   pull_request:
-    branches: [main, production]
   push:
     branches: [main]
   workflow_dispatch:
@@ -22,14 +24,14 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
 
       - name: Unit tests
         run: ./gradlew testDebugUnitTest
@@ -39,15 +41,53 @@ jobs:
 
       - name: Upload test reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-reports
           path: app/build/reports/tests/
           retention-days: 7
 
       - name: Upload debug APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: muzik-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
+
+  lint:
+    name: Android lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      # Lets the SARIF upload show findings in the Security tab and as PR annotations
+      security-events: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      # Fails only on issues that are not in app/lint-baseline.xml
+      - name: Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload lint results to code scanning
+        if: always() && hashFiles('app/build/reports/lint-results-debug.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: app/build/reports/lint-results-debug.sarif
+          category: android-lint
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lint-report
+          path: app/build/reports/lint-results-debug.html
           retention-days: 7

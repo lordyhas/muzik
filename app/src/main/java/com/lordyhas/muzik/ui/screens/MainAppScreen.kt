@@ -54,10 +54,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.lordyhas.muzik.data.model.SmartPlaylistType
@@ -70,6 +72,7 @@ import com.lordyhas.muzik.ui.components.MuzikSnackbarHost
 import com.lordyhas.muzik.ui.components.NowPlayingScreen
 import com.lordyhas.muzik.ui.components.PermissionRequestView
 import com.lordyhas.muzik.ui.components.SongDetailsDialog
+import com.lordyhas.muzik.ui.components.WhatsNewSheet
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -95,6 +98,13 @@ enum class NavigationTab(
 }
 
 private const val PLAYLIST_EDIT_ROUTE = "playlist/{playlistId}/edit"
+private const val SETTINGS_ROUTE = "settings"
+private const val ABOUT_ROUTE = "about"
+private const val LICENSES_ROUTE = "licenses"
+private const val WHATS_NEW_ROUTE = "whatsnew"
+
+/** Screens drawn without the mini player and tab bar under them. */
+private val FULL_SCREEN_ROUTES = setOf(PLAYLIST_EDIT_ROUTE, SETTINGS_ROUTE, ABOUT_ROUTE, LICENSES_ROUTE, WHATS_NEW_ROUTE)
 
 private val TAB_ROUTES = NavigationTab.entries.map { it.route }.toSet()
 
@@ -126,22 +136,31 @@ fun MainAppScreen(
     val playbackSpeed by viewModel.playbackSpeed.collectAsState()
     val equalizer by viewModel.equalizer.collectAsState()
     val equalizerInfo by viewModel.equalizerInfo.collectAsState()
+    val unseenReleaseNotes by viewModel.unseenReleaseNotes.collectAsState()
     var showSleepTimerSheet by remember { mutableStateOf(false) }
     var showAudioEffectsSheet by remember { mutableStateOf(false) }
     // Height of mini player + nav bar, so confirmations appear just above them
     var bottomBarHeight by remember { mutableStateOf(0.dp) }
 
     val navController = rememberNavController()
-    val backStack by navController.currentBackStack.collectAsState()
-    val currentRoute = backStack.lastOrNull()?.destination?.route
+    val currentEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentEntry?.destination?.route
 
     val context = LocalContext.current
     var backPressedTime by remember { mutableLongStateOf(0L) }
 
     // The tab whose stack is showing: the current route on a tab root, or the tab a
-    // detail screen was opened from, so the bar keeps that tab highlighted
-    val activeTab = remember(backStack) {
-        backStack.lastOrNull { it.destination.route in TAB_ROUTES }?.destination?.route
+    // detail screen was opened from, so the bar keeps that tab highlighted.
+    // Tab switches always pop up to Home, so the stack holds Home plus at most one other
+    // tab root; a detail screen therefore belongs to that other tab if present, else Home.
+    val activeTab = remember(currentEntry) {
+        when {
+            currentEntry == null -> null
+            currentRoute in TAB_ROUTES -> currentRoute
+            else -> NavigationTab.entries
+                .firstOrNull { it != NavigationTab.HOME && navController.isInBackStack(it.route) }
+                ?.route ?: NavigationTab.HOME.route
+        }
     }
 
     // Tabs always land on their root list. The tab being left is first popped back to
@@ -224,14 +243,14 @@ fun MainAppScreen(
         navController.navigate("playlist/$encoded/edit")
     }
 
-    // The editor is full screen, like Spotify's: no mini player or tab bar under it
-    val isEditingPlaylist = currentRoute == PLAYLIST_EDIT_ROUTE
+    // The playlist editor and the settings pages are full screen: no mini player or tab bar under them
+    val isFullScreen = currentRoute in FULL_SCREEN_ROUTES
 
     Box(modifier = modifier.fillMaxSize().background(Color.Transparent)) {
         Scaffold(
             containerColor = BackgroundDark,
             bottomBar = {
-                if (!isEditingPlaylist) Column(
+                if (!isFullScreen) Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
@@ -316,6 +335,7 @@ fun MainAppScreen(
                             onSeeAllAlbums = { navigateToTab(NavigationTab.ALBUMS) },
                             onSeeAllArtists = { navigateToTab(NavigationTab.ARTISTS) },
                             onSearchClick = { navController.navigate("search") },
+                            onSettingsClick = { navController.navigate(SETTINGS_ROUTE) },
                             onFoldersClick = { navController.navigate("folders") },
                             onSmartPlaylistClick = { type -> navController.navigate("smart/${type.name}") }
                         )
@@ -447,6 +467,37 @@ fun MainAppScreen(
                         )
                     }
 
+                    composable(SETTINGS_ROUTE) {
+                        SettingsScreen(
+                            viewModel = viewModel,
+                            onBackClick = { safePopBack() },
+                            onFoldersClick = { navController.navigate("folders") },
+                            onAboutClick = { navController.navigate(ABOUT_ROUTE) }
+                        )
+                    }
+
+                    composable(ABOUT_ROUTE) {
+                        AboutScreen(
+                            appVersion = viewModel.appVersion,
+                            onBackClick = { safePopBack() },
+                            onLicensesClick = { navController.navigate(LICENSES_ROUTE) },
+                            onWhatsNewClick = { navController.navigate(WHATS_NEW_ROUTE) }
+                        )
+                    }
+
+                    composable(WHATS_NEW_ROUTE) {
+                        val releaseNotes by viewModel.releaseNotes.collectAsState()
+                        ReleaseNotesScreen(
+                            releases = releaseNotes,
+                            currentVersionCode = viewModel.appVersion.code,
+                            onBackClick = { safePopBack() }
+                        )
+                    }
+
+                    composable(LICENSES_ROUTE) {
+                        LicensesScreen(onBackClick = { safePopBack() })
+                    }
+
                     composable(
                         route = PLAYLIST_EDIT_ROUTE,
                         arguments = listOf(navArgument("playlistId") { type = NavType.StringType }),
@@ -542,6 +593,18 @@ fun MainAppScreen(
             )
         }
 
+        // "What's new" after an update, once (it waits until Now Playing is closed)
+        if (unseenReleaseNotes.isNotEmpty() && !showNowPlaying) {
+            WhatsNewSheet(
+                releases = unseenReleaseNotes,
+                onSeeAll = {
+                    viewModel.dismissWhatsNew()
+                    navController.navigate(WHATS_NEW_ROUTE)
+                },
+                onDismiss = { viewModel.dismissWhatsNew() }
+            )
+        }
+
         // Song Details Dialog / Bottom Sheet
         selectedSongForDetails?.let { song ->
             SongDetailsDialog(
@@ -598,3 +661,6 @@ fun MainAppScreen(
     }
 }
 
+/** Whether [route] has an entry anywhere in the back stack, using only public NavController API. */
+private fun NavController.isInBackStack(route: String): Boolean =
+    runCatching { getBackStackEntry(route) }.isSuccess

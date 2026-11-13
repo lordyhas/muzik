@@ -1,9 +1,12 @@
 package com.lordyhas.muzik
 
 import android.Manifest
+import android.app.SearchManager
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -14,7 +17,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import androidx.  media3.common.util.UnstableApi
+import androidx.media3.common.util.UnstableApi
 import com.lordyhas.muzik.ui.screens.MainAppScreen
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.theme.MuzikTheme
@@ -30,6 +33,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         viewModel = androidx.lifecycle.ViewModelProvider(this)[MusicViewModel::class.java]
+        if (savedInstanceState == null) handleSearchIntent(intent)
 
         setContent {
             MuzikTheme {
@@ -67,6 +71,17 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleSearchIntent(intent)
+    }
+
+    /** "Play <query> on Muzik" from the Assistant or other apps (MEDIA_PLAY_FROM_SEARCH). */
+    private fun handleSearchIntent(intent: Intent?) {
+        if (intent?.action != MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH) return
+        viewModel.playFromSearch(intent.getStringExtra(SearchManager.QUERY).orEmpty())
     }
 
     override fun onResume() {

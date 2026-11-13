@@ -1,0 +1,36 @@
+{
+  "_comment": "Shown to users in the 'What's new' sheet after an update, and at the top of the GitHub release notes. Newest release first. Write for listeners, not developers: what they can do now, in a sentence or two. type is new, improved or fixed.",
+  "releases": [
+    {
+      "versionCode": 7,
+      "versionName": "1.6.0",
+      "highlights": [
+        {
+          "type": "new",
+          "title": "Settings, all in one place",
+          "text": "Tap the gear on Home to manage your folders, library filters, sleep timer and sound settings."
+        },
+        {
+          "type": "new",
+          "title": "Pull down to refresh",
+          "text": "Added new music? Pull down on Home or Songs and Muzik finds it right away."
+        },
+        {
+          "type": "new",
+          "title": "Play by voice",
+          "text": "Ask Google Assistant or Android Auto to \"play\" an artist, album or song on Muzik."
+        },
+        {
+          "type": "new",
+          "title": "About Muzik",
+          "text": "See which version you have, get the latest one, or tell us about a bug in a couple of taps."
+        },
+        {
+          "type": "improved",
+          "title": "Up to date under the hood",
+          "text": "Muzik is now built on the latest Android libraries, so it keeps working well on new phones."
+        }
+      ]
+    }
+  ]
+}
