@@ -97,6 +97,12 @@ enum class NavigationTab(
 }
 
 private const val PLAYLIST_EDIT_ROUTE = "playlist/{playlistId}/edit"
+private const val SETTINGS_ROUTE = "settings"
+private const val ABOUT_ROUTE = "about"
+private const val LICENSES_ROUTE = "licenses"
+
+/** Screens drawn without the mini player and tab bar under them. */
+private val FULL_SCREEN_ROUTES = setOf(PLAYLIST_EDIT_ROUTE, SETTINGS_ROUTE, ABOUT_ROUTE, LICENSES_ROUTE)
 
 private val TAB_ROUTES = NavigationTab.entries.map { it.route }.toSet()
 
@@ -234,14 +240,14 @@ fun MainAppScreen(
         navController.navigate("playlist/$encoded/edit")
     }
 
-    // The editor is full screen, like Spotify's: no mini player or tab bar under it
-    val isEditingPlaylist = currentRoute == PLAYLIST_EDIT_ROUTE
+    // The playlist editor and the settings pages are full screen: no mini player or tab bar under them
+    val isFullScreen = currentRoute in FULL_SCREEN_ROUTES
 
     Box(modifier = modifier.fillMaxSize().background(Color.Transparent)) {
         Scaffold(
             containerColor = BackgroundDark,
             bottomBar = {
-                if (!isEditingPlaylist) Column(
+                if (!isFullScreen) Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
@@ -326,6 +332,7 @@ fun MainAppScreen(
                             onSeeAllAlbums = { navigateToTab(NavigationTab.ALBUMS) },
                             onSeeAllArtists = { navigateToTab(NavigationTab.ARTISTS) },
                             onSearchClick = { navController.navigate("search") },
+                            onSettingsClick = { navController.navigate(SETTINGS_ROUTE) },
                             onFoldersClick = { navController.navigate("folders") },
                             onSmartPlaylistClick = { type -> navController.navigate("smart/${type.name}") }
                         )
@@ -455,6 +462,27 @@ fun MainAppScreen(
                             onGoToAlbum = { id -> navigateToAlbum(id) },
                             onEditClick = { navigateToPlaylistEdit(playlistId) }
                         )
+                    }
+
+                    composable(SETTINGS_ROUTE) {
+                        SettingsScreen(
+                            viewModel = viewModel,
+                            onBackClick = { safePopBack() },
+                            onFoldersClick = { navController.navigate("folders") },
+                            onAboutClick = { navController.navigate(ABOUT_ROUTE) }
+                        )
+                    }
+
+                    composable(ABOUT_ROUTE) {
+                        AboutScreen(
+                            appVersion = viewModel.appVersion,
+                            onBackClick = { safePopBack() },
+                            onLicensesClick = { navController.navigate(LICENSES_ROUTE) }
+                        )
+                    }
+
+                    composable(LICENSES_ROUTE) {
+                        LicensesScreen(onBackClick = { safePopBack() })
                     }
 
                     composable(

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.aboutlibraries)
 }
 
 android {
@@ -82,6 +83,9 @@ dependencies {
     implementation(libs.androidx.media3.session)
     implementation(libs.androidx.media3.ui)
     implementation(libs.androidx.media3.common)
+
+    // Open-source licenses screen (data generated at build time by the aboutlibraries plugin)
+    implementation(libs.aboutlibraries.compose.m3)
 
     // Coil
     implementation(libs.coil.compose)

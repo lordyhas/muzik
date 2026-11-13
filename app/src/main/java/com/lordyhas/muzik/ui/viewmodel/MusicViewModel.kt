@@ -5,7 +5,10 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
+import com.lordyhas.muzik.data.AppVersion
 import com.lordyhas.muzik.data.local.PlaylistEntity
+import com.lordyhas.muzik.data.readAppVersion
+import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.data.model.AlbumSort
 import com.lordyhas.muzik.data.model.ArtistSort
@@ -95,6 +98,12 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    /** A pull-to-refresh or "Rescan library" in progress; unlike [isLoading] the list stays visible. */
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    val appVersion: AppVersion = application.readAppVersion()
 
     private val _isPermissionGranted = MutableStateFlow(false)
     val isPermissionGranted: StateFlow<Boolean> = _isPermissionGranted.asStateFlow()
@@ -415,11 +424,29 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     fun loadSongs() {
         viewModelScope.launch {
             _isLoading.value = true
-            val loaded = repository.getLocalSongs()
-            _allSongs.value = loaded
-            _songs.value = loaded.filteredBy(LibraryFilterStore.filter.value)
+            reloadSongs()
             _isLoading.value = false
         }
+    }
+
+    /**
+     * Rescans the device while keeping the current list on screen (pull-to-refresh, Settings).
+     * With [announce], confirms the result with a message.
+     */
+    fun refreshLibrary(announce: Boolean = false) {
+        if (_isRefreshing.value || _isLoading.value) return
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            reloadSongs()
+            _isRefreshing.value = false
+            if (announce) showMessage("Library updated · " + pluralize(_songs.value.size, "song"))
+        }
+    }
+
+    private suspend fun reloadSongs() {
+        val loaded = repository.getLocalSongs()
+        _allSongs.value = loaded
+        _songs.value = loaded.filteredBy(LibraryFilterStore.filter.value)
     }
 
     fun updateSearchQuery(query: String) {
