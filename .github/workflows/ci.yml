@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  # Every PR, whatever its base: a stacked PR (based on another PR's branch) gets checked
+  # from the start, and since checks belong to the commit, they still count when GitHub
+  # retargets it to main after the PR below is merged (a retarget alone runs no workflow).
   pull_request:
-    branches: [main, production]
   push:
     branches: [main]
   workflow_dispatch:

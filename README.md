@@ -123,7 +123,7 @@ Grab the latest signed APK from the [Releases page](https://github.com/lordyhas/
 
 Two GitHub Actions workflows live in `.github/workflows/`:
 
-- **CI** (`ci.yml`): on every pull request to `main` or `production` and every push to `main`, runs the unit tests and builds the debug APK (downloadable from the run's artifacts). A second job runs Android Lint and reports findings in the **Security** tab and on the PR; known issues are listed in `app/lint-baseline.xml`, so only new ones fail the build.
+- **CI** (`ci.yml`): on every pull request (including PRs stacked on another PR's branch) and every push to `main`, runs the unit tests and builds the debug APK (downloadable from the run's artifacts). A second job runs Android Lint and reports findings in the **Security** tab and on the PR; known issues are listed in `app/lint-baseline.xml`, so only new ones fail the build.
 - **Release** (`release.yml`): on every push to `production` (for example after merging `main` into it), runs the tests, builds a **signed** release APK and publishes it as a GitHub Release tagged `v<versionName>`.
 
 **Dependabot** (`.github/dependabot.yml`) opens grouped PRs every Monday to update Gradle dependencies and GitHub Actions.
