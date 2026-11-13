@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.lordyhas.muzik"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.lordyhas.muzik"
@@ -47,17 +46,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
     buildFeatures {
         compose = true
     }
     lint {
         // Known issues are recorded in lint-baseline.xml, so CI only fails on new ones.
         // Regenerate it with `./gradlew updateLintBaseline` after fixing old issues.
+        // The SARIF report (uploaded to code scanning by CI) is always generated since AGP 9.
         baseline = file("lint-baseline.xml")
-        sarifReport = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
 }
 

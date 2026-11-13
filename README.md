@@ -82,10 +82,11 @@ Grab the latest signed APK from the [Releases page](https://github.com/lordyhas/
 
 ## Requirements
 
-- **Android Studio**: Narwhal or newer (Android Gradle Plugin 8.11)
-- **JDK**: Version 11 (Java 11)
+- **Android Studio**: a version that supports Android Gradle Plugin 9.5
+- **JDK**: 17 or newer to run the build (the app itself targets Java 11)
 - **Min SDK**: Android 7.0 (API 24)
-- **Target / Compile SDK**: Android 16 (API 36)
+- **Target SDK**: Android 16 (API 36)
+- **Compile SDK**: API 37
 
 ---
 
