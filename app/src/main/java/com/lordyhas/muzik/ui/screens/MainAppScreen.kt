@@ -54,10 +54,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
+import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.lordyhas.muzik.data.model.SmartPlaylistType
@@ -132,16 +134,24 @@ fun MainAppScreen(
     var bottomBarHeight by remember { mutableStateOf(0.dp) }
 
     val navController = rememberNavController()
-    val backStack by navController.currentBackStack.collectAsState()
-    val currentRoute = backStack.lastOrNull()?.destination?.route
+    val currentEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentEntry?.destination?.route
 
     val context = LocalContext.current
     var backPressedTime by remember { mutableLongStateOf(0L) }
 
     // The tab whose stack is showing: the current route on a tab root, or the tab a
-    // detail screen was opened from, so the bar keeps that tab highlighted
-    val activeTab = remember(backStack) {
-        backStack.lastOrNull { it.destination.route in TAB_ROUTES }?.destination?.route
+    // detail screen was opened from, so the bar keeps that tab highlighted.
+    // Tab switches always pop up to Home, so the stack holds Home plus at most one other
+    // tab root; a detail screen therefore belongs to that other tab if present, else Home.
+    val activeTab = remember(currentEntry) {
+        when {
+            currentEntry == null -> null
+            currentRoute in TAB_ROUTES -> currentRoute
+            else -> NavigationTab.entries
+                .firstOrNull { it != NavigationTab.HOME && navController.isInBackStack(it.route) }
+                ?.route ?: NavigationTab.HOME.route
+        }
     }
 
     // Tabs always land on their root list. The tab being left is first popped back to
@@ -598,3 +608,6 @@ fun MainAppScreen(
     }
 }
 
+/** Whether [route] has an entry anywhere in the back stack, using only public NavController API. */
+private fun NavController.isInBackStack(route: String): Boolean =
+    runCatching { getBackStackEntry(route) }.isSuccess

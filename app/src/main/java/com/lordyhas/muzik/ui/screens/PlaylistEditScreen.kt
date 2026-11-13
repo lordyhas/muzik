@@ -70,7 +70,7 @@ import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
  * Spotify-style playlist editor: rename, remove songs and drag to reorder on a working copy.
  * Nothing is written until Save; leaving with changes asks before discarding them.
  */
-@OptIn(UnstableApi::class)
+@UnstableApi
 @Composable
 fun PlaylistEditScreen(
     playlistId: String,
