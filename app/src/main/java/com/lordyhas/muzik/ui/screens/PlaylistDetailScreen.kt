@@ -36,7 +36,7 @@ import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
 
-@OptIn(UnstableApi::class)
+@UnstableApi
 @Composable
 fun PlaylistDetailScreen(
     playlistId: String,

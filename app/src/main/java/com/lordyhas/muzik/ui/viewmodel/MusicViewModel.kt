@@ -19,6 +19,7 @@ import com.lordyhas.muzik.data.model.Playlist
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.model.LibraryFilter
 import com.lordyhas.muzik.data.model.filteredBy
+import com.lordyhas.muzik.data.model.forVoiceSearch
 import com.lordyhas.muzik.data.model.groupIntoAlbums
 import com.lordyhas.muzik.data.model.groupIntoFolders
 import com.lordyhas.muzik.data.model.mergeEditedOrder
@@ -456,6 +457,20 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
             val targetSong = startSong ?: songs.first()
             playSong(targetSong, songs)
             _playingPlaylistId.value = playlist.id
+        }
+    }
+
+    /** Plays the songs matching a voice search ("play <query> on Muzik") once the library and player are ready. */
+    fun playFromSearch(query: String) {
+        viewModelScope.launch {
+            val library = combine(_songs, musicController.isControllerReady) { songs, ready -> songs.takeIf { ready } }
+                .filterNotNull()
+                .first { it.isNotEmpty() }
+            val matches = library.forVoiceSearch(query)
+            if (matches.isNotEmpty()) {
+                _playingPlaylistId.value = null
+                musicController.playSongList(matches, 0)
+            }
         }
     }
 
