@@ -1,0 +1,67 @@
+name: Release check
+
+# Runs on every PR into `production`, before anything is merged and released.
+# The `production` ruleset requires this check, so a PR that would fail the release
+# (same version as production, or no "What's new" entry) can't be merged.
+on:
+  pull_request:
+    branches: [production]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-readiness:
+    name: Release readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # needs the production branch to compare versions
+
+      - name: Compare with the version on production
+        id: version
+        run: |
+          read -r name code < <(.github/scripts/app-version.sh < app/build.gradle.kts)
+          read -r prod_name prod_code < <(git show origin/production:app/build.gradle.kts | .github/scripts/app-version.sh)
+          echo "This PR: $name ($code), production: $prod_name ($prod_code)"
+
+          failed=0
+          if [ "$code" -le "$prod_code" ]; then
+            echo "::error file=app/build.gradle.kts::versionCode is $code, but production already has $prod_code. Increase versionCode in app/build.gradle.kts."
+            failed=1
+          fi
+          if [ "$name" = "$prod_name" ]; then
+            echo "::error file=app/build.gradle.kts::versionName is still \"$name\", the version already on production. Change versionName in app/build.gradle.kts."
+            failed=1
+          fi
+          [ "$failed" -eq 0 ] || exit 1
+
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      - name: Check the tag is free
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: v${{ steps.version.outputs.name }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "::error file=app/build.gradle.kts::A release $TAG already exists. Pick a new versionName."
+            exit 1
+          fi
+
+      - name: Check the "What's new" entry and preview the release notes
+        env:
+          NAME: ${{ steps.version.outputs.name }}
+          CODE: ${{ steps.version.outputs.code }}
+        run: |
+          notes=$(python3 .github/scripts/whatsnew_notes.py "$CODE" "$NAME")
+          {
+            echo "### Release notes preview"
+            echo
+            echo "$notes"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "$notes"

@@ -128,7 +128,13 @@ Two GitHub Actions workflows live in `.github/workflows/`:
 
 **Dependabot** (`.github/dependabot.yml`) opens grouped PRs every Monday to update Gradle dependencies and GitHub Actions.
 
-**Shipping a version:** bump `versionCode` and `versionName` in `app/build.gradle.kts`, merge to `main`, then merge `main` into `production`. The release fails on purpose if a release for that `versionName` already exists.
+**Shipping a version:**
+
+1. Bump `versionCode` and `versionName` in `app/build.gradle.kts`.
+2. Add an entry for that version at the top of `app/src/main/assets/whatsnew.json`: a few highlights in plain English, written for listeners (`type` is `new`, `improved` or `fixed`). The app shows them once after the update, and they open the GitHub release notes.
+3. Merge to `main`, then open a PR from `main` into `production`.
+
+The **Release check** workflow (`release-check.yml`) runs on that PR, and the `production` ruleset requires it to pass. It fails if the version is the same as (or lower than) the one already on `production`, if a release for that version already exists, or if `whatsnew.json` has no matching entry, and it previews the release notes in the run summary. Once merged, the release workflow publishes `What's new` + install instructions + the list of merged PRs.
 
 **One-time signing setup:** create a keystore once and keep it safe. Every future update must be signed with the same key, or phones will refuse to install it over the old version.
 
