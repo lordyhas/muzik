@@ -707,7 +707,7 @@ fun NowPlayingScreen(
                             if (contextStart < queue.size) {
                                 item(key = "label_context") {
                                     QueueSectionLabel(
-                                        "NEXT FROM: " + song.album.ifEmpty { "Library" }.uppercase(Locale.getDefault()),
+                                        "NEXT FROM: " + song.album.ifEmpty { "Library" }.uppercase(),
                                         color = TextSecondary,
                                         modifier = Modifier.animateItem()
                                     )
