@@ -4,6 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,9 +15,11 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.runtime.Composable
@@ -38,7 +43,6 @@ import com.lordyhas.muzik.ui.components.SongItem
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
-import com.lordyhas.muzik.ui.theme.TextSecondary
 import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
 
 @UnstableApi
@@ -55,6 +59,7 @@ fun TracksScreen(
     val isPlaying by viewModel.isPlaying.collectAsState()
     val likedIds by viewModel.likedSongIds.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     val songSort by viewModel.songSort.collectAsState()
     val listState = rememberLazyListState()
@@ -88,12 +93,6 @@ fun TracksScreen(
                 label = { it.label },
                 onSelect = { viewModel.setSongSort(it) }
             )
-            CircleIconButton(
-                icon = Icons.Default.Refresh,
-                contentDescription = "Refresh library",
-                onClick = { viewModel.loadSongs() },
-                tint = TextSecondary
-            )
         }
 
         MuzikSearchField(
@@ -102,18 +101,28 @@ fun TracksScreen(
             placeholder = "Search songs, artists, albums"
         )
 
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.refreshLibrary() },
+            modifier = Modifier.fillMaxSize()
+        ) {
         when {
             isLoading -> LoadingState()
-            songs.isEmpty() && searchQuery.isNotBlank() -> EmptyState(
-                icon = Icons.Default.SearchOff,
-                title = "No results for \"$searchQuery\"",
-                message = "Try a different title, artist or album."
-            )
-            songs.isEmpty() -> EmptyState(
-                icon = Icons.Default.MusicNote,
-                title = "No music found",
-                message = "Add audio files to your device, then tap refresh."
-            )
+            // Empty states scroll so the pull-to-refresh gesture still works on them
+            songs.isEmpty() && searchQuery.isNotBlank() -> PullableEmptyArea {
+                EmptyState(
+                    icon = Icons.Default.SearchOff,
+                    title = "No results for \"$searchQuery\"",
+                    message = "Try a different title, artist or album."
+                )
+            }
+            songs.isEmpty() -> PullableEmptyArea {
+                EmptyState(
+                    icon = Icons.Default.MusicNote,
+                    title = "No music found",
+                    message = "Add audio files to your device, then pull down to refresh."
+                )
+            }
             else -> Box(modifier = Modifier.fillMaxSize()) {
             val scroller = showScroller(songSort.alphabetical, songs.size, searchQuery)
             LazyColumn(
@@ -148,9 +157,24 @@ fun TracksScreen(
             }
             }
         }
+        }
     }
 }
 
 /** The A–Z scroller only makes sense for long, alphabetically sorted, unfiltered lists. */
 internal fun showScroller(alphabetical: Boolean, itemCount: Int, query: String) =
     alphabetical && itemCount > 30 && query.isBlank()
+
+/**
+ * A screen-high, scrollable area for empty states inside a pull-to-refresh box: the gesture
+ * needs scrollable content, and the fixed height keeps the empty state centered.
+ */
+@Composable
+private fun PullableEmptyArea(content: @Composable () -> Unit) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val height = maxHeight
+        Box(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            Box(modifier = Modifier.fillMaxWidth().height(height)) { content() }
+        }
+    }
+}

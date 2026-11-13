@@ -38,6 +38,7 @@ Grab the latest signed APK from the [Releases page](https://github.com/lordyhas/
 
 - **Modern & Fluid UI (Jetpack Compose & Material 3)**:
   - Polished dark theme with colors that adapt to the current album artwork.
+  - **Settings & About**: one place for folders, library filters, rescan, sleep timer and audio settings; app version, open-source licenses and quick links to report a bug or get the latest version. Pull down on Home or Songs to rescan your library.
   - **Persistent Mini-Player**: swipe left/right to skip, tap to open the full player.
   - **Fullscreen Now Playing**: blurred artwork backdrop, swipe the cover to skip, like button, "Up next" preview and the queue one swipe away.
   - **Lyrics**: synced lyrics follow the song (tap a line to jump there); plain lyrics scroll. Read from tags embedded in the file (MP3, FLAC, OGG/Opus, M4A) or from a `.lrc` file next to the song.
