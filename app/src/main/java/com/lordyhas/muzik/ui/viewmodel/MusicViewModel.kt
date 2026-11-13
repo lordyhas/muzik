@@ -567,6 +567,13 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
         showMessage("Added to queue")
     }
 
+    /** Queues a whole album, playlist, artist or folder after what's already queued. */
+    fun addAllToQueue(songs: List<Song>) {
+        if (songs.isEmpty()) return
+        musicController.addAllToQueue(songs)
+        showMessage(if (songs.size == 1) "Added to queue" else pluralize(songs.size, "song") + " added to queue")
+    }
+
     fun removeQueueItem(index: Int) {
         val song = currentQueue.value.getOrNull(index) ?: return
         val current = currentQueueIndex.value
