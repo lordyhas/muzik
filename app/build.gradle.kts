@@ -53,6 +53,12 @@ android {
     buildFeatures {
         compose = true
     }
+    lint {
+        // Known issues are recorded in lint-baseline.xml, so CI only fails on new ones.
+        // Regenerate it with `./gradlew updateLintBaseline` after fixing old issues.
+        baseline = file("lint-baseline.xml")
+        sarifReport = true
+    }
 }
 
 dependencies {
