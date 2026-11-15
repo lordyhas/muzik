@@ -70,6 +70,7 @@ fun ArtistDetailScreen(
                 circular = true,
                 placeholderIcon = Icons.Default.Person,
                 onPlay = { viewModel.playArtist(artist) },
+                onAddToQueue = { viewModel.addAllToQueue(songs) },
                 onShuffle = {
                     val shuffled = songs.shuffled()
                     if (shuffled.isNotEmpty()) viewModel.playSong(shuffled.first(), shuffled)

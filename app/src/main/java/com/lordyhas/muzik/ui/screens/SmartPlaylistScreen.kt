@@ -49,6 +49,7 @@ fun SmartPlaylistScreen(
                 meta = if (songs.isEmpty()) "No songs yet" else pluralize(songs.size, "song"),
                 cover = { coverModifier -> SmartPlaylistCover(type = type, modifier = coverModifier, iconSize = 80.dp) },
                 onPlay = if (songs.isNotEmpty()) ({ viewModel.playSong(songs.first(), songs) }) else null,
+                onAddToQueue = { viewModel.addAllToQueue(songs) },
                 onShuffle = if (songs.isNotEmpty()) ({
                     val shuffled = songs.shuffled()
                     viewModel.playSong(shuffled.first(), shuffled)

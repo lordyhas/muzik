@@ -231,6 +231,7 @@ fun FolderDetailScreen(
                 meta = "${pluralize(songs.size, "song")} • ${formatTotalDuration(songs.sumOf { it.duration })}",
                 placeholderIcon = Icons.Default.Folder,
                 onPlay = { viewModel.playSong(songs.first(), songs) },
+                onAddToQueue = { viewModel.addAllToQueue(songs) },
                 onShuffle = {
                     val shuffled = songs.shuffled()
                     viewModel.playSong(shuffled.first(), shuffled)

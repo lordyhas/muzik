@@ -32,6 +32,7 @@ Grab the latest signed APK from the [Releases page](https://github.com/lordyhas/
   - Full playback queue with shuffle and repeat modes (*Repeat All*, *Repeat One*, *Off*).
   - **Spotify-style queue**: "Add to queue" songs play next in order; drag handles to reorder upcoming songs, swipe a song left to remove it (with Undo). Rows slide smoothly as the queue changes.
   - **Swipe to queue**: swipe any song right in an album, artist, playlist, folder or song list to add it to the queue.
+  - **Queue a whole collection**: one tap next to Play and Shuffle adds a whole album, playlist, artist or folder to the queue.
   - **Resume where you left off**: queue, song and position are restored on the next launch, and the system can resume your last session (e.g. a Bluetooth play button) even after the app was closed.
   - **Sleep timer**: 5–90 minutes or "end of current song", with a gentle fade-out. Keeps working with the app closed.
   - **Equalizer & playback speed**: system equalizer with presets and per-band sliders, and 0.5x–2x speed, remembered across launches.
