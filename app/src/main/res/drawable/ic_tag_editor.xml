@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Before Android 8 (no adaptive icons): the tag on a purple circle -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#FF8B5CF6" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/ic_tag_editor_foreground" />
+</layer-list>

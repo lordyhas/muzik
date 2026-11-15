@@ -86,6 +86,7 @@ dependencies {
 
     // Open-source licenses screen (data generated at build time by the aboutlibraries plugin)
     implementation(libs.aboutlibraries.compose.m3)
+    implementation(libs.taglib)
 
     // Coil
     implementation(libs.coil.compose)

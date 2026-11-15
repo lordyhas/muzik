@@ -8,6 +8,13 @@
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
+    <!-- Tag editor: writing tags into audio files. Android 11+ asks the user per save instead
+         (MediaStore.createWriteRequest); MANAGE_MEDIA lets them skip that dialog (Android 12+). -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.MANAGE_MEDIA" />
+
     <!-- Permissions for background playback and notification -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
@@ -26,6 +33,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.Muzik">
 
         <activity
@@ -43,6 +51,28 @@
                 <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
+        <!-- Tag editor: its own launcher icon and task, so it works like a separate app
+             (separate entry in recent apps) while sharing Muzik's library and code -->
+        <activity
+            android:name=".tageditor.TagEditorActivity"
+            android:exported="true"
+            android:icon="@drawable/ic_tag_editor"
+            android:label="@string/tag_editor_app_name"
+            android:launchMode="singleTask"
+            android:roundIcon="@drawable/ic_tag_editor"
+            android:taskAffinity="com.lordyhas.muzik.tageditor"
+            android:theme="@style/Theme.Muzik"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Muzik</string>
+    <!-- Tag editor: its own launcher entry, and the shortcut on Muzik's icon -->
+    <string name="tag_editor_app_name">Muzik Tags</string>
+    <string name="tag_editor_name">Edit tags</string>
     <string name="widget_description">Now playing with playback controls</string>
 </resources>

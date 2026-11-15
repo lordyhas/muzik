@@ -69,6 +69,7 @@ import com.lordyhas.muzik.ui.components.SleepTimerSheet
 import com.lordyhas.muzik.ui.components.CreatePlaylistDialog
 import com.lordyhas.muzik.ui.components.MiniPlayer
 import com.lordyhas.muzik.ui.components.MuzikSnackbarHost
+import com.lordyhas.muzik.tageditor.TagEditorActivity
 import com.lordyhas.muzik.ui.components.NowPlayingScreen
 import com.lordyhas.muzik.ui.components.PermissionRequestView
 import com.lordyhas.muzik.ui.components.SongDetailsDialog
@@ -609,7 +610,11 @@ fun MainAppScreen(
         selectedSongForDetails?.let { song ->
             SongDetailsDialog(
                 song = song,
-                onDismiss = { viewModel.selectSongForDetails(null) }
+                onDismiss = { viewModel.selectSongForDetails(null) },
+                onEditTags = {
+                    viewModel.selectSongForDetails(null)
+                    context.startActivity(TagEditorActivity.intent(context, song.id))
+                }
             )
         }
 
