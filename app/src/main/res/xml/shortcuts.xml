@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Long-press shortcuts on Muzik's launcher icon -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:targetApi="25">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_tag_editor"
+        android:shortcutId="tag_editor"
+        android:shortcutShortLabel="@string/tag_editor_name">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.lordyhas.muzik.tageditor.TagEditorActivity"
+            android:targetPackage="com.lordyhas.muzik" />
+    </shortcut>
+</shortcuts>

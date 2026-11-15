@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Sell
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.Equalizer
 import androidx.compose.runtime.Composable
@@ -26,9 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import com.lordyhas.muzik.service.SleepTimer
+import com.lordyhas.muzik.tageditor.TagEditorActivity
 import com.lordyhas.muzik.ui.components.AudioEffectsSheet
 import com.lordyhas.muzik.ui.components.CircleIconButton
 import com.lordyhas.muzik.ui.components.LibraryFiltersSheet
@@ -58,6 +61,7 @@ fun SettingsScreen(
     onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val songs by viewModel.songs.collectAsState()
     val hiddenSongCount by viewModel.hiddenSongCount.collectAsState()
     val folders by viewModel.allFolders.collectAsState()
@@ -113,6 +117,14 @@ fun SettingsScreen(
                 title = "Library filters",
                 subtitle = libraryFiltersSummary(filter.hideRecordings, filter.minDurationMs),
                 onClick = { showFilters = true }
+            )
+            SettingsRow(
+                icon = Icons.Default.Sell,
+                title = "Tag editor",
+                subtitle = "Fix titles, artists, albums and covers in your files",
+                iconTint = AccentSecondary,
+                onClick = { context.startActivity(TagEditorActivity.intent(context)) },
+                trailing = SettingsRowTrailing.External
             )
             SettingsRow(
                 icon = Icons.Default.Refresh,

@@ -28,6 +28,10 @@ import kotlinx.coroutines.withContext
 object ArtworkColorExtractor {
 
     private val cache = LruCache<String, Int>(64)
+
+    /** Forgets every cached color, after covers changed inside the files (Tag editor). */
+    fun clear() = cache.evictAll()
+
     private const val NO_COLOR = 0
 
     suspend fun extract(context: Context, uri: Uri?): Color? {
