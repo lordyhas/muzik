@@ -2,6 +2,32 @@
   "_comment": "Shown to users in the 'What's new' sheet after an update, and at the top of the GitHub release notes. Newest release first. Write for listeners, not developers: what they can do now, in a sentence or two. type is new, improved or fixed.",
   "releases": [
     {
+      "versionCode": 8,
+      "versionName": "1.6.2",
+      "highlights": [
+        {
+          "type": "new",
+          "title": "Muzik Tags: fix your songs' info",
+          "text": "A new tag editor, with its own icon in your app drawer. Fix titles, artists, albums, years and covers right inside your files, or a whole album at once."
+        },
+        {
+          "type": "new",
+          "title": "Add a whole album to the queue",
+          "text": "One tap next to Play and Shuffle queues a whole album, playlist, artist or folder."
+        },
+        {
+          "type": "improved",
+          "title": "Quicker \"Added to queue\"",
+          "text": "The confirmation is now small and short, and no longer gets in the way of the next song you want to add."
+        },
+        {
+          "type": "fixed",
+          "title": "Back no longer plays a song",
+          "text": "Tapping Back on an album or playlist page sometimes started the song underneath. Not anymore."
+        }
+      ]
+    },
+    {
       "versionCode": 7,
       "versionName": "1.6.0",
       "highlights": [
