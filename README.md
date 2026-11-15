@@ -32,6 +32,7 @@ Grab the latest signed APK from the [Releases page](https://github.com/lordyhas/
   - Full playback queue with shuffle and repeat modes (*Repeat All*, *Repeat One*, *Off*).
   - **Spotify-style queue**: "Add to queue" songs play next in order; drag handles to reorder upcoming songs, swipe a song left to remove it (with Undo). Rows slide smoothly as the queue changes.
   - **Swipe to queue**: swipe any song right in an album, artist, playlist, folder or song list to add it to the queue.
+  - **Queue a whole collection**: one tap next to Play and Shuffle adds a whole album, playlist, artist or folder to the queue.
   - **Resume where you left off**: queue, song and position are restored on the next launch, and the system can resume your last session (e.g. a Bluetooth play button) even after the app was closed.
   - **Sleep timer**: 5–90 minutes or "end of current song", with a gentle fade-out. Keeps working with the app closed.
   - **Equalizer & playback speed**: system equalizer with presets and per-band sliders, and 0.5x–2x speed, remembered across launches.
@@ -53,6 +54,12 @@ Grab the latest signed APK from the [Releases page](https://github.com/lordyhas/
   - **Search**: one search across songs, artists, albums and playlists.
   - **Custom Playlists**: create and delete playlists backed by **Room**, and edit them Spotify-style: rename, remove songs and drag to reorder, saved in one go (or discarded).
   - **Smart Playlists**: *Liked Songs*, *Most Played*, *Recently Added* and *Rediscover*, built automatically from your likes and listening history.
+
+- **Tag editor** (*Muzik Tags*, its own icon in the app drawer):
+  - Fix titles, artists, albums, year, genre, track numbers and covers right inside your files (MP3, FLAC, OGG, M4A...).
+  - Edit a whole album at once: fill the shared fields once, type each title in a list, or fill titles and track numbers from the file names. Perfect for albums with no tags at all.
+  - Search by song, album or artist, and show only what's missing info.
+  - Opens as a separate app, so your music keeps playing; also reachable from Settings, "Song details" and a long press on Muzik's icon.
 
 - **Everywhere you listen**:
   - **Android Auto**: browse Recently played, Liked Songs, Playlists, Albums, Artists and all songs from the car.
@@ -165,13 +172,15 @@ app/src/main/
 │   ├── data/
 │   │   ├── local/                    # Room database (playlists, liked songs, play stats)
 │   │   ├── model/                    # Data models (Song, Album, Artist, Playlist, sorting, smart playlists)
-│   │   └── repository/               # MediaStore, playlists, likes/history and lyrics
+│   │   ├── repository/               # MediaStore, playlists, likes/history and lyrics
+│   │   └── tags/                     # Reading and writing tags inside audio files (TagLib)
 │   ├── service/
 │   │   ├── MusicPlaybackService.kt   # Media3 playback + library service (Auto, resumption, sleep timer, EQ)
 │   │   ├── MusicController.kt        # Media controller bridge & queue model
 │   │   ├── MediaLibraryTree.kt       # Browse tree for Android Auto / media browsers
 │   │   ├── PlaybackSettings.kt       # Sleep timer, speed & equalizer settings shared with the service
 │   │   └── PlaybackStateStore.kt     # Saved queue/position for "resume where you left off"
+│   ├── tageditor/                    # Tag editor ("Muzik Tags"): its own activity, screens and write access
 │   ├── widget/                       # Home-screen now-playing widget
 │   └── ui/
 │       ├── components/               # Reusable Compose components (MiniPlayer, NowPlaying, Lyrics, sheets...)

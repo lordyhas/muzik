@@ -13,8 +13,8 @@ android {
         applicationId = "com.lordyhas.muzik"
         minSdk = 24
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.6.0"
+        versionCode = 8
+        versionName = "1.6.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -86,6 +86,7 @@ dependencies {
 
     // Open-source licenses screen (data generated at build time by the aboutlibraries plugin)
     implementation(libs.aboutlibraries.compose.m3)
+    implementation(libs.taglib)
 
     // Coil
     implementation(libs.coil.compose)

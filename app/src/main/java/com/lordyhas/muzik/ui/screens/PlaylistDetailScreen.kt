@@ -79,6 +79,7 @@ fun PlaylistDetailScreen(
                 placeholderIcon = Icons.Default.PlaylistPlay,
                 cover = { coverModifier -> PlaylistCollage(playlist = playlist, modifier = coverModifier) },
                 onPlay = if (hasSongs) ({ viewModel.playPlaylist(playlist) }) else null,
+                onAddToQueue = { viewModel.addAllToQueue(songs) },
                 onShuffle = if (hasSongs) ({ viewModel.playPlaylist(playlist, shuffle = true) }) else null,
                 extra = {
                     OutlinedButton(

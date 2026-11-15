@@ -1,6 +1,11 @@
 package com.lordyhas.muzik.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,7 +62,8 @@ import com.lordyhas.muzik.ui.theme.TextSecondary
 fun SongDetailsDialog(
     song: Song,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEditTags: (() -> Unit)? = null
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -227,8 +233,23 @@ fun SongDetailsDialog(
                 DetailRow(
                     icon = Icons.Default.Folder,
                     label = "Location",
-                    value = song.contentUri.toString()
+                    value = if (song.fileName.isNotEmpty()) "${song.folderPath}/${song.fileName}" else song.contentUri.toString()
                 )
+            }
+
+            if (onEditTags != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedButton(
+                    onClick = onEditTags,
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = CircleShape,
+                    border = BorderStroke(1.dp, TextPrimary.copy(alpha = 0.18f)),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary)
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Edit tags", style = MaterialTheme.typography.labelLarge)
+                }
             }
         }
     }

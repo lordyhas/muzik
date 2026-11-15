@@ -204,28 +204,30 @@ class MusicController(private val context: Context) {
         persist()
     }
 
-    fun addToQueue(song: Song) {
+    fun addToQueue(song: Song) = addAllToQueue(listOf(song))
+
+    /**
+     * Adds [songs] to the user queue, in order, after the songs already queued (Spotify-style
+     * FIFO). With nothing playing, they become the queue and start playing.
+     */
+    fun addAllToQueue(songs: List<Song>) {
+        if (songs.isEmpty()) return
         val controller = mediaController ?: return
-        val mediaItem = song.toMediaItem()
 
         if (controller.mediaItemCount == 0 || _currentQueue.value.isEmpty()) {
-            playSongList(listOf(song), 0)
+            playSongList(songs, 0)
             return
         }
 
         clampUserQueueCount()
-        // Spotify-style: insert after the last user-queued song (FIFO order)
         val currentIndex = controller.currentMediaItemIndex
-        val insertIndex = (currentIndex + 1 + _userQueueCount.value).coerceAtMost(controller.mediaItemCount)
-        controller.addMediaItem(insertIndex, mediaItem)
-        _userQueueCount.value++
+        val insertIndex = (currentIndex + 1 + _userQueueCount.value)
+            .coerceAtMost(minOf(controller.mediaItemCount, _currentQueue.value.size))
+        controller.addMediaItems(insertIndex, songs.map { it.toMediaItem() })
+        _userQueueCount.value += songs.size
 
         val updatedQueue = _currentQueue.value.toMutableList()
-        if (insertIndex <= updatedQueue.size) {
-            updatedQueue.add(insertIndex, song)
-        } else {
-            updatedQueue.add(song)
-        }
+        updatedQueue.addAll(insertIndex, songs)
         _currentQueue.value = updatedQueue
         updateUIQueues()
         persist()
