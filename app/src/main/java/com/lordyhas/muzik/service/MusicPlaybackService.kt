@@ -10,6 +10,7 @@ import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.core.graphics.drawable.toBitmap
@@ -26,6 +27,9 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import com.lordyhas.muzik.MainActivity
 import com.lordyhas.muzik.data.repository.LibraryRepository
+import com.lordyhas.muzik.service.QueuePlayer.cleanUpAfterLoop
+import com.lordyhas.muzik.service.QueuePlayer.isLoopTransition
+import com.lordyhas.muzik.service.QueuePlayer.reorderUpcoming
 import com.lordyhas.muzik.widget.NowPlayingWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,6 +61,8 @@ class MusicPlaybackService : MediaLibraryService() {
     /** Song waiting to be counted as "played" once playback actually starts. */
     private var pendingPlayRecord: String? = null
     private var progressSaverJob: Job? = null
+    private var lastIndex = 0
+    private var lastCount = 0
 
     private val playerListener = object : Player.Listener {
         override fun onAudioSessionIdChanged(audioSessionId: Int) {
@@ -67,7 +73,30 @@ class MusicPlaybackService : MediaLibraryService() {
             // Counted here (not in the UI) so plays are tracked even when the app is closed
             pendingPlayRecord = mediaItem?.mediaId
             if (exoPlayer?.playWhenReady == true) recordPendingPlay()
+
+            // Handled here too, so the queue rules hold with the app closed or in Android Auto
+            exoPlayer?.let { player ->
+                if (player.isLoopTransition(lastIndex, lastCount, reason)) {
+                    player.cleanUpAfterLoop(PlaybackSettings.shuffle.value)
+                }
+            }
+            rememberPosition()
             saveProgress()
+        }
+
+        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+            rememberPosition()
+        }
+
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+            // Muzik shuffles the queue itself (QueueRules); a shuffle button outside the app
+            // (Android Auto) turns on the player's own mode, so switch ours instead
+            val player = exoPlayer ?: return
+            if (!shuffleModeEnabled) return
+            player.shuffleModeEnabled = false
+            val enabled = !PlaybackSettings.shuffle.value
+            PlaybackSettings.setShuffle(enabled)
+            player.reorderUpcoming(enabled)
         }
 
         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -153,16 +182,17 @@ class MusicPlaybackService : MediaLibraryService() {
         super.onDestroy()
     }
 
+    /** Where the player was, to recognize the album looping back to its start. */
+    private fun rememberPosition() {
+        val player = exoPlayer ?: return
+        lastIndex = player.currentMediaItemIndex
+        lastCount = player.mediaItemCount
+    }
+
     /** Keeps the saved session fresh while playing with the UI closed. */
     private fun saveProgress() {
         val player = exoPlayer ?: return
-        if (player.mediaItemCount == 0) return
-        PlaybackStateStore.saveProgress(
-            this,
-            songIds = (0 until player.mediaItemCount).mapNotNull { player.getMediaItemAt(it).mediaId.toLongOrNull() },
-            index = player.currentMediaItemIndex,
-            positionMs = player.currentPosition
-        )
+        PlaybackStateStore.save(this, player)
     }
 
     private fun startProgressSaver() {

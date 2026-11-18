@@ -2,6 +2,7 @@ package com.lordyhas.muzik.service
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,6 +42,7 @@ object PlaybackSettings {
     private const val KEY_EQ_ENABLED = "eq_enabled"
     private const val KEY_EQ_PRESET = "eq_preset"
     private const val KEY_EQ_LEVELS = "eq_levels"
+    private const val KEY_SHUFFLE = "shuffle"
 
     private var prefs: SharedPreferences? = null
 
@@ -56,12 +58,19 @@ object PlaybackSettings {
     private val _equalizerInfo = MutableStateFlow<EqualizerInfo?>(null)
     val equalizerInfo: StateFlow<EqualizerInfo?> = _equalizerInfo.asStateFlow()
 
+    /** Muzik's own shuffle (see QueueRules), read by the service when the album loops. */
+    private val _shuffle = MutableStateFlow(false)
+    val shuffle: StateFlow<Boolean> = _shuffle.asStateFlow()
+
     @Synchronized
     fun init(context: Context) {
         if (prefs != null) return
         val p = context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         prefs = p
         _speed.value = p.getFloat(KEY_SPEED, 1f)
+        // Shuffle used to be saved with the session; keep the old choice the first time
+        _shuffle.value = if (p.contains(KEY_SHUFFLE)) p.getBoolean(KEY_SHUFFLE, false)
+            else context.applicationContext.getSharedPreferences("muzik_session", Context.MODE_PRIVATE).getBoolean("shuffle", false)
         _equalizer.value = EqualizerSettings(
             enabled = p.getBoolean(KEY_EQ_ENABLED, false),
             preset = p.getInt(KEY_EQ_PRESET, -1),
@@ -85,6 +94,13 @@ object PlaybackSettings {
 
     fun cancelSleepTimer() {
         _sleepTimer.value = SleepTimer.Off
+    }
+
+    // ─── Shuffle ────────────────────────────────────────────────────────────
+
+    fun setShuffle(enabled: Boolean) {
+        _shuffle.value = enabled
+        prefs?.edit { putBoolean(KEY_SHUFFLE, enabled) }
     }
 
     // ─── Speed ──────────────────────────────────────────────────────────────
