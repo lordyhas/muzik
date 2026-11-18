@@ -40,9 +40,11 @@ import com.lordyhas.muzik.ui.components.SettingsGroup
 import com.lordyhas.muzik.ui.components.SettingsRow
 import com.lordyhas.muzik.ui.components.SettingsRowTrailing
 import com.lordyhas.muzik.ui.components.SleepTimerSheet
+import com.lordyhas.muzik.ui.components.ThemePicker
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.components.rememberSleepRemaining
 import com.lordyhas.muzik.ui.theme.AccentSecondary
+import com.lordyhas.muzik.ui.theme.AppThemeStore
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
 
@@ -98,6 +100,14 @@ fun SettingsScreen(
                 )
             }
             ScreenHeader(title = "Settings", subtitle = null)
+        }
+
+        SettingsGroup(title = "Theme") {
+            ThemePicker(
+                selected = AppThemeStore.current,
+                onSelect = AppThemeStore::select,
+                modifier = Modifier.padding(12.dp)
+            )
         }
 
         SettingsGroup(title = "Library") {
