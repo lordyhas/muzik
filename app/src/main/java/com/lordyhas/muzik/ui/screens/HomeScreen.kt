@@ -493,7 +493,7 @@ private fun QuickActionCard(
                 .background(Brush.linearGradient(gradient)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = contentColorOn(gradient.first()), modifier = Modifier.size(20.dp))
+            Icon(icon, contentDescription = null, tint = contentColorOn(gradient), modifier = Modifier.size(20.dp))
         }
 
         Spacer(modifier = Modifier.width(10.dp))

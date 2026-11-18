@@ -1,6 +1,7 @@
 package com.lordyhas.muzik.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 
 // Colors that follow the theme picked in Settings (see AppTheme.kt). They read Compose
@@ -38,10 +39,18 @@ val BrandGradient: List<Color> get() = themed.gradient
 
 private val NearBlack = Color(0xFF0A0A0A)
 
-/** White or near-black, whichever reads better on [background] (WCAG contrast). */
-fun contentColorOn(background: Color): Color {
+/**
+ * White on [background] when it reaches [minContrast] (WCAG), otherwise whichever of white
+ * or near-black reads better. The default 3:1 suits icons; pass 4.5f for small text.
+ */
+fun contentColorOn(background: Color, minContrast: Float = 3f): Color {
     val l = background.luminance()
     val onWhite = 1.05f / (l + 0.05f)
+    if (onWhite >= minContrast) return Color.White
     val onBlack = (l + 0.05f) / (NearBlack.luminance() + 0.05f)
     return if (onWhite >= onBlack) Color.White else NearBlack
 }
+
+/** [contentColorOn] for an icon centered on a [gradient]: judged on its middle color. */
+fun contentColorOn(gradient: List<Color>, minContrast: Float = 3f): Color =
+    contentColorOn(lerp(gradient.first(), gradient.last(), 0.5f), minContrast)

@@ -180,7 +180,7 @@ fun PlayShuffleButtons(
                 .height(50.dp)
                 .shadow(14.dp, CircleShape, spotColor = accent),
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = contentColorOn(accent))
+            colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = contentColorOn(accent, minContrast = 4.5f))
         ) {
             Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(22.dp))
             Spacer(modifier = Modifier.width(6.dp))

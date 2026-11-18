@@ -81,7 +81,7 @@ fun PermissionRequestView(
                 Icon(
                     imageVector = Icons.Default.Headphones,
                     contentDescription = null,
-                    tint = contentColorOn(BrandGradient.first()),
+                    tint = contentColorOn(BrandGradient),
                     modifier = Modifier.size(56.dp)
                 )
             }

@@ -37,6 +37,9 @@ class AppThemeTest {
     @Test
     fun contentColorOnPicksTheMoreReadableColor() {
         assertEquals(Color.White, contentColorOn(Color(0xFF7C3AED)))
+        // Icons stay white on the Nocturne gradient; small text switches to dark there.
+        assertEquals(Color.White, contentColorOn(Color(0xFF8B5CF6)))
+        assertTrue(contentColorOn(Color(0xFF8B5CF6), minContrast = 4.5f) != Color.White)
         assertTrue(contentColorOn(Color(0xFF2DD4BF)) != Color.White)
         assertTrue(contentColorOn(Color(0xFFFFB020)) != Color.White)
     }

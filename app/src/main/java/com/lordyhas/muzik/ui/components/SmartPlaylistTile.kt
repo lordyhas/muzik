@@ -53,7 +53,7 @@ fun SmartPlaylistCover(type: SmartPlaylistType, modifier: Modifier = Modifier, i
         modifier = modifier.background(Brush.linearGradient(type.gradient)),
         contentAlignment = Alignment.Center
     ) {
-        Icon(type.icon, contentDescription = null, tint = contentColorOn(type.gradient.first()), modifier = Modifier.size(iconSize))
+        Icon(type.icon, contentDescription = null, tint = contentColorOn(type.gradient), modifier = Modifier.size(iconSize))
     }
 }
 
