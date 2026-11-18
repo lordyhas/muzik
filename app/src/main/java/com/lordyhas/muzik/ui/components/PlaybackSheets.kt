@@ -50,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import com.lordyhas.muzik.service.EqualizerInfo
 import com.lordyhas.muzik.service.EqualizerSettings
 import com.lordyhas.muzik.service.SleepTimer
+import com.lordyhas.muzik.ui.theme.OnAccentFill
+import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.StrokeSubtle
 import com.lordyhas.muzik.ui.theme.SurfaceCard
@@ -368,8 +370,8 @@ fun AudioEffectsSheet(
 internal fun chipColors() = FilterChipDefaults.filterChipColors(
     containerColor = SurfaceCard,
     labelColor = TextPrimary,
-    selectedContainerColor = AccentPrimary,
-    selectedLabelColor = Color.White
+    selectedContainerColor = AccentFill,
+    selectedLabelColor = OnAccentFill
 )
 
 fun formatSpeed(speed: Float): String =

@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.dp
 import com.lordyhas.muzik.data.tags.CoverArt
 import com.lordyhas.muzik.ui.components.Artwork
 import com.lordyhas.muzik.ui.components.CircleIconButton
+import com.lordyhas.muzik.ui.theme.OnAccentFill
+import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -98,8 +100,8 @@ fun EditorTopBar(
                 enabled = canSave,
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AccentPrimary,
-                    contentColor = Color.White,
+                    containerColor = AccentFill,
+                    contentColor = OnAccentFill,
                     disabledContainerColor = SurfaceCard,
                     disabledContentColor = TextMuted
                 )

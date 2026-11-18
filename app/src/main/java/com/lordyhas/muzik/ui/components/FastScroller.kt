@@ -34,6 +34,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lordyhas.muzik.ui.theme.OnAccentFill
+import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.TextMuted
 import com.lordyhas.muzik.ui.theme.TextPrimary
@@ -80,13 +82,13 @@ fun AlphabetFastScroller(
                     .padding(end = 8.dp)
                     .size(56.dp)
                     .clip(RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp, topEnd = 28.dp))
-                    .background(AccentPrimary),
+                    .background(AccentFill),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = activeLetter.orEmpty(),
                     style = MaterialTheme.typography.headlineMedium,
-                    color = TextPrimary
+                    color = OnAccentFill
                 )
             }
         }

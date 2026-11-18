@@ -40,7 +40,6 @@ import com.lordyhas.muzik.ui.components.CircleIconButton
 import com.lordyhas.muzik.ui.components.SettingsGroup
 import com.lordyhas.muzik.ui.components.SettingsRow
 import com.lordyhas.muzik.ui.components.SettingsRowTrailing
-import com.lordyhas.muzik.ui.theme.AccentCyan
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.theme.TextMuted
@@ -160,7 +159,7 @@ fun AboutScreen(
                 icon = Icons.Default.SystemUpdate,
                 title = "Get the latest version",
                 subtitle = "Opens the download page in your browser",
-                iconTint = AccentCyan,
+                iconTint = AccentSecondary,
                 trailing = SettingsRowTrailing.External,
                 onClick = { uriHandler.openUri(AppLinks.RELEASES) },
                 showDivider = false

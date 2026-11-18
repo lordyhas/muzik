@@ -35,6 +35,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lordyhas.muzik.ui.theme.contentColorOn
+import com.lordyhas.muzik.ui.theme.OnAccentFill
+import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -78,7 +81,7 @@ fun PermissionRequestView(
                 Icon(
                     imageVector = Icons.Default.Headphones,
                     contentDescription = null,
-                    tint = Color.White,
+                    tint = contentColorOn(BrandGradient.first()),
                     modifier = Modifier.size(56.dp)
                 )
             }
@@ -138,8 +141,8 @@ fun PermissionRequestView(
                     .shadow(16.dp, CircleShape, spotColor = AccentPrimary),
                 shape = CircleShape,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AccentPrimary,
-                    contentColor = Color.White
+                    containerColor = AccentFill,
+                    contentColor = OnAccentFill
                 )
             ) {
                 Text(text = "Allow access", style = MaterialTheme.typography.titleMedium)

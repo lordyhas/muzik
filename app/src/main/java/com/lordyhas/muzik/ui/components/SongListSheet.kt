@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.lordyhas.muzik.data.model.Song
+import com.lordyhas.muzik.ui.theme.OnAccentFill
+import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -193,7 +195,7 @@ fun SongListSheet(
                         .weight(1f)
                         .height(46.dp),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = AccentPrimary)
+                    colors = ButtonDefaults.buttonColors(containerColor = AccentFill, contentColor = OnAccentFill)
                 ) {
                     Icon(
                         imageVector = Icons.Default.PlayArrow,

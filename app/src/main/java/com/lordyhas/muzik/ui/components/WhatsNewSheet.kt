@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.lordyhas.muzik.data.model.ReleaseNotes
-import com.lordyhas.muzik.ui.theme.AccentCyan
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.SurfaceDark
@@ -134,5 +133,5 @@ fun HighlightRow(highlight: ReleaseNotes.Highlight, modifier: Modifier = Modifie
 private fun ReleaseNotes.Type.visual(): Pair<ImageVector, Color> = when (this) {
     ReleaseNotes.Type.NEW -> Icons.Default.AutoAwesome to AccentPrimary
     ReleaseNotes.Type.IMPROVED -> Icons.AutoMirrored.Filled.TrendingUp to AccentSecondary
-    ReleaseNotes.Type.FIXED -> Icons.Default.Build to AccentCyan
+    ReleaseNotes.Type.FIXED -> Icons.Default.Build to TextSecondary
 }

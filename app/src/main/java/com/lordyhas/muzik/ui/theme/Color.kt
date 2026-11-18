@@ -16,7 +16,6 @@ val SurfaceElevated: Color get() = themed.elevated
 val AccentPrimary: Color get() = themed.accent
 /** Second brand hue, for small highlights. */
 val AccentSecondary: Color get() = themed.secondary
-val AccentCyan: Color get() = themed.secondary
 /** Accent used behind text (Play, Save, Allow). Pair it with [OnAccentFill]. */
 val AccentFill: Color get() = themed.fill
 /** Text and icon color on [AccentFill]. */

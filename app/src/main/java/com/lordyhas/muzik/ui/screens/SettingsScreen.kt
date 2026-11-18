@@ -42,7 +42,6 @@ import com.lordyhas.muzik.ui.components.SettingsRowTrailing
 import com.lordyhas.muzik.ui.components.SleepTimerSheet
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.components.rememberSleepRemaining
-import com.lordyhas.muzik.ui.theme.AccentCyan
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
@@ -165,7 +164,7 @@ fun SettingsScreen(
                 icon = Icons.Default.Info,
                 title = "About Muzik",
                 subtitle = "Version ${viewModel.appVersion.name}",
-                iconTint = AccentCyan,
+                iconTint = AccentSecondary,
                 onClick = onAboutClick,
                 showDivider = false
             )

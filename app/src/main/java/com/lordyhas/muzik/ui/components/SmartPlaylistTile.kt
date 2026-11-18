@@ -26,9 +26,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.lordyhas.muzik.data.model.SmartPlaylist
 import com.lordyhas.muzik.data.model.SmartPlaylistType
-import com.lordyhas.muzik.ui.theme.AccentCyan
-import com.lordyhas.muzik.ui.theme.AccentPrimary
-import com.lordyhas.muzik.ui.theme.AccentSecondary
+import com.lordyhas.muzik.ui.theme.AppThemeStore
+import com.lordyhas.muzik.ui.theme.contentColorOn
 
 /** Visual identity (icon + gradient) of each smart playlist. */
 val SmartPlaylistType.icon: ImageVector
@@ -41,10 +40,10 @@ val SmartPlaylistType.icon: ImageVector
 
 val SmartPlaylistType.gradient: List<Color>
     get() = when (this) {
-        SmartPlaylistType.LIKED -> listOf(AccentPrimary, AccentSecondary)
-        SmartPlaylistType.MOST_PLAYED -> listOf(Color(0xFFFF8A3D), Color(0xFFE11D48))
-        SmartPlaylistType.RECENTLY_ADDED -> listOf(AccentCyan, Color(0xFF2563EB))
-        SmartPlaylistType.REDISCOVER -> listOf(Color(0xFF10B981), AccentCyan)
+        SmartPlaylistType.LIKED -> AppThemeStore.current.colors.liked
+        SmartPlaylistType.MOST_PLAYED -> AppThemeStore.current.colors.mostPlayed
+        SmartPlaylistType.RECENTLY_ADDED -> AppThemeStore.current.colors.recentlyAdded
+        SmartPlaylistType.REDISCOVER -> AppThemeStore.current.colors.rediscover
     }
 
 /** Gradient square cover with the smart playlist's icon. */
@@ -54,7 +53,7 @@ fun SmartPlaylistCover(type: SmartPlaylistType, modifier: Modifier = Modifier, i
         modifier = modifier.background(Brush.linearGradient(type.gradient)),
         contentAlignment = Alignment.Center
     ) {
-        Icon(type.icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(iconSize))
+        Icon(type.icon, contentDescription = null, tint = contentColorOn(type.gradient.first()), modifier = Modifier.size(iconSize))
     }
 }
 
