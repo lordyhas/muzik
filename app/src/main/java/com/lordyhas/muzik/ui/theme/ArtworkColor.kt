@@ -104,7 +104,7 @@ fun rememberArtworkColor(uri: Uri?, fallback: Color = AccentPrimary): Color {
     val context = LocalContext.current
     var target by remember { mutableStateOf(fallback) }
 
-    LaunchedEffect(uri) {
+    LaunchedEffect(uri, fallback) {
         target = ArtworkColorExtractor.extract(context, uri) ?: fallback
     }
 
