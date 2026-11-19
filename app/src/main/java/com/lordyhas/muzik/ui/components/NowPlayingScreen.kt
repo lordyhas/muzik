@@ -117,6 +117,7 @@ fun NowPlayingScreen(
     queue: List<Song>,
     currentIndex: Int,
     userQueueCount: Int,
+    queueAdded: List<Boolean>,
     onTogglePlayPause: () -> Unit,
     onSeekTo: (Long) -> Unit,
     onSkipNext: () -> Unit,
@@ -737,7 +738,8 @@ fun NowPlayingScreen(
                                             onClick = { onPlayIndex(absoluteIndex) },
                                             onRemove = { onRemoveIndex(absoluteIndex) },
                                             handleModifier = handle,
-                                            isDragging = dragging
+                                            isDragging = dragging,
+                                            isAdded = queueAdded.getOrNull(absoluteIndex) == true
                                         )
                                       }
                                     }
@@ -806,7 +808,9 @@ private fun QueueSongRow(
     onRemove: (() -> Unit)?,
     modifier: Modifier = Modifier,
     handleModifier: Modifier? = null,
-    isDragging: Boolean = false
+    isDragging: Boolean = false,
+    /** Added with "Add to queue" but further down the list, after album songs. */
+    isAdded: Boolean = false
 ) {
     Row(
         modifier = modifier
@@ -856,13 +860,23 @@ private fun QueueSongRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Text(
-                text = "${song.artist} • ${song.formattedDuration()}",
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (isAdded) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.QueueMusic,
+                        contentDescription = "Added to queue",
+                        tint = accent,
+                        modifier = Modifier.padding(end = 4.dp).size(14.dp)
+                    )
+                }
+                Text(
+                    text = "${song.artist} • ${song.formattedDuration()}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
 
         if (onRemove != null) {

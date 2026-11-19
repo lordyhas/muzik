@@ -534,6 +534,7 @@ fun MainAppScreen(
                 queue = currentQueue,
                 currentIndex = currentQueueIndex,
                 userQueueCount = viewModel.userQueueCount.collectAsState().value,
+                queueAdded = viewModel.queueAdded.collectAsState().value,
                 onTogglePlayPause = { viewModel.togglePlayPause() },
                 onSeekTo = { viewModel.seekTo(it) },
                 onSkipNext = { viewModel.skipNext() },
