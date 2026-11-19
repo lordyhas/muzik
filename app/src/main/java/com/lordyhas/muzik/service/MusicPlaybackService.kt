@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.media.audiofx.Equalizer
+import android.os.Bundle
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -14,10 +15,13 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.core.graphics.drawable.toBitmap
+import androidx.media3.session.CommandButton
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionError
+import androidx.media3.session.SessionResult
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
@@ -99,6 +103,10 @@ class MusicPlaybackService : MediaLibraryService() {
             player.reorderUpcoming(enabled)
         }
 
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            updateCustomLayout()
+        }
+
         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
             updateWidget()
         }
@@ -161,6 +169,9 @@ class MusicPlaybackService : MediaLibraryService() {
             .build()
 
         observeSettings()
+        serviceScope.launch {
+            PlaybackSettings.shuffle.collect { updateCustomLayout() }
+        }
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession? {
@@ -215,6 +226,58 @@ class MusicPlaybackService : MediaLibraryService() {
                 e.printStackTrace()
             }
         }
+    }
+
+    // ─── Notification buttons (shuffle, repeat) ─────────────────────────────
+
+    /** Shuffle and repeat buttons shown next to previous/play/next in the media notification. */
+    private fun updateCustomLayout() {
+        val session = mediaSession ?: return
+        val player = exoPlayer ?: return
+        val shuffle = PlaybackSettings.shuffle.value
+        val shuffleButton = CommandButton.Builder(
+            if (shuffle) CommandButton.ICON_SHUFFLE_ON else CommandButton.ICON_SHUFFLE_OFF
+        )
+            .setDisplayName(if (shuffle) "Shuffle on" else "Shuffle off")
+            .setSessionCommand(SHUFFLE_COMMAND)
+            .build()
+        val repeatButton = CommandButton.Builder(
+            when (player.repeatMode) {
+                Player.REPEAT_MODE_ALL -> CommandButton.ICON_REPEAT_ALL
+                Player.REPEAT_MODE_ONE -> CommandButton.ICON_REPEAT_ONE
+                else -> CommandButton.ICON_REPEAT_OFF
+            }
+        )
+            .setDisplayName(
+                when (player.repeatMode) {
+                    Player.REPEAT_MODE_ALL -> "Repeat all"
+                    Player.REPEAT_MODE_ONE -> "Repeat one"
+                    else -> "Repeat off"
+                }
+            )
+            .setSessionCommand(REPEAT_COMMAND)
+            .build()
+        session.setCustomLayout(ImmutableList.of(shuffleButton, repeatButton))
+    }
+
+    /** Same as the in-app shuffle button (MusicController.toggleShuffle). */
+    private fun toggleShuffle() {
+        val player = exoPlayer ?: return
+        val enabled = !PlaybackSettings.shuffle.value
+        PlaybackSettings.setShuffle(enabled)
+        player.shuffleModeEnabled = false
+        player.reorderUpcoming(enabled)
+    }
+
+    /** Same cycle as the in-app repeat button: off → all → one → off. */
+    private fun cycleRepeat() {
+        val player = exoPlayer ?: return
+        player.repeatMode = when (player.repeatMode) {
+            Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL
+            Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE
+            else -> Player.REPEAT_MODE_OFF
+        }
+        saveProgress()
     }
 
     // ─── Settings → player ──────────────────────────────────────────────────
@@ -323,6 +386,39 @@ class MusicPlaybackService : MediaLibraryService() {
 
     private inner class LibraryCallback : MediaLibrarySession.Callback {
 
+        override fun onConnect(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo
+        ): MediaSession.ConnectionResult {
+            val result = super.onConnect(session, controller)
+            val commands = result.availableSessionCommands.buildUpon()
+                .add(SHUFFLE_COMMAND)
+                .add(REPEAT_COMMAND)
+                .build()
+            return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+                .setAvailableSessionCommands(commands)
+                .setAvailablePlayerCommands(result.availablePlayerCommands)
+                .build()
+        }
+
+        override fun onPostConnect(session: MediaSession, controller: MediaSession.ControllerInfo) {
+            updateCustomLayout()
+        }
+
+        override fun onCustomCommand(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo,
+            customCommand: SessionCommand,
+            args: Bundle
+        ): ListenableFuture<SessionResult> {
+            when (customCommand.customAction) {
+                ACTION_SHUFFLE -> toggleShuffle()
+                ACTION_REPEAT -> cycleRepeat()
+                else -> return super.onCustomCommand(session, controller, customCommand, args)
+            }
+            return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+        }
+
         override fun onGetLibraryRoot(
             session: MediaLibrarySession,
             browser: MediaSession.ControllerInfo,
@@ -428,5 +524,9 @@ class MusicPlaybackService : MediaLibraryService() {
 
     private companion object {
         const val FADE_OUT_MS = 10_000L
+        const val ACTION_SHUFFLE = "com.lordyhas.muzik.SHUFFLE"
+        const val ACTION_REPEAT = "com.lordyhas.muzik.REPEAT"
+        val SHUFFLE_COMMAND = SessionCommand(ACTION_SHUFFLE, Bundle.EMPTY)
+        val REPEAT_COMMAND = SessionCommand(ACTION_REPEAT, Bundle.EMPTY)
     }
 }
