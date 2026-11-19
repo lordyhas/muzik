@@ -2,6 +2,27 @@
   "_comment": "Shown to users in the 'What's new' sheet after an update, and at the top of the GitHub release notes. Newest release first. Write for listeners, not developers: what they can do now, in a sentence or two. type is new, improved or fixed.",
   "releases": [
     {
+      "versionCode": 9,
+      "versionName": "1.6.3",
+      "highlights": [
+        {
+          "type": "new",
+          "title": "Pick your colors",
+          "text": "Choose between three themes in Settings: Nocturne, Ember and Lagoon."
+        },
+        {
+          "type": "new",
+          "title": "Shuffle and repeat from the notification",
+          "text": "Turn shuffle on or off and switch repeat right from the player in your notifications, without opening the app."
+        },
+        {
+          "type": "improved",
+          "title": "A queue that makes more sense",
+          "text": "Songs you add play right after the current one and stay in the list, so Previous takes you back to them. Shuffle now only mixes the songs still to come."
+        }
+      ]
+    },
+    {
       "versionCode": 8,
       "versionName": "1.6.2",
       "highlights": [
