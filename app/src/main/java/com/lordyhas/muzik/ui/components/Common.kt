@@ -71,6 +71,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.lordyhas.muzik.ui.theme.contentColorOn
+import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.theme.StrokeSubtle
@@ -164,7 +166,7 @@ fun PlayShuffleButtons(
     onPlay: () -> Unit,
     onShuffle: () -> Unit,
     modifier: Modifier = Modifier,
-    accent: Color = AccentPrimary,
+    accent: Color = AccentFill,
     onAddToQueue: (() -> Unit)? = null
 ) {
     Row(
@@ -178,7 +180,7 @@ fun PlayShuffleButtons(
                 .height(50.dp)
                 .shadow(14.dp, CircleShape, spotColor = accent),
             shape = CircleShape,
-            colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = Color.White)
+            colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = contentColorOn(accent, minContrast = 4.5f))
         ) {
             Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(22.dp))
             Spacer(modifier = Modifier.width(6.dp))

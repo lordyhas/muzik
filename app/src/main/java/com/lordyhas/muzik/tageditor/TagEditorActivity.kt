@@ -47,6 +47,7 @@ import com.lordyhas.muzik.tageditor.ui.TagLibraryScreen
 import com.lordyhas.muzik.ui.components.LoadingState
 import com.lordyhas.muzik.ui.components.MuzikSnackbarHost
 import com.lordyhas.muzik.ui.components.PermissionRequestView
+import com.lordyhas.muzik.ui.theme.AppThemeStore
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.theme.MuzikTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,6 +68,7 @@ class TagEditorActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppThemeStore.init(this)
         enableEdgeToEdge()
         if (savedInstanceState == null) openSongId.value = intent.songIdExtra()
 

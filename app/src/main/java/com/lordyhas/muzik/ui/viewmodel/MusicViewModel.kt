@@ -52,6 +52,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
@@ -147,6 +148,8 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     val userQueueCount: StateFlow<Int> = musicController.userQueueCount
     val userQueue: StateFlow<List<Song>> = musicController.userQueueList
     val contextQueue: StateFlow<List<Song>> = musicController.contextQueueList
+    /** For each song of [currentQueue], whether it was added with "Add to queue". */
+    val queueAdded: StateFlow<List<Boolean>> = musicController.queueAdded
 
     private val libraryRepository = LibraryRepository(application)
 
@@ -365,12 +368,13 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     init {
         importLegacyRecentHistory()
 
-        // Once both the library and the player connection are ready, restore the last session
+        // Once both the library and the player connection are ready, restore the last session;
+        // later library changes (rescans, tag edits) refresh the songs shown in the queue
         viewModelScope.launch {
             combine(_songs, musicController.isControllerReady) { songs, ready -> songs.takeIf { ready } }
                 .filterNotNull()
-                .first { it.isNotEmpty() }
-                .let { musicController.restoreOrSync(it) }
+                .filter { it.isNotEmpty() }
+                .collect { musicController.restoreOrSync(it) }
         }
     }
 
@@ -575,11 +579,8 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun removeQueueItem(index: Int) {
-        val song = currentQueue.value.getOrNull(index) ?: return
-        val current = currentQueueIndex.value
-        val inUserQueue = index > current && index <= current + userQueueCount.value
-        musicController.removeQueueItem(index)
-        showMessage("Removed from queue", "Undo") { musicController.insertQueueItem(index, song, inUserQueue) }
+        val item = musicController.removeQueueItem(index) ?: return
+        showMessage("Removed from queue", "Undo") { musicController.insertQueueItem(index, item) }
     }
     fun playQueueIndex(index: Int) { musicController.playQueueIndex(index) }
     fun moveQueueItem(from: Int, to: Int) { musicController.moveQueueItem(from, to) }

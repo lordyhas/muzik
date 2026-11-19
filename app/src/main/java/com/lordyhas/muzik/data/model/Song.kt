@@ -3,6 +3,7 @@ package com.lordyhas.muzik.data.model
 import android.net.Uri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import com.lordyhas.muzik.service.QueuePlayer.withQueueMarks
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
@@ -32,7 +33,20 @@ data class Song(
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
     }
 
-    fun toMediaItem(): MediaItem {
+    /**
+     * The player item for this song. [contextOrder] is its place in the album/playlist being
+     * played and [addedToQueue] marks songs put in the queue by hand (see QueueRules).
+     */
+    fun toMediaItem(contextOrder: Int? = null, addedToQueue: Boolean = false): MediaItem {
+        val item = toPlainMediaItem()
+        return if (contextOrder != null || addedToQueue) {
+            item.withQueueMarks(addedToQueue, contextOrder ?: -1)
+        } else {
+            item
+        }
+    }
+
+    private fun toPlainMediaItem(): MediaItem {
         val metadataBuilder = MediaMetadata.Builder()
             .setTitle(title)
             .setArtist(artist)

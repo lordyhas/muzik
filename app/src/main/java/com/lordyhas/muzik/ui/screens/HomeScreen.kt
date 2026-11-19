@@ -69,10 +69,12 @@ import com.lordyhas.muzik.ui.components.EmptyState
 import com.lordyhas.muzik.ui.components.LoadingState
 import com.lordyhas.muzik.ui.components.SectionHeader
 import com.lordyhas.muzik.ui.components.pluralize
-import com.lordyhas.muzik.ui.theme.AccentCyan
+import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
+import com.lordyhas.muzik.ui.theme.BrandGradient
+import com.lordyhas.muzik.ui.theme.contentColorOn
 import com.lordyhas.muzik.ui.theme.StrokeSubtle
 import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.TextPrimary
@@ -209,7 +211,7 @@ fun HomeScreen(
                             title = "Shuffle all",
                             subtitle = "Your whole library",
                             icon = Icons.Default.Shuffle,
-                            gradient = listOf(AccentPrimary, Color(0xFFE11D48)),
+                            gradient = BrandGradient,
                             onClick = { viewModel.playRandom() },
                             modifier = Modifier.weight(1f)
                         )
@@ -217,7 +219,7 @@ fun HomeScreen(
                             title = "Discover",
                             subtitle = "10 random picks",
                             icon = Icons.Default.AutoAwesome,
-                            gradient = listOf(AccentSecondary, AccentCyan),
+                            gradient = listOf(AccentSecondary, AccentFill),
                             onClick = {
                                 val sample = songs.shuffled().take(10)
                                 if (sample.isNotEmpty()) viewModel.playSong(sample.first(), sample)
@@ -245,15 +247,15 @@ fun HomeScreen(
                             icon = Icons.Default.Whatshot,
                             label = "Most Played",
                             onClick = { onSmartPlaylistClick(SmartPlaylistType.MOST_PLAYED) },
-                            tint = Color(0xFFFF8A3D)
+                            tint = AccentSecondary
                         )
                         ShortcutChip(
                             icon = Icons.Default.NewReleases,
                             label = "Recently Added",
                             onClick = { onSmartPlaylistClick(SmartPlaylistType.RECENTLY_ADDED) },
-                            tint = AccentCyan
+                            tint = AccentPrimary
                         )
-                        ShortcutChip(icon = Icons.Default.Folder, label = "Folders", onClick = onFoldersClick, tint = AccentSecondary)
+                        ShortcutChip(icon = Icons.Default.Folder, label = "Folders", onClick = onFoldersClick, tint = TextSecondary)
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -491,7 +493,7 @@ private fun QuickActionCard(
                 .background(Brush.linearGradient(gradient)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(20.dp))
+            Icon(icon, contentDescription = null, tint = contentColorOn(gradient), modifier = Modifier.size(20.dp))
         }
 
         Spacer(modifier = Modifier.width(10.dp))

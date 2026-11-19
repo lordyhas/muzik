@@ -16,6 +16,7 @@ import com.lordyhas.muzik.data.repository.LibraryFilterStore
 import com.lordyhas.muzik.data.repository.LibraryRepository
 import com.lordyhas.muzik.data.repository.MusicRepository
 import com.lordyhas.muzik.data.repository.PlaylistRepository
+import com.lordyhas.muzik.service.QueuePlayer.withQueueMarksOf
 import kotlinx.coroutines.flow.first
 
 /**
@@ -121,8 +122,10 @@ class MediaLibraryTree(private val context: Context) {
                 item.localConfiguration != null -> listOf(item)
                 query != null -> s.songs.forVoiceSearch(query).map { it.toMediaItem() }
                 else -> listOfNotNull(
-                    parseSongId(item.mediaId)?.let { s.songsById[it]?.toMediaItem() }
-                        ?: songsOf(item.mediaId, s).firstOrNull()?.toMediaItem()
+                    (parseSongId(item.mediaId)?.let { s.songsById[it]?.toMediaItem() }
+                        ?: item.mediaId.toLongOrNull()?.let { s.songsById[it]?.toMediaItem() }
+                        ?: songsOf(item.mediaId, s).firstOrNull()?.toMediaItem())
+                            ?.withQueueMarksOf(item)
                 )
             }
         }
@@ -138,7 +141,7 @@ class MediaLibraryTree(private val context: Context) {
         if (items.size == 1 && items[0].localConfiguration == null) {
             items[0].requestMetadata.searchQuery?.let { query ->
                 val matches = s.songs.forVoiceSearch(query)
-                return MediaItemsWithStartPosition(matches.map { it.toMediaItem() }, 0, C.TIME_UNSET)
+                return MediaItemsWithStartPosition(matches.mapIndexed { i, song -> song.toMediaItem(contextOrder = i) }, 0, C.TIME_UNSET)
             }
             val mediaId = items[0].mediaId
             val songId = parseSongId(mediaId)
@@ -146,7 +149,7 @@ class MediaLibraryTree(private val context: Context) {
             val context = songsOf(parent, s)
             if (context.isNotEmpty()) {
                 val index = songId?.let { id -> context.indexOfFirst { it.id == id } }?.takeIf { it >= 0 } ?: 0
-                return MediaItemsWithStartPosition(context.map { it.toMediaItem() }, index, startPositionMs)
+                return MediaItemsWithStartPosition(context.mapIndexed { i, song -> song.toMediaItem(contextOrder = i) }, index, startPositionMs)
             }
         }
         return MediaItemsWithStartPosition(resolve(items), startIndex, startPositionMs)
@@ -156,15 +159,7 @@ class MediaLibraryTree(private val context: Context) {
     suspend fun resumption(): MediaItemsWithStartPosition? {
         val saved = PlaybackStateStore.load(context) ?: return null
         val s = snapshot()
-        val songs = saved.songIds.mapNotNull { s.songsById[it] }
-        if (songs.isEmpty()) return null
-        val currentId = saved.songIds.getOrNull(saved.index)
-        val index = songs.indexOfFirst { it.id == currentId }
-        return MediaItemsWithStartPosition(
-            songs.map { it.toMediaItem() },
-            index.coerceAtLeast(0),
-            if (index >= 0) saved.positionMs else 0L
-        )
+        return saved.toMediaItems(s.songsById)
     }
 
     fun invalidate() {

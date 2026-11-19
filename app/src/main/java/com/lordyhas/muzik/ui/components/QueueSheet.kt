@@ -259,7 +259,7 @@ private fun QueueSongItem(
                 .clip(RoundedCornerShape(8.dp))
                 .background(
                     Brush.linearGradient(
-                        listOf(SurfaceElevated, Color(0xFF2B2244))
+                        listOf(SurfaceElevated, AccentSecondary.copy(alpha = 0.18f))
                     )
                 ),
             contentAlignment = Alignment.Center
