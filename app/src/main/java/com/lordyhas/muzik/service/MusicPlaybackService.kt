@@ -17,6 +17,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.session.CommandButton
 import androidx.media3.session.LibraryResult
+import androidx.media3.session.MediaConstants
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
@@ -166,6 +167,14 @@ class MusicPlaybackService : MediaLibraryService() {
 
         mediaSession = MediaLibrarySession.Builder(this, player, LibraryCallback())
             .setSessionActivity(sessionActivityPendingIntent)
+            // Keep the previous/next places for those buttons: otherwise, on the last song,
+            // some phones (Samsung) put the shuffle button where Next was
+            .setSessionExtras(
+                Bundle().apply {
+                    putBoolean(MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_PREV, true)
+                    putBoolean(MediaConstants.EXTRAS_KEY_SLOT_RESERVATION_SEEK_TO_NEXT, true)
+                }
+            )
             .build()
 
         observeSettings()
