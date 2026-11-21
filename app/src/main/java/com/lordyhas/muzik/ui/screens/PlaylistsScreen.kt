@@ -32,6 +32,7 @@ import androidx.media3.common.util.UnstableApi
 import com.composables.icons.lucide.ListVideo
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
+import com.lordyhas.muzik.data.model.Pin
 import com.lordyhas.muzik.data.model.SmartPlaylistType
 import com.lordyhas.muzik.ui.components.CreatePlaylistDialog
 import com.lordyhas.muzik.ui.components.EmptyState
@@ -57,7 +58,8 @@ fun PlaylistsScreen(
     val playlists by viewModel.playlists.collectAsState()
     val smartPlaylists by viewModel.smartPlaylists.collectAsState()
     val showCreateDialog by viewModel.showCreatePlaylistDialog.collectAsState()
-    val songPendingAddToPlaylist by viewModel.songPendingAddToPlaylist.collectAsState()
+    val songsPendingAddToPlaylist by viewModel.songsPendingAddToPlaylist.collectAsState()
+    val pins by viewModel.pins.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val playingPlaylistId by viewModel.playingPlaylistId.collectAsState()
     val isPlaying by viewModel.isPlaying.collectAsState()
@@ -125,7 +127,9 @@ fun PlaylistsScreen(
                                 isPlaying = isPlaying,
                                 onClick = { onPlaylistClick(playlist.id) },
                                 onEdit = { onEditPlaylist(playlist.id) },
-                                onDelete = { viewModel.deletePlaylist(playlist.id) }
+                                onDelete = { viewModel.deletePlaylist(playlist.id) },
+                                isPinned = Pin.playlist(playlist.id) in pins,
+                                onTogglePin = { viewModel.togglePin(Pin.playlist(playlist.id)) }
                             )
                         }
                     }
@@ -147,7 +151,7 @@ fun PlaylistsScreen(
     }
 
     // The global dialog in MainAppScreen handles creation from the add-to-playlist sheet
-    if (showCreateDialog && songPendingAddToPlaylist == null) {
+    if (showCreateDialog && songsPendingAddToPlaylist.isEmpty()) {
         CreatePlaylistDialog(
             title = "New playlist",
             initialName = "",

@@ -20,6 +20,8 @@ data class Song(
     val discNumber: Int? = null,
     /** Seconds since epoch when the file was added to the device (MediaStore DATE_ADDED). */
     val dateAdded: Long = 0L,
+    /** Release year from the tags (MediaStore YEAR), when known. */
+    val year: Int? = null,
     /** Directory containing the file, e.g. "/storage/emulated/0/Music/Rock". */
     val folderPath: String = "",
     /** File name with extension, e.g. "01 - Intro.mp3". */

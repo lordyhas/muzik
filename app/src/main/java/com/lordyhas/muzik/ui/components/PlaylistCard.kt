@@ -41,6 +41,8 @@ import com.composables.icons.lucide.EllipsisVertical
 import com.composables.icons.lucide.ListVideo
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Pencil
+import com.composables.icons.lucide.Pin
+import com.composables.icons.lucide.PinOff
 import com.composables.icons.lucide.Trash2
 import com.lordyhas.muzik.data.model.Playlist
 import com.lordyhas.muzik.ui.theme.AccentPrimary
@@ -61,7 +63,9 @@ fun PlaylistCard(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
     isCurrent: Boolean = false,
-    isPlaying: Boolean = false
+    isPlaying: Boolean = false,
+    isPinned: Boolean = false,
+    onTogglePin: (() -> Unit)? = null
 ) {
     var isMenuExpanded by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
@@ -147,6 +151,29 @@ fun PlaylistCard(
                             onEdit()
                         }
                     )
+                    if (onTogglePin != null) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    if (isPinned) "Unpin from Home" else "Pin to Home",
+                                    color = TextPrimary,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            },
+                            leadingIcon = {
+                                Icon(
+                                    if (isPinned) Lucide.PinOff else Lucide.Pin,
+                                    contentDescription = null,
+                                    tint = TextSecondary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            },
+                            onClick = {
+                                isMenuExpanded = false
+                                onTogglePin()
+                            }
+                        )
+                    }
                     DropdownMenuItem(
                         text = { Text("Delete", color = DangerRed, style = MaterialTheme.typography.bodyMedium) },
                         leadingIcon = {

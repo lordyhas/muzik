@@ -29,6 +29,10 @@ import com.lordyhas.muzik.data.model.groupIntoAlbums
 import com.lordyhas.muzik.data.model.groupIntoFolders
 import com.lordyhas.muzik.data.model.mergeEditedOrder
 import com.lordyhas.muzik.data.repository.LibraryFilterStore
+import com.lordyhas.muzik.data.repository.PinStore
+import com.lordyhas.muzik.data.model.Pin
+import com.lordyhas.muzik.data.model.PinnedItem
+import com.lordyhas.muzik.data.model.resolvePins
 import com.lordyhas.muzik.data.repository.LibraryRepository
 import com.lordyhas.muzik.data.repository.LyricsRepository
 import com.lordyhas.muzik.data.repository.LyricsState
@@ -75,6 +79,7 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     init {
         PlaybackSettings.init(application)
         LibraryFilterStore.init(application)
+        PinStore.init(application)
     }
 
     // Sleep timer / speed / equalizer live in the playback service; the UI only reads & requests changes
@@ -211,9 +216,9 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     private val _showCreatePlaylistDialog = MutableStateFlow(false)
     val showCreatePlaylistDialog: StateFlow<Boolean> = _showCreatePlaylistDialog.asStateFlow()
 
-    /** Song waiting to be added to a playlist (triggers AddToPlaylistSheet). */
-    private val _songPendingAddToPlaylist = MutableStateFlow<Song?>(null)
-    val songPendingAddToPlaylist: StateFlow<Song?> = _songPendingAddToPlaylist.asStateFlow()
+    /** Songs waiting to be added to a playlist (a song, or a whole album); shows AddToPlaylistSheet. */
+    private val _songsPendingAddToPlaylist = MutableStateFlow<List<Song>>(emptyList())
+    val songsPendingAddToPlaylist: StateFlow<List<Song>> = _songsPendingAddToPlaylist.asStateFlow()
 
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -620,14 +625,15 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun setShowCreatePlaylistDialog(show: Boolean) { _showCreatePlaylistDialog.value = show }
-    fun setSongPendingAddToPlaylist(song: Song?) { _songPendingAddToPlaylist.value = song }
+    fun setSongPendingAddToPlaylist(song: Song?) { _songsPendingAddToPlaylist.value = listOfNotNull(song) }
+    fun setSongsPendingAddToPlaylist(songs: List<Song>) { _songsPendingAddToPlaylist.value = songs }
 
-    /** Creates a playlist and optionally adds [initialSongId] to it once it exists. */
-    fun createPlaylist(name: String, initialSongId: Long? = null) {
+    /** Creates a playlist and adds [initialSongIds] to it once it exists. */
+    fun createPlaylist(name: String, initialSongIds: List<Long> = emptyList()) {
         if (name.isBlank()) return
         viewModelScope.launch {
             val created = playlistRepository.createPlaylist(name)
-            initialSongId?.let { playlistRepository.addSongToPlaylist(created.id, it) }
+            initialSongIds.forEach { playlistRepository.addSongToPlaylist(created.id, it) }
         }
         // Room Flow auto-updates playlists StateFlow — no manual refresh
     }
@@ -635,12 +641,36 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     fun deletePlaylist(id: String) {
         viewModelScope.launch {
             playlistRepository.deletePlaylist(id)
+            PinStore.remove(Pin.playlist(id))
             if (_selectedPlaylistId.value == id) _selectedPlaylistId.value = null
         }
     }
 
     fun addSongToPlaylist(playlistId: String, songId: Long) {
         viewModelScope.launch { playlistRepository.addSongToPlaylist(playlistId, songId) }
+    }
+
+    /** Adds several songs (a whole album) to a playlist, skipping the ones already in it. */
+    fun addSongsToPlaylist(playlist: Playlist, songs: List<Song>) {
+        val toAdd = songs.map { it.id }.filterNot { it in playlist.songIds }
+        viewModelScope.launch { toAdd.forEach { playlistRepository.addSongToPlaylist(playlist.id, it) } }
+        if (songs.size > 1) {
+            showMessage(if (toAdd.isEmpty()) "Already in ${playlist.name}" else pluralize(toAdd.size, "song") + " added to ${playlist.name}")
+        }
+    }
+
+    // ─── Pinned to Home ──────────────────────────────────────────────────────
+
+    val pins: StateFlow<List<Pin>> = PinStore.pins
+
+    /** Pinned albums and playlists, newest first; ones no longer in the library are left out. */
+    val pinnedItems: StateFlow<List<PinnedItem>> = combine(PinStore.pins, albums, playlists) { pins, albumList, playlistList ->
+        resolvePins(pins, albumList, playlistList)
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    fun togglePin(pin: Pin) {
+        val pinned = PinStore.toggle(pin)
+        showMessage(if (pinned) "Pinned to Home" else "Unpinned from Home")
     }
 
     fun removeSongFromPlaylist(playlistId: String, songId: Long) {

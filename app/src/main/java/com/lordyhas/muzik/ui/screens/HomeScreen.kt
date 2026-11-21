@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import coil.compose.AsyncImage
+import com.composables.icons.lucide.Disc3
 import com.composables.icons.lucide.EyeOff
 import com.composables.icons.lucide.Folder
 import com.composables.icons.lucide.LibraryBig
@@ -58,7 +59,7 @@ import com.composables.icons.lucide.Play
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.Shuffle
-import com.lordyhas.muzik.data.model.Playlist
+import com.lordyhas.muzik.data.model.PinnedItem
 import com.lordyhas.muzik.data.model.SmartPlaylistType
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.components.AlbumCard
@@ -106,6 +107,7 @@ fun HomeScreen(
 ) {
     val songs by viewModel.songs.collectAsState()
     val playlists by viewModel.playlists.collectAsState()
+    val pinnedItems by viewModel.pinnedItems.collectAsState()
     val recentSongs by viewModel.recentlyPlayedSongs.collectAsState()
     val recentAlbums by viewModel.recentlyPlayedAlbums.collectAsState()
     val recentArtists by viewModel.recentlyPlayedArtists.collectAsState()
@@ -239,6 +241,41 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    // Pinned albums and playlists; the row disappears when nothing is pinned
+                    if (pinnedItems.isNotEmpty()) {
+                        SectionHeader(title = "Pinned")
+                        LazyRow(
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.padding(vertical = 6.dp)
+                        ) {
+                            items(pinnedItems, key = { it.pin.encode() }) { item ->
+                                when (item) {
+                                    is PinnedItem.PinnedAlbum -> HomeCollectionCard(
+                                        title = item.album.title,
+                                        subtitle = item.album.artist,
+                                        onClick = { onAlbumClick(item.album.id) }
+                                    ) { coverModifier ->
+                                        Artwork(
+                                            uri = item.album.albumArtUri,
+                                            shape = RoundedCornerShape(14.dp),
+                                            placeholderIcon = Lucide.Disc3,
+                                            iconSize = 36.dp,
+                                            contentDescription = null,
+                                            modifier = coverModifier
+                                        )
+                                    }
+                                    is PinnedItem.PinnedPlaylist -> HomeCollectionCard(
+                                        title = item.playlist.name,
+                                        subtitle = "Playlist · " + pluralize(item.playlist.songs.size, "song"),
+                                        onClick = { onPlaylistClick(item.playlist.id) }
+                                    ) { coverModifier -> PlaylistCollage(playlist = item.playlist, modifier = coverModifier) }
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
                     if (recentRow.isNotEmpty()) {
                         SectionHeader(title = "Recently played")
                         // Compact song rows (3 per column) so they read as tracks to play,
@@ -266,7 +303,11 @@ fun HomeScreen(
                             modifier = Modifier.padding(vertical = 6.dp)
                         ) {
                             items(playlists, key = { it.id }) { playlist ->
-                                HomePlaylistCard(playlist = playlist, onClick = { onPlaylistClick(playlist.id) })
+                                HomeCollectionCard(
+                                    title = playlist.name,
+                                    subtitle = pluralize(playlist.songs.size, "song"),
+                                    onClick = { onPlaylistClick(playlist.id) }
+                                ) { coverModifier -> PlaylistCollage(playlist = playlist, modifier = coverModifier) }
                             }
                         }
                         Spacer(modifier = Modifier.height(16.dp))
@@ -564,8 +605,15 @@ private fun ShortcutTileView(tile: ShortcutTile, modifier: Modifier = Modifier) 
     }
 }
 
+/** Square cover with a title and subtitle: playlists and pinned albums/playlists on Home. */
 @Composable
-private fun HomePlaylistCard(playlist: Playlist, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun HomeCollectionCard(
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    cover: @Composable (Modifier) -> Unit
+) {
     Column(
         modifier = modifier
             .width(128.dp)
@@ -573,26 +621,26 @@ private fun HomePlaylistCard(playlist: Playlist, onClick: () -> Unit, modifier: 
             .clickable(onClick = onClick)
             .padding(4.dp)
     ) {
-        PlaylistCollage(
-            playlist = playlist,
-            modifier = Modifier
+        cover(
+            Modifier
                 .size(120.dp)
                 .clip(RoundedCornerShape(14.dp))
                 .border(1.dp, StrokeSubtle, RoundedCornerShape(14.dp))
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = playlist.name,
+            text = title,
             style = MaterialTheme.typography.titleSmall,
             color = TextPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = pluralize(playlist.songs.size, "song"),
+            text = subtitle,
             style = MaterialTheme.typography.bodySmall,
             color = TextSecondary,
-            maxLines = 1
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

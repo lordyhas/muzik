@@ -38,7 +38,6 @@ import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Plus
 import com.composables.icons.lucide.X
 import com.lordyhas.muzik.data.model.Playlist
-import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.SurfaceDark
@@ -54,7 +53,10 @@ import com.lordyhas.muzik.ui.theme.TextSecondary
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddToPlaylistSheet(
-    song: Song,
+    /** What is being added: a song title, or "Multitude · 12 songs" for an album. */
+    subject: String,
+    /** Ids being added: a playlist that already has them all is shown as done. */
+    songIds: List<Long>,
     playlists: List<Playlist>,
     onAddToPlaylist: (Playlist) -> Unit,
     onCreateNew: () -> Unit,
@@ -95,7 +97,7 @@ fun AddToPlaylistSheet(
                         color = TextPrimary
                     )
                     Text(
-                        text = song.title,
+                        text = subject,
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary,
                         maxLines = 1,
@@ -156,7 +158,7 @@ fun AddToPlaylistSheet(
                 contentPadding = PaddingValues(vertical = 6.dp)
             ) {
                 items(playlists, key = { it.id }) { playlist ->
-                    val alreadyAdded = song.id in playlist.songIds
+                    val alreadyAdded = songIds.all { it in playlist.songIds }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
