@@ -105,3 +105,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+aboutLibraries {
+    collect {
+        // Entries that aren't Gradle dependencies, such as the bundled Plus Jakarta Sans font
+        configPath = rootProject.file("config")
+    }
+}
