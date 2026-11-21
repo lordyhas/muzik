@@ -14,11 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.PlaylistPlay
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -42,6 +37,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.composables.icons.lucide.EllipsisVertical
+import com.composables.icons.lucide.ListVideo
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Pencil
+import com.composables.icons.lucide.Trash2
 import com.lordyhas.muzik.data.model.Playlist
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
@@ -121,7 +121,7 @@ fun PlaylistCard(
                     modifier = Modifier.size(32.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.MoreVert,
+                        imageVector = Lucide.EllipsisVertical,
                         contentDescription = "Playlist options",
                         tint = TextMuted,
                         modifier = Modifier.size(18.dp)
@@ -136,7 +136,7 @@ fun PlaylistCard(
                         text = { Text("Edit playlist", color = TextPrimary, style = MaterialTheme.typography.bodyMedium) },
                         leadingIcon = {
                             Icon(
-                                Icons.Default.Edit,
+                                Lucide.Pencil,
                                 contentDescription = null,
                                 tint = AccentPrimary,
                                 modifier = Modifier.size(18.dp)
@@ -151,7 +151,7 @@ fun PlaylistCard(
                         text = { Text("Delete", color = DangerRed, style = MaterialTheme.typography.bodyMedium) },
                         leadingIcon = {
                             Icon(
-                                Icons.Default.Delete,
+                                Lucide.Trash2,
                                 contentDescription = null,
                                 tint = DangerRed,
                                 modifier = Modifier.size(18.dp)
@@ -237,7 +237,7 @@ fun PlaylistCollage(
             artworkUris.isNotEmpty() -> Cell(0, Modifier.fillMaxSize())
             else -> {
                 Icon(
-                    imageVector = Icons.Default.PlaylistPlay,
+                    imageVector = Lucide.ListVideo,
                     contentDescription = null,
                     tint = TextPrimary.copy(alpha = 0.8f),
                     modifier = Modifier.size(52.dp)

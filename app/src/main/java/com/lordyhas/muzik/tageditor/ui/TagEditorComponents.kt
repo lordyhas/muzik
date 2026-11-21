@@ -19,11 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -49,15 +44,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.Image
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Trash2
 import com.lordyhas.muzik.data.tags.CoverArt
 import com.lordyhas.muzik.ui.components.Artwork
 import com.lordyhas.muzik.ui.components.CircleIconButton
-import com.lordyhas.muzik.ui.theme.OnAccentFill
 import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.theme.DangerRed
+import com.lordyhas.muzik.ui.theme.OnAccentFill
 import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.SurfaceDark
 import com.lordyhas.muzik.ui.theme.TextMuted
@@ -82,7 +82,7 @@ fun EditorTopBar(
             .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircleIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", onClick = onBack)
+        CircleIconButton(icon = Lucide.ArrowLeft, contentDescription = "Back", onClick = onBack)
         Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = title,
@@ -186,7 +186,7 @@ fun CoverEditor(
                 Artwork(
                     uri = fallbackUri,
                     shape = shape,
-                    placeholderIcon = Icons.Default.Album,
+                    placeholderIcon = Lucide.Disc3,
                     iconSize = 64.dp,
                     placeholderTint = AccentSecondary,
                     modifier = Modifier.size(size)
@@ -196,13 +196,13 @@ fun CoverEditor(
         Spacer(modifier = Modifier.height(8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             TextButton(onClick = onChange) {
-                Icon(Icons.Default.Image, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
+                Icon(Lucide.Image, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
                 Spacer(modifier = Modifier.width(6.dp))
                 Text("Change cover", color = AccentPrimary)
             }
             if (onRemove != null) {
                 TextButton(onClick = onRemove) {
-                    Icon(Icons.Default.Delete, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(18.dp))
+                    Icon(Lucide.Trash2, contentDescription = null, tint = TextSecondary, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text("Remove", color = TextSecondary)
                 }

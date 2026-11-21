@@ -17,11 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Equalizer
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.QueueMusic
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,14 +36,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.media3.common.util.UnstableApi
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.composables.icons.lucide.AudioLines
+import com.composables.icons.lucide.ListMusic
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.X
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.SurfaceDark
-import androidx.media3.common.util.UnstableApi
 import com.lordyhas.muzik.ui.theme.SurfaceElevated
 import com.lordyhas.muzik.ui.theme.TextMuted
 import com.lordyhas.muzik.ui.theme.TextPrimary
@@ -99,7 +99,7 @@ fun QueueSheet(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Default.QueueMusic,
+                        imageVector = Lucide.ListMusic,
                         contentDescription = null,
                         tint = AccentPrimary,
                         modifier = Modifier.size(24.dp)
@@ -123,7 +123,7 @@ fun QueueSheet(
                         .background(SurfaceCard)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Lucide.X,
                         contentDescription = "Close",
                         tint = TextSecondary,
                         modifier = Modifier.size(20.dp)
@@ -276,7 +276,7 @@ private fun QueueSongItem(
                 )
             } else {
                 Icon(
-                    imageVector = Icons.Default.MusicNote,
+                    imageVector = Lucide.Music,
                     contentDescription = null,
                     tint = if (isCurrent) AccentPrimary else TextMuted,
                     modifier = Modifier.size(22.dp)
@@ -291,7 +291,7 @@ private fun QueueSongItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Equalizer,
+                        imageVector = Lucide.AudioLines,
                         contentDescription = null,
                         tint = AccentPrimary,
                         modifier = Modifier.size(20.dp)
@@ -331,7 +331,7 @@ private fun QueueSongItem(
                 modifier = Modifier.size(32.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Close,
+                    imageVector = Lucide.X,
                     contentDescription = "Remove from queue",
                     tint = TextMuted,
                     modifier = Modifier.size(18.dp)

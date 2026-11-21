@@ -8,11 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.NewReleases
-import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +19,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.BadgePlus
+import com.composables.icons.lucide.Flame
+import com.composables.icons.lucide.History
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.data.model.SmartPlaylist
 import com.lordyhas.muzik.data.model.SmartPlaylistType
 import com.lordyhas.muzik.ui.theme.AppThemeStore
@@ -32,10 +31,10 @@ import com.lordyhas.muzik.ui.theme.contentColorOn
 /** Visual identity (icon + gradient) of each smart playlist. */
 val SmartPlaylistType.icon: ImageVector
     get() = when (this) {
-        SmartPlaylistType.LIKED -> Icons.Default.Favorite
-        SmartPlaylistType.MOST_PLAYED -> Icons.Default.Whatshot
-        SmartPlaylistType.RECENTLY_ADDED -> Icons.Default.NewReleases
-        SmartPlaylistType.REDISCOVER -> Icons.Default.History
+        SmartPlaylistType.LIKED -> Lucide.HeartFilled
+        SmartPlaylistType.MOST_PLAYED -> Lucide.Flame
+        SmartPlaylistType.RECENTLY_ADDED -> Lucide.BadgePlus
+        SmartPlaylistType.REDISCOVER -> Lucide.History
     }
 
 val SmartPlaylistType.gradient: List<Color>

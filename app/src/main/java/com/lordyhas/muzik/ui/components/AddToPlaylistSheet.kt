@@ -17,10 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PlaylistPlay
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -37,6 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composables.icons.lucide.ListVideo
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Plus
+import com.composables.icons.lucide.X
 import com.lordyhas.muzik.data.model.Playlist
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.theme.AccentPrimary
@@ -104,7 +104,7 @@ fun AddToPlaylistSheet(
                 }
                 IconButton(onClick = onDismiss) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Lucide.X,
                         contentDescription = "Close",
                         tint = TextSecondary,
                         modifier = Modifier.size(20.dp)
@@ -132,7 +132,7 @@ fun AddToPlaylistSheet(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Add,
+                        imageVector = Lucide.Plus,
                         contentDescription = null,
                         tint = AccentPrimary,
                         modifier = Modifier.size(24.dp)
@@ -174,7 +174,7 @@ fun AddToPlaylistSheet(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = Icons.Default.PlaylistPlay,
+                                imageVector = Lucide.ListVideo,
                                 contentDescription = null,
                                 tint = if (alreadyAdded) AccentPrimary else TextMuted,
                                 modifier = Modifier.size(24.dp)

@@ -1,0 +1,62 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+Muzik is a single-module (`:app`) Android local music player written in Kotlin with Jetpack Compose (Material 3), Media3/ExoPlayer for playback, Room for playlists, and Coil for artwork. Package: `com.lordyhas.muzik`. minSdk 24, targetSdk 36, compileSdk 37, JVM target 11. Android Gradle Plugin 9 with its built-in Kotlin support (no `org.jetbrains.kotlin.android` plugin; Kotlin options go in the top-level `kotlin { compilerOptions { } }` block). Dependency versions live in `gradle/libs.versions.toml`; Room uses KSP.
+
+## Commands
+
+Run from the repo root (use `./gradlew` in Git Bash, `.\gradlew.bat` in PowerShell):
+
+- Build debug APK: `./gradlew assembleDebug`
+- Install on a connected device/emulator: `./gradlew installDebug`
+- Lint: `./gradlew lint`
+- Unit tests (JVM): `./gradlew testDebugUnitTest`
+- Single unit test: `./gradlew testDebugUnitTest --tests "com.lordyhas.muzik.ExampleUnitTest"` (append `.methodName` for one method)
+- Instrumented tests (needs a device): `./gradlew connectedDebugAndroidTest`
+
+The only tests right now are the template `ExampleUnitTest` / `ExampleInstrumentedTest`.
+
+## CI/CD
+
+GitHub Actions in `.github/workflows/`: `ci.yml` runs unit tests, a debug build and lint on every PR (any base branch, so stacked PRs keep their checks when retargeted to `main`) and on pushes to `main`. `release.yml` runs on pushes to `production`: tests, signed `assembleRelease` (keystore from the `MUZIK_*` repository secrets, wired through env vars read in `app/build.gradle.kts`), then a GitHub Release tagged `v<versionName>`. It fails if that tag already exists, so `versionName`/`versionCode` must be bumped before merging to `production`. `release-check.yml` (job "Release readiness") runs on PRs into `production` and fails if the version isn't higher than production's, if the tag exists, or if `whatsnew.json` has no entry for the new `versionCode`; the release notes start with that entry (`.github/scripts/whatsnew_notes.py`).
+
+## Architecture
+
+**One ViewModel for everything.** `MainActivity` creates a single `MusicViewModel` (an `AndroidViewModel`) and passes it down explicitly to `MainAppScreen` and every screen. There's no DI framework: the ViewModel builds `MusicRepository`, `PlaylistRepository` and `MusicController` itself. All UI state is exposed as `StateFlow`s on this ViewModel, including overlay visibility (now playing, queue, song details, add-to-playlist sheet, create/rename playlist dialogs).
+
+**The library is derived in memory.** `MusicRepository.getLocalSongs()` queries `MediaStore` (and first triggers a `MediaScannerConnection` scan of common directories). The raw result is `_allSongs`; `_songs` is that minus what the user's `LibraryFilter` excludes (hidden folders and their subfolders, recordings, short clips). The filter lives in the process-wide `LibraryFilterStore` and is also applied by `MediaLibraryTree`, so everything that lists songs must start from `_songs`, never from the repository directly. Albums, artists, filtered search results, and recently played lists are all computed from it with `map`/`combine`. Albums are grouped by **MediaStore album id** (`groupIntoAlbums()` in `data/model/Album.kt`, shared with Android Auto), so same-titled albums stay separate. Artists are grouped by **artist name**. Album track order comes from `sortedForAlbum()` (disc number, then track number). MediaStore's `TRACK` value packs the disc into the thousands digit (`1003` = disc 1, track 3) and the repository decodes it. Songs also carry `dateAdded`, `folderPath` and `fileName`, which drive sorting (`data/model/Library.kt`), folders and lyrics. Sort choices persist in `muzik_prefs`.
+
+**Playlists live in Room** (`MuzikDatabase`: the `playlists` table plus the `playlist_songs` junction table with a `position` column, cascade delete). They store only MediaStore song IDs. `MusicViewModel.playlists` joins Room flows with `_songs` to resolve `Song` objects, so songs missing from the device are silently dropped. The same DB also holds `liked_songs` and `play_stats` (play count + last played). "Recently played", the smart playlists (Liked, Most Played, Recently Added, Rediscover) and Android Auto all read from these tables. The DB is **version 2** with `exportSchema = false`. Any schema change needs a version bump plus a `Migration` in `MuzikDatabase` whose SQL matches Room's generated `CREATE TABLE` exactly. You can check it in `app/build/generated/ksp/`.
+
+**Playback is split across two classes:**
+- `service/MusicPlaybackService`: a `MediaLibraryService` that owns the `ExoPlayer` and `MediaLibrarySession` (audio focus, becoming-noisy, wake lock). Declared in the manifest as a `mediaPlayback` foreground service. It also handles everything that must keep working with the UI closed:
+  - It records plays into `play_stats` when a song actually starts.
+  - It applies the sleep timer, speed and equalizer from `PlaybackSettings`. That object is shared in-process: the UI writes to it and the service collects from it.
+  - It saves progress into `PlaybackStateStore`.
+  - It serves the Android Auto browse tree (`MediaLibraryTree`) and `onPlaybackResumption`, and updates the home-screen widget (`widget/NowPlayingWidget`).
+  - **Queue items must keep `mediaId` = song id**, because current-song lookup, play stats and session restore depend on it. Browse-tree items use `song|<id>|<parentId>` ids and are converted back in `onAddMediaItems`/`onSetMediaItems`.
+- `service/MusicController`: the in-app client. It connects through a `MediaController` built from a `SessionToken`, mirrors player state into StateFlows, and polls position every 500ms while playing.
+
+**Queue model.** The queue is the player's own list, one ordinary list (1, 2, 3, A, B, 4) that Previous and Next move through. Each `MediaItem` carries queue marks in its metadata extras (`service/QueuePlayer`): whether it was added with "Add to queue", and its place in the album/playlist (to undo shuffle). The rules are pure and unit-tested in `service/QueueRules`: added songs go right after the current one and the added songs after it; they stay in the list once played; when the album/playlist loops back to its start (repeat all) the playback service drops them and reshuffles with shuffle on; playing another album/playlist replaces everything. Shuffle does **not** use ExoPlayer's `shuffleModeEnabled` (forced off): it reorders only the album songs still to come, and its state lives in `PlaybackSettings.shuffle`. `MusicController` never tracks the queue on the side: it reads it back from the player (`syncQueue()`). New queue operations go through the `QueuePlayer` functions so they work on both the controller and the service's ExoPlayer, and the session saves the marks (`PlaybackStateStore`).
+
+Most Media3 classes need `@UnstableApi`, which is applied at the class level on the activity, ViewModel, controller, and service.
+
+**Navigation.** `ui/screens/MainAppScreen.kt` holds the `NavHost`, the bottom tab bar (`NavigationTab` enum: home, tracks, albums, artists, playlists), and detail routes `album/{albumId}`, `artist/{artistName}`, `playlist/{playlistId}` and `playlist/{playlistId}/edit` (the playlist editor), plus `settings`, `about` and `licenses` (reached from the gear on Home). The routes in `FULL_SCREEN_ROUTES` hide the mini player and tab bar. The app version comes from `readAppVersion()` in `data/AppInfo.kt` (package manager, not `BuildConfig`, which AGP 9 disables by default); external links live in `AppLinks`. User-facing release notes live in `app/src/main/assets/whatsnew.json` (newest first, plain English for listeners, `type` new/improved/fixed): `WhatsNewSheet` shows the unseen ones once after an update (never on a fresh install), and About > What's new lists them all. Every `versionCode` bump needs an entry there. Library rescans from pull-to-refresh or Settings use `refreshLibrary()`, which keeps the list on screen (`isRefreshing`), unlike the initial `loadSongs()` (`isLoading`). String arguments are URL-encoded/decoded, and detail screens look up their data from the ViewModel by album id, artist name, or playlist id. `NowPlayingScreen`, the dialogs, and the sheets are drawn as overlays on top of the `NavHost`, driven by ViewModel flags, not as nav destinations. Back handling is a layered set of `BackHandler`s in `MainAppScreen`: overlays close first, a secondary tab goes back to Home, and on Home a double press exits. Keep their `enabled` conditions mutually exclusive when adding new overlays.
+
+**Tag editor.** `tageditor/TagEditorActivity` is a second launcher entry ("Muzik Tags") with its own `taskAffinity`, so it appears as a separate app in recents. It has its own `TagEditorViewModel` (same `MusicRepository` + `LibraryFilterStore` filter), a small NavHost (library, `song/{id}`, `album/{id}`, `artist/{name}`) and reuses `ui/components`. Tags are read and written inside the files by `data/tags/AudioTagStore` through TagLib (`io.github.kyant0:taglib`) on a file descriptor. The pure field mapping, edit diffing and file-name guessing live in `data/tags/SongTags.kt` (unit-tested). Writing needs `rememberWriteAccess()`: one `MediaStore.createWriteRequest` dialog per save on Android 11+ (skipped with the MANAGE_MEDIA special access), `WRITE_EXTERNAL_STORAGE` + `requestLegacyExternalStorage` on 10 and below. After a write, files are rescanned, and Coil's caches and `ArtworkColorExtractor` are cleared when a cover changed. The player picks the changes up in `onResume`.
+
+**Permissions.** These are requested in `MainActivity`: `READ_MEDIA_AUDIO` + `POST_NOTIFICATIONS` on API 33+, and `READ_EXTERNAL_STORAGE` below that. Songs reload in `onResume` whenever permission is granted.
+
+## Conventions
+
+- User-facing strings are in **English** and hardcoded in Kotlin (no `strings.xml` resources). Use `pluralize(count, "song")` from `ui/components/Common.kt` for counts.
+- The app is dark-only, with three color themes listeners pick in Settings (`AppTheme` in `ui/theme/AppTheme.kt`: Nocturne, the default, Ember, Lagoon; the choice lives in `AppThemeStore`, saved in `muzik_prefs`). The names in `ui/theme/Color.kt` (`BackgroundDark`, `AccentPrimary`...) read the current theme, so never hardcode a color: put text behind an accent on `AccentFill` with `OnAccentFill`, and use `contentColorOn(color)` on gradients or artwork colors. Each theme has only two brand hues (`AccentPrimary`, `AccentSecondary`). The type scale is in `Type.kt`. Prefer `MaterialTheme.typography.*` over ad-hoc `fontSize`.
+- Before building new UI, check `ui/components/Common.kt`. It has the shared kit: `Artwork` (cover with placeholder), `ScreenHeader`, `SectionHeader`, `MuzikSearchField`, `EmptyState`/`LoadingState`, `PlayShuffleButtons`, and `DetailScaffold` + `DetailHero` for album/artist/playlist pages.
+- Icons come from Lucide (`com.composables:icons-lucide-cmp`, used as `Lucide.Music`), never from Material icons, which the app no longer depends on. Lucide is outline only. For the few icons that must look filled (the liked heart, play/pause/skip), use the variants in `ui/components/LucideFilled.kt` (`Lucide.HeartFilled`, `Lucide.PlayFilled`...). Notification and widget icons are XML drawables in `res/drawable`.
+- Artwork-driven accent colors come from `rememberArtworkColor(uri)` in `ui/theme/ArtworkColor.kt`. It samples the cover through Coil and caches by URI.
+- Reusable composables (cards, sheets, dialogs, `MiniPlayer`, `NowPlayingScreen`) live in `ui/components/`, and top-level and detail screens live in `ui/screens/`. `QueueSheet` and `SongListSheet` are currently unused.
+- Swipe gestures go through `SwipeActionBox` (`ui/components/SwipeActions.kt`): `SongItem` gets swipe-right-to-queue automatically whenever `onAddToQueue` is set, and only the queue uses swipe-left (remove). Lists that animate inserts/removals need stable `key`s plus `Modifier.animateItem()`; reorderable rows pass `reorderState.placementSpec(key)` so the dropped row doesn't replay its move.
+- User-facing confirmations ("Added to queue", "Removed · Undo") are emitted with `showMessage(...)` in `MusicViewModel` and shown by `MuzikSnackbarHost` in `MainAppScreen`, above every overlay. Plain confirmations are a short pill that lets touches through; only messages with an action (Undo) use a snackbar.

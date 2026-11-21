@@ -15,11 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Headphones
-import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -35,16 +30,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lordyhas.muzik.ui.theme.contentColorOn
-import com.lordyhas.muzik.ui.theme.OnAccentFill
+import com.composables.icons.lucide.BellRing
+import com.composables.icons.lucide.Headphones
+import com.composables.icons.lucide.LibraryBig
+import com.composables.icons.lucide.Lock
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.theme.BrandGradient
+import com.lordyhas.muzik.ui.theme.OnAccentFill
 import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.theme.TextSecondary
+import com.lordyhas.muzik.ui.theme.contentColorOn
 
 @Composable
 fun PermissionRequestView(
@@ -79,7 +79,7 @@ fun PermissionRequestView(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.Headphones,
+                    imageVector = Lucide.Headphones,
                     contentDescription = null,
                     tint = contentColorOn(BrandGradient),
                     modifier = Modifier.size(56.dp)
@@ -115,17 +115,17 @@ fun PermissionRequestView(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 PermissionReason(
-                    icon = Icons.Default.LibraryMusic,
+                    icon = Lucide.LibraryBig,
                     title = "Audio files",
                     description = "Find and play the songs stored on your device."
                 )
                 PermissionReason(
-                    icon = Icons.Default.NotificationsActive,
+                    icon = Lucide.BellRing,
                     title = "Notifications",
                     description = "Control playback from the lock screen and notification shade."
                 )
                 PermissionReason(
-                    icon = Icons.Default.Lock,
+                    icon = Lucide.Lock,
                     title = "Private by design",
                     description = "Everything stays on your device. Nothing is uploaded."
                 )

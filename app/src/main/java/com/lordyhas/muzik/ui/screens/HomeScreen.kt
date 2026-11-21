@@ -24,18 +24,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.NewReleases
-import androidx.compose.material.icons.filled.Whatshot
-import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Shuffle
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -59,14 +47,26 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import coil.compose.AsyncImage
-import com.lordyhas.muzik.data.model.Song
+import com.composables.icons.lucide.BadgePlus
+import com.composables.icons.lucide.EyeOff
+import com.composables.icons.lucide.Flame
+import com.composables.icons.lucide.Folder
+import com.composables.icons.lucide.LibraryBig
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Search
+import com.composables.icons.lucide.Settings
+import com.composables.icons.lucide.Shuffle
+import com.composables.icons.lucide.Sparkles
 import com.lordyhas.muzik.data.model.SmartPlaylistType
+import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.components.AlbumCard
 import com.lordyhas.muzik.ui.components.ArtistCard
 import com.lordyhas.muzik.ui.components.Artwork
 import com.lordyhas.muzik.ui.components.CircleIconButton
 import com.lordyhas.muzik.ui.components.EmptyState
+import com.lordyhas.muzik.ui.components.HeartFilled
 import com.lordyhas.muzik.ui.components.LoadingState
+import com.lordyhas.muzik.ui.components.PlayFilled
 import com.lordyhas.muzik.ui.components.SectionHeader
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.theme.AccentFill
@@ -74,11 +74,11 @@ import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.theme.BrandGradient
-import com.lordyhas.muzik.ui.theme.contentColorOn
 import com.lordyhas.muzik.ui.theme.StrokeSubtle
 import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.theme.TextSecondary
+import com.lordyhas.muzik.ui.theme.contentColorOn
 import com.lordyhas.muzik.ui.theme.rememberArtworkColor
 import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
 import java.util.Calendar
@@ -155,12 +155,12 @@ fun HomeScreen(
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     CircleIconButton(
-                        icon = Icons.Default.Search,
+                        icon = Lucide.Search,
                         contentDescription = "Search library",
                         onClick = onSearchClick
                     )
                     CircleIconButton(
-                        icon = Icons.Default.Settings,
+                        icon = Lucide.Settings,
                         contentDescription = "Settings",
                         onClick = onSettingsClick
                     )
@@ -171,7 +171,7 @@ fun HomeScreen(
                 isLoading -> LoadingState(modifier = Modifier.height(240.dp))
                 // Everything filtered out: say so, and offer the way back
                 songs.isEmpty() && hiddenSongCount > 0 -> EmptyState(
-                    icon = Icons.Default.VisibilityOff,
+                    icon = Lucide.EyeOff,
                     title = "All your music is hidden",
                     message = "${pluralize(hiddenSongCount, "audio file")} hidden by your folder and library filters.",
                     modifier = Modifier.height(360.dp),
@@ -183,7 +183,7 @@ fun HomeScreen(
                     }
                 )
                 songs.isEmpty() -> EmptyState(
-                    icon = Icons.Default.LibraryMusic,
+                    icon = Lucide.LibraryBig,
                     title = "No music found on this device",
                     message = "Add some audio files, then pull down to refresh.",
                     modifier = Modifier.height(320.dp)
@@ -210,7 +210,7 @@ fun HomeScreen(
                         QuickActionCard(
                             title = "Shuffle all",
                             subtitle = "Your whole library",
-                            icon = Icons.Default.Shuffle,
+                            icon = Lucide.Shuffle,
                             gradient = BrandGradient,
                             onClick = { viewModel.playRandom() },
                             modifier = Modifier.weight(1f)
@@ -218,7 +218,7 @@ fun HomeScreen(
                         QuickActionCard(
                             title = "Discover",
                             subtitle = "10 random picks",
-                            icon = Icons.Default.AutoAwesome,
+                            icon = Lucide.Sparkles,
                             gradient = listOf(AccentSecondary, AccentFill),
                             onClick = {
                                 val sample = songs.shuffled().take(10)
@@ -239,23 +239,23 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         ShortcutChip(
-                            icon = Icons.Default.Favorite,
+                            icon = Lucide.HeartFilled,
                             label = "Liked Songs",
                             onClick = { onSmartPlaylistClick(SmartPlaylistType.LIKED) }
                         )
                         ShortcutChip(
-                            icon = Icons.Default.Whatshot,
+                            icon = Lucide.Flame,
                             label = "Most Played",
                             onClick = { onSmartPlaylistClick(SmartPlaylistType.MOST_PLAYED) },
                             tint = AccentSecondary
                         )
                         ShortcutChip(
-                            icon = Icons.Default.NewReleases,
+                            icon = Lucide.BadgePlus,
                             label = "Recently Added",
                             onClick = { onSmartPlaylistClick(SmartPlaylistType.RECENTLY_ADDED) },
                             tint = AccentPrimary
                         )
-                        ShortcutChip(icon = Icons.Default.Folder, label = "Folders", onClick = onFoldersClick, tint = TextSecondary)
+                        ShortcutChip(icon = Lucide.Folder, label = "Folders", onClick = onFoldersClick, tint = TextSecondary)
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -413,7 +413,7 @@ private fun HeroCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Default.PlayArrow,
+                    imageVector = Lucide.PlayFilled,
                     contentDescription = "Play",
                     tint = BackgroundDark,
                     modifier = Modifier.size(30.dp)

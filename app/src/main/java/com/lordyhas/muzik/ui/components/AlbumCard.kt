@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.StrokeSubtle
@@ -44,7 +44,7 @@ fun AlbumCard(
             Artwork(
                 uri = album.albumArtUri,
                 shape = RoundedCornerShape(16.dp),
-                placeholderIcon = Icons.Default.Album,
+                placeholderIcon = Lucide.Disc3,
                 iconSize = 48.dp,
                 contentDescription = album.title,
                 modifier = Modifier

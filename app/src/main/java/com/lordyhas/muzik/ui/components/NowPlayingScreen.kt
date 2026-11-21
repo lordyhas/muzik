@@ -2,8 +2,8 @@ package com.lordyhas.muzik.ui.components
 
 import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,29 +30,6 @@ import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
-import androidx.compose.material.icons.automirrored.filled.QueueMusic
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Bedtime
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Lyrics
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material.icons.filled.RepeatOne
-import androidx.compose.material.icons.filled.Shuffle
-import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material.icons.filled.SkipPrevious
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -78,9 +55,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -90,6 +67,24 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import coil.compose.AsyncImage
+import com.composables.icons.lucide.ChevronDown
+import com.composables.icons.lucide.ChevronUp
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.EllipsisVertical
+import com.composables.icons.lucide.Heart
+import com.composables.icons.lucide.Info
+import com.composables.icons.lucide.ListMusic
+import com.composables.icons.lucide.ListPlus
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.MicVocal
+import com.composables.icons.lucide.Moon
+import com.composables.icons.lucide.Repeat
+import com.composables.icons.lucide.Repeat1
+import com.composables.icons.lucide.Shuffle
+import com.composables.icons.lucide.SlidersHorizontal
+import com.composables.icons.lucide.Trash2
+import com.composables.icons.lucide.UserRound
+import com.composables.icons.lucide.X
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.repository.LyricsState
 import com.lordyhas.muzik.service.SleepTimer
@@ -101,9 +96,9 @@ import com.lordyhas.muzik.ui.theme.TextMuted
 import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.theme.TextSecondary
 import com.lordyhas.muzik.ui.theme.rememberArtworkColor
-import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.math.abs
+import kotlinx.coroutines.launch
 
 @UnstableApi
 @Composable
@@ -238,7 +233,7 @@ fun NowPlayingScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         CircleIconButton(
-                            icon = Icons.Default.KeyboardArrowDown,
+                            icon = Lucide.ChevronDown,
                             contentDescription = "Close player",
                             onClick = onDismiss,
                             size = 44.dp,
@@ -266,7 +261,7 @@ fun NowPlayingScreen(
                         }
                         // claude do not un comment this.
                         /*CircleIconButton(
-                            icon = Icons.AutoMirrored.Filled.QueueMusic,
+                            icon = Lucide.ListMusic,
                             contentDescription = "Open queue",
                             onClick = { coroutineScope.launch { pagerState.animateScrollToPage(1) } },
                             size = 44.dp,
@@ -277,7 +272,7 @@ fun NowPlayingScreen(
                         Box {
                             var isMenuExpanded by remember { mutableStateOf(false) }
                             CircleIconButton(
-                                icon = Icons.Default.MoreVert,
+                                icon = Lucide.EllipsisVertical,
                                 contentDescription = "More options",
                                 onClick = { isMenuExpanded = true },
                                 size = 44.dp,
@@ -310,13 +305,13 @@ fun NowPlayingScreen(
                                     )
                                 }
 
-                                MenuItem("Add to playlist", Icons.AutoMirrored.Filled.PlaylistAdd, accent, onAddToPlaylist)
-                                MenuItem("Queue", Icons.AutoMirrored.Filled.QueueMusic, accent) {
+                                MenuItem("Add to playlist", Lucide.ListPlus, accent, onAddToPlaylist)
+                                MenuItem("Queue", Lucide.ListMusic, accent) {
                                     coroutineScope.launch { pagerState.animateScrollToPage(1) }
                                 }
-                                MenuItem("Go to album", Icons.Default.Album, TextSecondary, onGoToAlbum)
-                                MenuItem("Go to artist", Icons.Default.Person, TextSecondary, onGoToArtist)
-                                MenuItem("Song details", Icons.Default.Info, TextSecondary, onShowDetails)
+                                MenuItem("Go to album", Lucide.Disc3, TextSecondary, onGoToAlbum)
+                                MenuItem("Go to artist", Lucide.UserRound, TextSecondary, onGoToArtist)
+                                MenuItem("Song details", Lucide.Info, TextSecondary, onShowDetails)
                             }
                         }
                     }
@@ -424,7 +419,7 @@ fun NowPlayingScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         ToggleControl(
-                            icon = Icons.Default.Shuffle,
+                            icon = Lucide.Shuffle,
                             contentDescription = if (isShuffle) "Shuffle on" else "Shuffle off",
                             active = isShuffle,
                             accent = accent,
@@ -433,7 +428,7 @@ fun NowPlayingScreen(
 
                         IconButton(onClick = onSkipPrevious, modifier = Modifier.size(56.dp)) {
                             Icon(
-                                Icons.Default.SkipPrevious, "Previous",
+                                Lucide.SkipBackFilled, "Previous",
                                 tint = TextPrimary,
                                 modifier = Modifier.size(38.dp)
                             )
@@ -448,7 +443,7 @@ fun NowPlayingScreen(
                                 .background(Color.White)
                         ) {
                             Icon(
-                                if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                if (isPlaying) Lucide.PauseFilled else Lucide.PlayFilled,
                                 if (isPlaying) "Pause" else "Play",
                                 tint = BackgroundDark,
                                 modifier = Modifier.size(40.dp)
@@ -457,13 +452,13 @@ fun NowPlayingScreen(
 
                         IconButton(onClick = onSkipNext, modifier = Modifier.size(56.dp)) {
                             Icon(
-                                Icons.Default.SkipNext, "Next",
+                                Lucide.SkipForwardFilled, "Next",
                                 tint = TextPrimary,
                                 modifier = Modifier.size(38.dp)
                             )
                         }
 
-                        val repeatIcon = if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat
+                        val repeatIcon = if (repeatMode == Player.REPEAT_MODE_ONE) Lucide.Repeat1 else Lucide.Repeat
                         val repeatLabel = when (repeatMode) {
                             Player.REPEAT_MODE_ONE -> "Repeat one"
                             Player.REPEAT_MODE_ALL -> "Repeat all"
@@ -485,7 +480,7 @@ fun NowPlayingScreen(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         PlayerActionChip(
-                            icon = Icons.Default.Bedtime,
+                            icon = Lucide.Moon,
                             label = when {
                                 sleepRemaining != null -> formatCountdown(sleepRemaining)
                                 sleepTimer == SleepTimer.EndOfTrack -> "End of song"
@@ -496,14 +491,14 @@ fun NowPlayingScreen(
                             onClick = onSleepTimerClick
                         )
                         PlayerActionChip(
-                            icon = Icons.Default.Lyrics,
+                            icon = Lucide.MicVocal,
                             label = "Lyrics",
                             active = showLyrics,
                             accent = accent,
                             onClick = onToggleLyrics
                         )
                         PlayerActionChip(
-                            icon = Icons.Default.Tune,
+                            icon = Lucide.SlidersHorizontal,
                             label = if (playbackSpeed != 1f) formatSpeed(playbackSpeed) else "Audio",
                             active = playbackSpeed != 1f,
                             accent = accent,
@@ -537,7 +532,7 @@ fun NowPlayingScreen(
                             )
                         }
                         Icon(
-                            Icons.Default.KeyboardArrowUp, "Swipe up for queue",
+                            Lucide.ChevronUp, "Swipe up for queue",
                             tint = TextSecondary,
                             modifier = Modifier.size(24.dp)
                         )
@@ -596,7 +591,7 @@ fun NowPlayingScreen(
                                 .background(Color.White)
                         ) {
                             Icon(
-                                if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                if (isPlaying) Lucide.PauseFilled else Lucide.PlayFilled,
                                 if (isPlaying) "Pause" else "Play",
                                 tint = BackgroundDark,
                                 modifier = Modifier.size(24.dp)
@@ -607,7 +602,7 @@ fun NowPlayingScreen(
 
                         IconButton(onClick = onSkipNext, modifier = Modifier.size(42.dp)) {
                             Icon(
-                                Icons.Default.SkipNext, "Next",
+                                Lucide.SkipForwardFilled, "Next",
                                 tint = TextPrimary,
                                 modifier = Modifier.size(26.dp)
                             )
@@ -617,7 +612,7 @@ fun NowPlayingScreen(
                     // ── Queue Track List ─────────────────────────────────
                     if (queue.isEmpty()) {
                         EmptyState(
-                            icon = Icons.AutoMirrored.Filled.QueueMusic,
+                            icon = Lucide.ListMusic,
                             title = "Queue is empty",
                             modifier = Modifier.weight(1f)
                         )
@@ -635,7 +630,7 @@ fun NowPlayingScreen(
                         }
                         val removeAction = { index: Int ->
                             SwipeAction(
-                                icon = Icons.Default.Delete,
+                                icon = Lucide.Trash2,
                                 label = "Remove from queue",
                                 color = DangerRed,
                                 dismiss = true,
@@ -863,7 +858,7 @@ private fun QueueSongRow(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (isAdded) {
                     Icon(
-                        Icons.AutoMirrored.Filled.QueueMusic,
+                        Lucide.ListMusic,
                         contentDescription = "Added to queue",
                         tint = accent,
                         modifier = Modifier.padding(end = 4.dp).size(14.dp)
@@ -882,7 +877,7 @@ private fun QueueSongRow(
         if (onRemove != null) {
             IconButton(onClick = onRemove, modifier = Modifier.size(34.dp)) {
                 Icon(
-                    Icons.Default.Close, "Remove from queue",
+                    Lucide.X, "Remove from queue",
                     tint = TextMuted,
                     modifier = Modifier.size(18.dp)
                 )
@@ -912,7 +907,7 @@ private fun LikeButton(isLiked: Boolean, accent: Color, onClick: () -> Unit) {
         modifier = Modifier.size(48.dp)
     ) {
         Icon(
-            imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+            imageVector = if (isLiked) Lucide.HeartFilled else Lucide.Heart,
             contentDescription = if (isLiked) "Remove from Liked Songs" else "Add to Liked Songs",
             tint = if (isLiked) accent else TextPrimary.copy(alpha = 0.8f),
             modifier = Modifier

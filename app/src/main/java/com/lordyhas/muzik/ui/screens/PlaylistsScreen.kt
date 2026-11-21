@@ -17,9 +17,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PlaylistPlay
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.ListVideo
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Plus
 import com.lordyhas.muzik.data.model.SmartPlaylistType
 import com.lordyhas.muzik.ui.components.CreatePlaylistDialog
 import com.lordyhas.muzik.ui.components.EmptyState
@@ -109,7 +109,7 @@ fun PlaylistsScreen(
                     if (playlists.isEmpty()) {
                         item(span = { GridItemSpan(maxLineSpan) }, key = "empty") {
                             EmptyState(
-                                icon = Icons.Default.PlaylistPlay,
+                                icon = Lucide.ListVideo,
                                 title = "No playlists yet",
                                 message = "Tap \"New playlist\" to create your first one.",
                                 modifier = Modifier
@@ -141,7 +141,7 @@ fun PlaylistsScreen(
             shape = CircleShape,
             containerColor = AccentPrimary,
             contentColor = Color.White,
-            icon = { Icon(Icons.Default.Add, contentDescription = null) },
+            icon = { Icon(Lucide.Plus, contentDescription = null) },
             text = { Text("New playlist") }
         )
     }

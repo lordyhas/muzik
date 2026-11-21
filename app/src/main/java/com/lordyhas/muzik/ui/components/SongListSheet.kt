@@ -21,11 +21,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,12 +46,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.Shuffle
+import com.composables.icons.lucide.X
 import com.lordyhas.muzik.data.model.Song
-import com.lordyhas.muzik.ui.theme.OnAccentFill
 import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
+import com.lordyhas.muzik.ui.theme.OnAccentFill
 import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.SurfaceDark
 import com.lordyhas.muzik.ui.theme.SurfaceElevated
@@ -129,7 +128,7 @@ fun SongListSheet(
                         )
                     } else {
                         Icon(
-                            imageVector = Icons.Default.MusicNote,
+                            imageVector = Lucide.Music,
                             contentDescription = null,
                             tint = AccentPrimary,
                             modifier = Modifier.size(36.dp)
@@ -174,7 +173,7 @@ fun SongListSheet(
                         .background(SurfaceCard)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Lucide.X,
                         contentDescription = "Close",
                         tint = TextSecondary,
                         modifier = Modifier.size(20.dp)
@@ -198,7 +197,7 @@ fun SongListSheet(
                     colors = ButtonDefaults.buttonColors(containerColor = AccentFill, contentColor = OnAccentFill)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.PlayArrow,
+                        imageVector = Lucide.PlayFilled,
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier.size(22.dp)
@@ -223,7 +222,7 @@ fun SongListSheet(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = AccentSecondary)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Shuffle,
+                        imageVector = Lucide.Shuffle,
                         contentDescription = null,
                         tint = AccentSecondary,
                         modifier = Modifier.size(20.dp)

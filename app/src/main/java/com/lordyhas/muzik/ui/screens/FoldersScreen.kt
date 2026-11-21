@@ -18,12 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +35,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Eye
+import com.composables.icons.lucide.EyeOff
+import com.composables.icons.lucide.Folder
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.SlidersHorizontal
 import com.lordyhas.muzik.data.model.Folder
 import com.lordyhas.muzik.ui.components.CircleIconButton
 import com.lordyhas.muzik.ui.components.DetailHero
@@ -82,7 +82,7 @@ fun FoldersScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
             CircleIconButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Lucide.ArrowLeft,
                 contentDescription = "Back",
                 onClick = onBackClick
             )
@@ -92,7 +92,7 @@ fun FoldersScreen(
             subtitle = pluralize(folders.size, "folder") + if (hiddenFolderCount > 0) " • $hiddenFolderCount hidden" else ""
         ) {
             CircleIconButton(
-                icon = Icons.Default.Tune,
+                icon = Lucide.SlidersHorizontal,
                 contentDescription = "Library filters",
                 onClick = { showFilters = true }
             )
@@ -106,7 +106,7 @@ fun FoldersScreen(
 
         if (folders.isEmpty()) {
             EmptyState(
-                icon = Icons.Default.Folder,
+                icon = Lucide.Folder,
                 title = "No folders found",
                 message = "Folders containing music will show up here."
             )
@@ -158,7 +158,7 @@ private fun FolderRow(folder: Folder, onClick: () -> Unit, onToggleHidden: () ->
         // A subfolder of a hidden folder comes back only when that parent is shown again
         IconButton(onClick = onToggleHidden, enabled = !folder.hiddenByParent) {
             Icon(
-                imageVector = if (folder.hidden) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                imageVector = if (folder.hidden) Lucide.EyeOff else Lucide.Eye,
                 contentDescription = if (folder.hidden) "Show ${folder.name}" else "Hide ${folder.name}",
                 tint = if (folder.hidden) TextMuted else TextSecondary,
                 modifier = Modifier.size(22.dp)
@@ -177,7 +177,7 @@ private fun FolderRowContent(folder: Folder) {
                 .background(AccentPrimary.copy(alpha = 0.14f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.Folder, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(24.dp))
+            Icon(Lucide.Folder, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(24.dp))
         }
         Spacer(modifier = Modifier.width(14.dp))
         Column(modifier = Modifier.weight(1f)) {
@@ -229,7 +229,7 @@ fun FolderDetailScreen(
                 title = folder.name,
                 subtitle = displayPath(folder.path),
                 meta = "${pluralize(songs.size, "song")} • ${formatTotalDuration(songs.sumOf { it.duration })}",
-                placeholderIcon = Icons.Default.Folder,
+                placeholderIcon = Lucide.Folder,
                 onPlay = { viewModel.playSong(songs.first(), songs) },
                 onAddToQueue = { viewModel.addAllToQueue(songs) },
                 onShuffle = {

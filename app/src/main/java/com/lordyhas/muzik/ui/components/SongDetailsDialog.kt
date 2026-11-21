@@ -1,11 +1,7 @@
 package com.lordyhas.muzik.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,19 +13,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -47,6 +39,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.composables.icons.lucide.Clock
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.Folder
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.Pencil
+import com.composables.icons.lucide.UserRound
+import com.composables.icons.lucide.X
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
@@ -112,7 +112,7 @@ fun SongDetailsDialog(
                         .background(SurfaceCard)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Lucide.X,
                         contentDescription = "Close",
                         tint = TextSecondary,
                         modifier = Modifier.size(20.dp)
@@ -154,7 +154,7 @@ fun SongDetailsDialog(
                         )
                     } else {
                         Icon(
-                            imageVector = Icons.Default.MusicNote,
+                            imageVector = Lucide.Music,
                             contentDescription = null,
                             tint = AccentPrimary,
                             modifier = Modifier.size(32.dp)
@@ -200,13 +200,13 @@ fun SongDetailsDialog(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 DetailRow(
-                    icon = Icons.Default.Person,
+                    icon = Lucide.UserRound,
                     label = "Artist",
                     value = song.artist
                 )
 
                 DetailRow(
-                    icon = Icons.Default.Album,
+                    icon = Lucide.Disc3,
                     label = "Album",
                     value = song.album
                 )
@@ -218,20 +218,20 @@ fun SongDetailsDialog(
                         "Track ${song.trackNumber}"
                     }
                     DetailRow(
-                        icon = Icons.Default.MusicNote,
+                        icon = Lucide.Music,
                         label = "Track",
                         value = trackLabel
                     )
                 }
 
                 DetailRow(
-                    icon = Icons.Default.Schedule,
+                    icon = Lucide.Clock,
                     label = "Duration",
                     value = song.formattedDuration()
                 )
 
                 DetailRow(
-                    icon = Icons.Default.Folder,
+                    icon = Lucide.Folder,
                     label = "Location",
                     value = if (song.fileName.isNotEmpty()) "${song.folderPath}/${song.fileName}" else song.contentUri.toString()
                 )
@@ -246,7 +246,7 @@ fun SongDetailsDialog(
                     border = BorderStroke(1.dp, TextPrimary.copy(alpha = 0.18f)),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = TextPrimary)
                 ) {
-                    Icon(Icons.Default.Edit, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
+                    Icon(Lucide.Pencil, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("Edit tags", style = MaterialTheme.typography.labelLarge)
                 }

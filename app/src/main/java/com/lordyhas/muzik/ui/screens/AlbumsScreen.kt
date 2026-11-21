@@ -13,29 +13,29 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.SearchX
 import com.lordyhas.muzik.data.model.AlbumSort
 import com.lordyhas.muzik.data.model.indexLetter
 import com.lordyhas.muzik.ui.components.AlbumCard
 import com.lordyhas.muzik.ui.components.AlphabetFastScroller
-import com.lordyhas.muzik.ui.components.SortMenuButton
 import com.lordyhas.muzik.ui.components.EmptyState
 import com.lordyhas.muzik.ui.components.LoadingState
 import com.lordyhas.muzik.ui.components.MuzikSearchField
 import com.lordyhas.muzik.ui.components.ScreenHeader
+import com.lordyhas.muzik.ui.components.SortMenuButton
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
@@ -92,11 +92,11 @@ fun AlbumsScreen(
         when {
             isLoading -> LoadingState()
             filteredAlbums.isEmpty() && searchQuery.isNotBlank() -> EmptyState(
-                icon = Icons.Default.SearchOff,
+                icon = Lucide.SearchX,
                 title = "No albums match \"$searchQuery\""
             )
             filteredAlbums.isEmpty() -> EmptyState(
-                icon = Icons.Default.Album,
+                icon = Lucide.Disc3,
                 title = "No albums yet",
                 message = "Albums appear here once music is on your device."
             )

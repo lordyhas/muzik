@@ -21,10 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -47,6 +43,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.theme.BackgroundDark
 import com.lordyhas.muzik.ui.theme.StrokeSubtle
@@ -55,8 +52,8 @@ import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.theme.TextSecondary
 import com.lordyhas.muzik.ui.theme.TrackBackground
 import com.lordyhas.muzik.ui.theme.rememberArtworkColor
-import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlinx.coroutines.launch
 
 @Composable
 fun MiniPlayer(
@@ -173,7 +170,7 @@ fun MiniPlayer(
                         .background(Color.White)
                 ) {
                     Icon(
-                        imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
+                        imageVector = if (isPlaying) Lucide.PauseFilled else Lucide.PlayFilled,
                         contentDescription = if (isPlaying) "Pause" else "Play",
                         tint = BackgroundDark,
                         modifier = Modifier.size(24.dp)
@@ -187,7 +184,7 @@ fun MiniPlayer(
                     modifier = Modifier.size(42.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.SkipNext,
+                        imageVector = Lucide.SkipForwardFilled,
                         contentDescription = "Next",
                         tint = TextPrimary,
                         modifier = Modifier.size(26.dp)
