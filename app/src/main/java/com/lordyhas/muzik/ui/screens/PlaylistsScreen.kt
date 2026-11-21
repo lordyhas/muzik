@@ -5,12 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -87,14 +88,20 @@ fun PlaylistsScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(top = 8.dp, bottom = 96.dp)
                 ) {
-                    // Smart playlists carousel
+                    // Smart playlists, two per row
                     item(span = { GridItemSpan(maxLineSpan) }, key = "smart") {
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            items(smartPlaylists, key = { it.type.name }) { smart ->
-                                SmartPlaylistTile(
-                                    playlist = smart,
-                                    onClick = { onSmartPlaylistClick(smart.type) }
-                                )
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            smartPlaylists.chunked(2).forEach { row ->
+                                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                    row.forEach { smart ->
+                                        SmartPlaylistTile(
+                                            playlist = smart,
+                                            onClick = { onSmartPlaylistClick(smart.type) },
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                    }
+                                    if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
+                                }
                             }
                         }
                     }
