@@ -102,11 +102,9 @@ fun HomeScreen(
     onSettingsClick: () -> Unit = {},
     onFoldersClick: () -> Unit = {},
     onSmartPlaylistClick: (SmartPlaylistType) -> Unit = {},
-    onPlaylistClick: (String) -> Unit = {},
-    onSeeAllPlaylists: () -> Unit = {}
+    onPlaylistClick: (String) -> Unit = {}
 ) {
     val songs by viewModel.songs.collectAsState()
-    val playlists by viewModel.playlists.collectAsState()
     val pinnedItems by viewModel.pinnedItems.collectAsState()
     val recentSongs by viewModel.recentlyPlayedSongs.collectAsState()
     val recentAlbums by viewModel.recentlyPlayedAlbums.collectAsState()
@@ -290,24 +288,6 @@ fun HomeScreen(
                         ) {
                             gridItems(recentRow, key = { it.contentUri.toString() }) { song ->
                                 RecentSongRow(song = song, onClick = { viewModel.playSong(song) })
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    if (playlists.isNotEmpty()) {
-                        SectionHeader(title = "Your playlists", actionLabel = "See all", onAction = onSeeAllPlaylists)
-                        LazyRow(
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            modifier = Modifier.padding(vertical = 6.dp)
-                        ) {
-                            items(playlists, key = { it.id }) { playlist ->
-                                HomeCollectionCard(
-                                    title = playlist.name,
-                                    subtitle = pluralize(playlist.songs.size, "song"),
-                                    onClick = { onPlaylistClick(playlist.id) }
-                                ) { coverModifier -> PlaylistCollage(playlist = playlist, modifier = coverModifier) }
                             }
                         }
                         Spacer(modifier = Modifier.height(16.dp))
