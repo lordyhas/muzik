@@ -332,7 +332,9 @@ fun MainAppScreen(
                             onSearchClick = { navController.navigate("search") },
                             onSettingsClick = { navController.navigate(SETTINGS_ROUTE) },
                             onFoldersClick = { navController.navigate("folders") },
-                            onSmartPlaylistClick = { type -> navController.navigate("smart/${type.name}") }
+                            onSmartPlaylistClick = { type -> navController.navigate("smart/${type.name}") },
+                            onPlaylistClick = { id -> navigateToPlaylist(id) },
+                            onSeeAllPlaylists = { navigateToTab(NavigationTab.PLAYLISTS) }
                         )
                     }
 
