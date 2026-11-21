@@ -2,9 +2,34 @@
   "_comment": "Shown to users in the 'What's new' sheet after an update, and at the top of the GitHub release notes. Newest release first. Write for listeners, not developers: what they can do now, in a sentence or two. type is new, improved or fixed.",
   "releases": [
     {
-      "versionCode": 11,
-      "versionName": "1.6.5",
+      "versionCode": 12,
+      "versionName": "1.7.0",
       "highlights": [
+        {
+          "type": "new",
+          "title": "A fresh new look",
+          "text": "New icons and a new typeface across the whole app, so Muzik looks the same on every phone."
+        },
+        {
+          "type": "new",
+          "title": "A new Home",
+          "text": "The top card picks up where you left off, with a progress bar and play/pause. Your shortcuts are all in one grid, recent songs show as a compact list, and a Listening stats card at the bottom sums up your plays."
+        },
+        {
+          "type": "new",
+          "title": "Pin to Home",
+          "text": "Pin your favorite albums and playlists from their ⋮ menu: they show up in a Pinned row on Home."
+        },
+        {
+          "type": "improved",
+          "title": "Better album pages",
+          "text": "Album pages show the release year and more albums by the same artist. The ⋮ menu lets you queue the whole album, add it to a playlist in one go, or edit its tags."
+        },
+        {
+          "type": "improved",
+          "title": "Smart playlists stand out",
+          "text": "Liked Songs, Most Played, Recently Added and Rediscover have new cards, with the cover of their top song in the background."
+        },
         {
           "type": "fixed",
           "title": "Next is always there",
