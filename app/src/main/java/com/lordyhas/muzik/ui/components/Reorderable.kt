@@ -7,8 +7,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,6 +26,8 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.composables.icons.lucide.GripVertical
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.ui.theme.TextMuted
 import kotlin.math.roundToInt
 
@@ -115,7 +115,7 @@ fun ReorderableRow(
 fun DragHandleIcon(modifier: Modifier = Modifier) {
     Box(modifier = modifier.size(36.dp), contentAlignment = Alignment.Center) {
         Icon(
-            imageVector = Icons.Default.DragHandle,
+            imageVector = Lucide.GripVertical,
             contentDescription = "Drag to reorder",
             tint = TextMuted,
             modifier = Modifier.size(22.dp)

@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Sparkles
 import com.lordyhas.muzik.data.model.ReleaseNotes
 import com.lordyhas.muzik.ui.components.CircleIconButton
 import com.lordyhas.muzik.ui.components.EmptyState
@@ -50,7 +50,7 @@ fun ReleaseNotesScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
             CircleIconButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Lucide.ArrowLeft,
                 contentDescription = "Back",
                 onClick = onBackClick
             )
@@ -58,7 +58,7 @@ fun ReleaseNotesScreen(
         ScreenHeader(title = "What's new", subtitle = null)
 
         if (releases.isEmpty()) {
-            EmptyState(icon = Icons.Default.AutoAwesome, title = "No release notes yet")
+            EmptyState(icon = Lucide.Sparkles, title = "No release notes yet")
         } else {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),

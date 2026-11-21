@@ -19,9 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoFixHigh
-import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +35,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.CircleAlert
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.WandSparkles
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.tags.AudioTagStore
 import com.lordyhas.muzik.data.tags.CoverArt
@@ -119,9 +119,9 @@ fun SongTagEditorScreen(
         )
 
         when {
-            song == null -> EmptyState(icon = Icons.Default.ErrorOutline, title = "Song not found")
+            song == null -> EmptyState(icon = Lucide.CircleAlert, title = "Song not found")
             loadFailed -> EmptyState(
-                icon = Icons.Default.ErrorOutline,
+                icon = Lucide.CircleAlert,
                 title = "Can't read this file",
                 message = "Its format may not support tags, or the file is no longer there."
             )
@@ -177,7 +177,7 @@ fun SongTagEditorScreen(
                         guess.track?.let { values[TagField.TRACK] = it.toString() }
                     }
                 ) {
-                    Icon(Icons.Default.AutoFixHigh, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
+                    Icon(Lucide.WandSparkles, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                     Text("Fill title and track from the file name", color = AccentPrimary)
                 }

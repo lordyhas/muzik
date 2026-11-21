@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,6 +26,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.components.DetailHero
@@ -83,7 +83,7 @@ fun AlbumDetailScreen(
                 subtitle = album.artist,
                 onSubtitleClick = { onGoToArtist(album.artist) },
                 meta = "${pluralize(songs.size, "song")} • ${formatTotalDuration(totalDuration)}",
-                placeholderIcon = Icons.Default.Album,
+                placeholderIcon = Lucide.Disc3,
                 onPlay = { viewModel.playAlbum(album) },
                 onAddToQueue = { viewModel.addAllToQueue(songs) },
                 onShuffle = {
@@ -145,7 +145,7 @@ private fun DiscHeader(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Default.Album,
+                imageVector = Lucide.Disc3,
                 contentDescription = null,
                 tint = AccentSecondary,
                 modifier = Modifier.size(16.dp)

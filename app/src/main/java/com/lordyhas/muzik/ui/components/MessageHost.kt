@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
@@ -35,6 +33,8 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.CircleCheck
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.SurfaceElevated
 import com.lordyhas.muzik.ui.theme.TextPrimary
@@ -115,7 +115,7 @@ fun MuzikSnackbarHost(messages: Flow<UiMessage>, modifier: Modifier = Modifier) 
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.CheckCircle,
+                    imageVector = Lucide.CircleCheck,
                     contentDescription = null,
                     tint = AccentPrimary,
                     modifier = Modifier.size(16.dp)

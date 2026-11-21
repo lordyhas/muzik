@@ -7,14 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.R
 import com.lordyhas.muzik.ui.components.CircleIconButton
 import com.lordyhas.muzik.ui.components.ScreenHeader
@@ -40,7 +40,7 @@ fun LicensesScreen(
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
                 CircleIconButton(
-                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                    icon = Lucide.ArrowLeft,
                     contentDescription = "Back",
                     onClick = onBackClick
                 )

@@ -3,9 +3,6 @@ package com.lordyhas.muzik.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -18,6 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.ArrowDownWideNarrow
+import com.composables.icons.lucide.Check
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.SurfaceElevated
 import com.lordyhas.muzik.ui.theme.TextMuted
@@ -37,7 +37,7 @@ fun <T> SortMenuButton(
 
     Box(modifier = modifier) {
         CircleIconButton(
-            icon = Icons.AutoMirrored.Filled.Sort,
+            icon = Lucide.ArrowDownWideNarrow,
             contentDescription = "Sort by ${label(selected)}",
             onClick = { expanded = true },
             tint = TextSecondary
@@ -64,7 +64,7 @@ fun <T> SortMenuButton(
                     },
                     trailingIcon = {
                         if (isSelected) {
-                            Icon(Icons.Default.Check, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
+                            Icon(Lucide.Check, contentDescription = null, tint = AccentPrimary, modifier = Modifier.size(18.dp))
                         }
                     },
                     onClick = {

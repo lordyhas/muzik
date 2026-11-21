@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +20,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.UserRound
 import com.lordyhas.muzik.data.model.Artist
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
@@ -49,7 +49,7 @@ fun ArtistCard(
             Artwork(
                 uri = artist.artworkUri,
                 shape = CircleShape,
-                placeholderIcon = Icons.Default.Person,
+                placeholderIcon = Lucide.UserRound,
                 iconSize = 36.dp,
                 placeholderTint = AccentSecondary,
                 contentDescription = artist.name,

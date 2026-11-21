@@ -15,10 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.TrendingUp
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +31,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Sparkles
+import com.composables.icons.lucide.TrendingUp
+import com.composables.icons.lucide.Wrench
 import com.lordyhas.muzik.data.model.ReleaseNotes
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
@@ -131,7 +131,7 @@ fun HighlightRow(highlight: ReleaseNotes.Highlight, modifier: Modifier = Modifie
 }
 
 private fun ReleaseNotes.Type.visual(): Pair<ImageVector, Color> = when (this) {
-    ReleaseNotes.Type.NEW -> Icons.Default.AutoAwesome to AccentPrimary
-    ReleaseNotes.Type.IMPROVED -> Icons.AutoMirrored.Filled.TrendingUp to AccentSecondary
-    ReleaseNotes.Type.FIXED -> Icons.Default.Build to TextSecondary
+    ReleaseNotes.Type.NEW -> Lucide.Sparkles to AccentPrimary
+    ReleaseNotes.Type.IMPROVED -> Lucide.TrendingUp to AccentSecondary
+    ReleaseNotes.Type.FIXED -> Lucide.Wrench to TextSecondary
 }

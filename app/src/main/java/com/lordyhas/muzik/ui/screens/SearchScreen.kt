@@ -18,11 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +34,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.Folder
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Search
+import com.composables.icons.lucide.SearchX
 import com.lordyhas.muzik.data.model.Playlist
 import com.lordyhas.muzik.ui.components.AlbumCard
 import com.lordyhas.muzik.ui.components.ArtistCard
@@ -92,7 +92,7 @@ fun SearchScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CircleIconButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Lucide.ArrowLeft,
                 contentDescription = "Back",
                 onClick = onBackClick
             )
@@ -110,19 +110,19 @@ fun SearchScreen(
                 Text("Browse", style = MaterialTheme.typography.titleLarge, color = TextPrimary)
                 Spacer(modifier = Modifier.height(10.dp))
                 BrowseTile(
-                    icon = Icons.Default.Folder,
+                    icon = Lucide.Folder,
                     title = "Folders",
                     subtitle = "Browse music by device folder",
                     onClick = onFoldersClick
                 )
                 EmptyState(
-                    icon = Icons.Default.Search,
+                    icon = Lucide.Search,
                     title = "Search your library",
                     message = "Find songs, artists, albums and playlists in one place."
                 )
             }
             results.isEmpty -> EmptyState(
-                icon = Icons.Default.SearchOff,
+                icon = Lucide.SearchX,
                 title = "No results for \"$query\"",
                 message = "Check the spelling or try another keyword."
             )
