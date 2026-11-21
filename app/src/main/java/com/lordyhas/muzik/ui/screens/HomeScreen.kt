@@ -61,9 +61,11 @@ import com.composables.icons.lucide.Play
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.Shuffle
+import com.lordyhas.muzik.data.model.ListeningStats
 import com.lordyhas.muzik.data.model.PinnedItem
 import com.lordyhas.muzik.data.model.SmartPlaylistType
 import com.lordyhas.muzik.data.model.Song
+import com.lordyhas.muzik.data.model.formatListenedTime
 import com.lordyhas.muzik.ui.components.AlbumCard
 import com.lordyhas.muzik.ui.components.ArtistCard
 import com.lordyhas.muzik.ui.components.Artwork
@@ -107,6 +109,7 @@ fun HomeScreen(
 ) {
     val songs by viewModel.songs.collectAsState()
     val pinnedItems by viewModel.pinnedItems.collectAsState()
+    val listeningStats by viewModel.listeningStats.collectAsState()
     val recentSongs by viewModel.recentlyPlayedSongs.collectAsState()
     val recentAlbums by viewModel.recentlyPlayedAlbums.collectAsState()
     val recentArtists by viewModel.recentlyPlayedArtists.collectAsState()
@@ -343,6 +346,12 @@ fun HomeScreen(
                         }
                         HorizontalScrollIndicator(artistsState)
                     }
+
+                    // Listening stats; hidden until something has been played
+                    listeningStats?.let { stats ->
+                        Spacer(modifier = Modifier.height(24.dp))
+                        ListeningStatsCard(stats = stats, modifier = Modifier.padding(horizontal = 16.dp))
+                    }
                 }
             }
         }
@@ -482,6 +491,65 @@ private fun HeroProgress(position: StateFlow<Long>, duration: StateFlow<Long>) {
                 .height(3.dp)
                 .clip(CircleShape)
                 .background(TextPrimary)
+        )
+    }
+}
+
+@Composable
+private fun ListeningStatsCard(stats: ListeningStats, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(24.dp)
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(SurfaceCard)
+            .border(1.dp, StrokeSubtle, shape)
+            .padding(20.dp)
+    ) {
+        Text(
+            text = "YOUR LIBRARY",
+            style = MaterialTheme.typography.labelSmall.copy(letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing * 3),
+            color = AccentPrimary
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(text = "Listening stats", style = MaterialTheme.typography.headlineSmall, color = TextPrimary)
+        Spacer(modifier = Modifier.height(18.dp))
+        Row {
+            StatCell(value = stats.plays.toString(), label = "Plays", modifier = Modifier.weight(1f))
+            StatCell(value = formatListenedTime(stats.listenedMs), label = "Listened", modifier = Modifier.weight(1f))
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Row {
+            StatCell(
+                value = stats.explored.toString(),
+                label = "Explored · of ${stats.librarySize}",
+                modifier = Modifier.weight(1f)
+            )
+            StatCell(
+                value = stats.topSong?.title ?: "—",
+                label = "Top track · " + pluralize(stats.topSongPlays, "play"),
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatCell(value: String, label: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(end = 12.dp)) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.headlineSmall,
+            color = TextPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = label.uppercase(),
+            style = MaterialTheme.typography.labelSmall.copy(letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing * 2),
+            color = TextSecondary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }

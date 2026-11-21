@@ -31,6 +31,8 @@ import com.lordyhas.muzik.data.model.mergeEditedOrder
 import com.lordyhas.muzik.data.repository.LibraryFilterStore
 import com.lordyhas.muzik.data.repository.PinStore
 import com.lordyhas.muzik.data.model.Pin
+import com.lordyhas.muzik.data.model.ListeningStats
+import com.lordyhas.muzik.data.model.listeningStats
 import com.lordyhas.muzik.data.model.PinnedItem
 import com.lordyhas.muzik.data.model.resolvePins
 import com.lordyhas.muzik.data.repository.LibraryRepository
@@ -340,6 +342,11 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
             .mapNotNull { songMap[it.songId] }
             .take(30)
     }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    /** Totals for the Listening stats card on Home; null until something has been played. */
+    val listeningStats: StateFlow<ListeningStats?> = combine(_songs, playStats) { songList, stats ->
+        listeningStats(stats.associate { it.songId to it.playCount }, songList)
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     /** Liked Songs, Most Played, Recently Added and Rediscover, derived live from Room + MediaStore. */
     val smartPlaylists: StateFlow<List<SmartPlaylist>> = combine(_songs, playStats, likedEntities) { songList, stats, liked ->
