@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,6 +42,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.CircleMinus
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.X
 import com.lordyhas.muzik.data.model.Playlist
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.components.Artwork
@@ -52,8 +52,8 @@ import com.lordyhas.muzik.ui.components.DetailNotFound
 import com.lordyhas.muzik.ui.components.DragHandleIcon
 import com.lordyhas.muzik.ui.components.PlaylistCollage
 import com.lordyhas.muzik.ui.components.ReorderableRow
-import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.components.placementSpec
+import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.components.rememberReorderState
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -115,7 +115,7 @@ fun PlaylistEditScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { close() }) {
-                Icon(Icons.Default.Close, contentDescription = "Cancel", tint = TextPrimary)
+                Icon(Lucide.X, contentDescription = "Cancel", tint = TextPrimary)
             }
             Text(
                 text = "Edit playlist",
@@ -258,7 +258,7 @@ private fun EditableSongRow(
     ) {
         IconButton(onClick = onRemove) {
             Icon(
-                Icons.Default.RemoveCircle,
+                Lucide.CircleMinus,
                 contentDescription = "Remove ${song.title}",
                 tint = TextSecondary,
                 modifier = Modifier.size(24.dp)

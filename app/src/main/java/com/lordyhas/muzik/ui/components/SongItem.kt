@@ -19,16 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
-import androidx.compose.material.icons.automirrored.filled.QueueMusic
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -53,6 +43,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.EllipsisVertical
+import com.composables.icons.lucide.Heart
+import com.composables.icons.lucide.Info
+import com.composables.icons.lucide.ListMusic
+import com.composables.icons.lucide.ListPlus
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Trash2
+import com.composables.icons.lucide.UserRound
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.DangerRed
@@ -90,7 +89,7 @@ fun SongItem(
     // Spotify-style: swipe right to add to queue (the row springs back)
     val swipeToQueue = onAddToQueue?.let {
         SwipeAction(
-            icon = Icons.AutoMirrored.Filled.QueueMusic,
+            icon = Lucide.ListMusic,
             label = "Add to queue",
             color = AccentPrimary,
             onTrigger = it
@@ -159,7 +158,7 @@ fun SongItem(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (isLiked) {
                         Icon(
-                            Icons.Default.Favorite,
+                            Lucide.HeartFilled,
                             contentDescription = "Liked",
                             tint = AccentPrimary,
                             modifier = Modifier.size(12.dp)
@@ -184,7 +183,7 @@ fun SongItem(
                     modifier = Modifier.size(36.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.MoreVert,
+                        imageVector = Lucide.EllipsisVertical,
                         contentDescription = "Song options",
                         tint = TextSecondary,
                         modifier = Modifier.size(20.dp)
@@ -219,17 +218,17 @@ fun SongItem(
                     onToggleLike?.let {
                         MenuItem(
                             if (isLiked) "Remove from Liked Songs" else "Add to Liked Songs",
-                            if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            if (isLiked) Lucide.HeartFilled else Lucide.Heart,
                             AccentPrimary,
                             it
                         )
                     }
-                    onAddToQueue?.let { MenuItem("Add to queue", Icons.AutoMirrored.Filled.QueueMusic, AccentPrimary, it) }
-                    onAddToPlaylist?.let { MenuItem("Add to playlist", Icons.AutoMirrored.Filled.PlaylistAdd, AccentPrimary, it) }
-                    onGoToArtist?.let { MenuItem("Go to artist", Icons.Default.Person, TextSecondary, it) }
-                    onGoToAlbum?.let { MenuItem("Go to album", Icons.Default.Album, TextSecondary, it) }
-                    onRemoveFromPlaylist?.let { MenuItem("Remove from playlist", Icons.Default.Delete, DangerRed, it) }
-                    onShowDetails?.let { MenuItem("Song details", Icons.Default.Info, TextSecondary, it) }
+                    onAddToQueue?.let { MenuItem("Add to queue", Lucide.ListMusic, AccentPrimary, it) }
+                    onAddToPlaylist?.let { MenuItem("Add to playlist", Lucide.ListPlus, AccentPrimary, it) }
+                    onGoToArtist?.let { MenuItem("Go to artist", Lucide.UserRound, TextSecondary, it) }
+                    onGoToAlbum?.let { MenuItem("Go to album", Lucide.Disc3, TextSecondary, it) }
+                    onRemoveFromPlaylist?.let { MenuItem("Remove from playlist", Lucide.Trash2, DangerRed, it) }
+                    onShowDetails?.let { MenuItem("Song details", Lucide.Info, TextSecondary, it) }
                 }
             }
 

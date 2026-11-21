@@ -2,9 +2,6 @@ package com.lordyhas.muzik.ui.screens
 
 import android.app.Activity
 import android.widget.Toast
-import java.net.URLDecoder
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -20,17 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.PlaylistPlay
-import androidx.compose.material.icons.automirrored.outlined.PlaylistPlay
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Album
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.MusicNote
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -46,10 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,16 +48,23 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.House
+import com.composables.icons.lucide.ListVideo
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.UserRound
 import com.lordyhas.muzik.data.model.SmartPlaylistType
+import com.lordyhas.muzik.tageditor.TagEditorActivity
+import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.components.AddToPlaylistSheet
 import com.lordyhas.muzik.ui.components.AudioEffectsSheet
-import com.lordyhas.muzik.ui.components.SleepTimerSheet
 import com.lordyhas.muzik.ui.components.CreatePlaylistDialog
 import com.lordyhas.muzik.ui.components.MiniPlayer
 import com.lordyhas.muzik.ui.components.MuzikSnackbarHost
-import com.lordyhas.muzik.tageditor.TagEditorActivity
 import com.lordyhas.muzik.ui.components.NowPlayingScreen
 import com.lordyhas.muzik.ui.components.PermissionRequestView
+import com.lordyhas.muzik.ui.components.SleepTimerSheet
 import com.lordyhas.muzik.ui.components.SongDetailsDialog
 import com.lordyhas.muzik.ui.components.WhatsNewSheet
 import com.lordyhas.muzik.ui.theme.AccentPrimary
@@ -84,18 +77,20 @@ import com.lordyhas.muzik.ui.theme.TextMuted
 import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.theme.TrackBackground
 import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 enum class NavigationTab(
     val route: String,
     val title: String,
-    val selectedIcon: ImageVector,
     val icon: ImageVector
 ) {
-    HOME("home", "Home", Icons.Filled.Home, Icons.Outlined.Home),
-    TRACKS("tracks", "Songs", Icons.Filled.MusicNote, Icons.Outlined.MusicNote),
-    ALBUMS("albums", "Albums", Icons.Filled.Album, Icons.Outlined.Album),
-    ARTISTS("artists", "Artists", Icons.Filled.Person, Icons.Outlined.Person),
-    PLAYLISTS("playlists", "Playlists", Icons.AutoMirrored.Filled.PlaylistPlay, Icons.AutoMirrored.Outlined.PlaylistPlay)
+    HOME("home", "Home", Lucide.House),
+    TRACKS("tracks", "Songs", Lucide.Music),
+    ALBUMS("albums", "Albums", Lucide.Disc3),
+    ARTISTS("artists", "Artists", Lucide.UserRound),
+    PLAYLISTS("playlists", "Playlists", Lucide.ListVideo)
 }
 
 private const val PLAYLIST_EDIT_ROUTE = "playlist/{playlistId}/edit"
@@ -127,7 +122,7 @@ fun MainAppScreen(
     val currentQueue by viewModel.currentQueue.collectAsState()
     val currentQueueIndex by viewModel.currentQueueIndex.collectAsState()
     val selectedSongForDetails by viewModel.selectedSongForDetails.collectAsState()
-    val songPendingAddToPlaylist by viewModel.songPendingAddToPlaylist.collectAsState()
+    val songsPendingAddToPlaylist by viewModel.songsPendingAddToPlaylist.collectAsState()
     val playlists by viewModel.playlists.collectAsState()
     val showCreatePlaylistDialog by viewModel.showCreatePlaylistDialog.collectAsState()
     val sleepTimer by viewModel.sleepTimer.collectAsState()
@@ -195,7 +190,7 @@ fun MainAppScreen(
     val isTopLevelRoute = currentRoute in TAB_ROUTES
 
     // Intercept back for overlays: AddToPlaylistSheet & SongDetailsDialog
-    BackHandler(enabled = songPendingAddToPlaylist != null && !showCreatePlaylistDialog) {
+    BackHandler(enabled = songsPendingAddToPlaylist.isNotEmpty() && !showCreatePlaylistDialog) {
         viewModel.setSongPendingAddToPlaylist(null)
     }
 
@@ -206,7 +201,7 @@ fun MainAppScreen(
     // Intercept back on secondary tabs: go back to Home tab first
     BackHandler(
         enabled = isTopLevelRoute && currentRoute != NavigationTab.HOME.route && !showNowPlaying &&
-                selectedSongForDetails == null && songPendingAddToPlaylist == null
+                selectedSongForDetails == null && songsPendingAddToPlaylist.isEmpty()
     ) {
         navigateToTab(NavigationTab.HOME)
     }
@@ -214,7 +209,7 @@ fun MainAppScreen(
     // On Home tab: double back press to exit application safely
     BackHandler(
         enabled = currentRoute == NavigationTab.HOME.route && !showNowPlaying &&
-                selectedSongForDetails == null && songPendingAddToPlaylist == null && !showCreatePlaylistDialog
+                selectedSongForDetails == null && songsPendingAddToPlaylist.isEmpty() && !showCreatePlaylistDialog
     ) {
         val now = System.currentTimeMillis()
         if (now - backPressedTime < 2000L) {
@@ -290,7 +285,7 @@ fun MainAppScreen(
                                     },
                                     icon = {
                                         Icon(
-                                            imageVector = if (isSelected) tab.selectedIcon else tab.icon,
+                                            imageVector = tab.icon,
                                             contentDescription = tab.title
                                         )
                                     },
@@ -333,12 +328,11 @@ fun MainAppScreen(
                             viewModel = viewModel,
                             onAlbumClick = { id -> navigateToAlbum(id) },
                             onArtistClick = { name -> navigateToArtist(name) },
-                            onSeeAllAlbums = { navigateToTab(NavigationTab.ALBUMS) },
-                            onSeeAllArtists = { navigateToTab(NavigationTab.ARTISTS) },
                             onSearchClick = { navController.navigate("search") },
                             onSettingsClick = { navController.navigate(SETTINGS_ROUTE) },
                             onFoldersClick = { navController.navigate("folders") },
-                            onSmartPlaylistClick = { type -> navController.navigate("smart/${type.name}") }
+                            onSmartPlaylistClick = { type -> navController.navigate("smart/${type.name}") },
+                            onPlaylistClick = { id -> navigateToPlaylist(id) }
                         )
                     }
 
@@ -434,7 +428,8 @@ fun MainAppScreen(
                             albumId = backStackEntry.arguments?.getLong("albumId") ?: 0L,
                             viewModel = viewModel,
                             onBackClick = { safePopBack() },
-                            onGoToArtist = { name -> navigateToArtist(name) }
+                            onGoToArtist = { name -> navigateToArtist(name) },
+                            onAlbumClick = { id -> navigateToAlbum(id) }
                         )
                     }
 
@@ -620,12 +615,15 @@ fun MainAppScreen(
         }
 
         // ─── Add To Playlist Sheet ─────────────────────────────────────────────
-        songPendingAddToPlaylist?.let { song ->
+        if (songsPendingAddToPlaylist.isNotEmpty()) {
+            val pending = songsPendingAddToPlaylist
             AddToPlaylistSheet(
-                song = song,
+                subject = pending.singleOrNull()?.title
+                    ?: "${pending.first().album} · ${pluralize(pending.size, "song")}",
+                songIds = pending.map { it.id },
                 playlists = playlists,
                 onAddToPlaylist = { playlist ->
-                    viewModel.addSongToPlaylist(playlist.id, song.id)
+                    viewModel.addSongsToPlaylist(playlist, pending)
                     viewModel.setSongPendingAddToPlaylist(null)
                 },
                 onCreateNew = {
@@ -648,13 +646,13 @@ fun MainAppScreen(
         )
 
         // ─── Create Playlist Dialog (global, triggered from AddToPlaylistSheet) ─
-        if (showCreatePlaylistDialog && songPendingAddToPlaylist != null) {
+        if (showCreatePlaylistDialog && songsPendingAddToPlaylist.isNotEmpty()) {
             CreatePlaylistDialog(
                 title = "New playlist",
                 initialName = "",
                 onConfirm = { name ->
                     // Create the playlist and add the pending song once it exists
-                    viewModel.createPlaylist(name, initialSongId = songPendingAddToPlaylist?.id)
+                    viewModel.createPlaylist(name, initialSongIds = songsPendingAddToPlaylist.map { it.id })
                     viewModel.setShowCreatePlaylistDialog(false)
                     viewModel.setSongPendingAddToPlaylist(null)
                 },

@@ -22,13 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Album
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.SearchOff
-import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,6 +38,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.BadgeCheck
+import com.composables.icons.lucide.Disc3
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.SearchX
+import com.composables.icons.lucide.UserRound
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.tageditor.TagArtist
@@ -91,7 +91,7 @@ fun TagLibraryScreen(
     Column(modifier = modifier.fillMaxSize().background(BackgroundDark).statusBarsPadding()) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
             Row(modifier = Modifier.padding(top = 8.dp)) {
-                CircleIconButton(icon = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Close", onClick = onClose)
+                CircleIconButton(icon = Lucide.ArrowLeft, contentDescription = "Close", onClick = onClose)
             }
             ScreenHeader(
                 title = "Tag editor",
@@ -140,11 +140,11 @@ fun TagLibraryScreen(
         when {
             isLoading -> LoadingState()
             isEmpty && onlyMissing && query.isBlank() -> EmptyState(
-                icon = Icons.Default.Verified,
+                icon = Lucide.BadgeCheck,
                 title = "Everything is tagged",
                 message = "No song is missing its title, artist or album."
             )
-            isEmpty -> EmptyState(icon = Icons.Default.SearchOff, title = "Nothing found")
+            isEmpty -> EmptyState(icon = Lucide.SearchX, title = "Nothing found")
             else -> LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 24.dp)
@@ -153,7 +153,7 @@ fun TagLibraryScreen(
                     TagTab.ALBUMS -> items(library.albums, key = { it.id }) { album ->
                         LibraryRow(
                             artworkUri = album.albumArtUri,
-                            placeholder = Icons.Default.Album,
+                            placeholder = Lucide.Disc3,
                             title = album.title,
                             subtitle = "${album.artist} · ${pluralize(album.songCount, "song")}",
                             missing = album.songs.any { it.needsTags() },
@@ -163,7 +163,7 @@ fun TagLibraryScreen(
                     TagTab.ARTISTS -> items(library.artists, key = { it.name }) { artist ->
                         LibraryRow(
                             artworkUri = artist.songs.firstOrNull { it.albumArtUri != null }?.albumArtUri,
-                            placeholder = Icons.Default.Person,
+                            placeholder = Lucide.UserRound,
                             title = artist.name,
                             subtitle = "${pluralize(artist.albumCount, "album")} · ${pluralize(artist.songs.size, "song")}",
                             missing = artist.songs.any { it.needsTags() },
@@ -174,7 +174,7 @@ fun TagLibraryScreen(
                     TagTab.SONGS -> items(library.songs, key = { it.id }) { song ->
                         LibraryRow(
                             artworkUri = song.albumArtUri,
-                            placeholder = Icons.Default.MusicNote,
+                            placeholder = Lucide.Music,
                             title = song.title,
                             subtitle = "${song.artist} · ${song.album}",
                             missing = song.needsTags(),

@@ -21,10 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,17 +37,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.ChevronRight
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.SearchX
+import com.composables.icons.lucide.UserRound
 import com.lordyhas.muzik.data.model.Artist
 import com.lordyhas.muzik.data.model.ArtistSort
 import com.lordyhas.muzik.data.model.indexLetter
 import com.lordyhas.muzik.ui.components.AlphabetFastScroller
-import com.lordyhas.muzik.ui.components.SortMenuButton
 import com.lordyhas.muzik.ui.components.Artwork
-import com.lordyhas.muzik.ui.components.NowPlayingBadge
 import com.lordyhas.muzik.ui.components.EmptyState
 import com.lordyhas.muzik.ui.components.LoadingState
 import com.lordyhas.muzik.ui.components.MuzikSearchField
+import com.lordyhas.muzik.ui.components.NowPlayingBadge
 import com.lordyhas.muzik.ui.components.ScreenHeader
+import com.lordyhas.muzik.ui.components.SortMenuButton
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
@@ -114,11 +114,11 @@ fun ArtistsScreen(
         when {
             isLoading -> LoadingState()
             filteredArtists.isEmpty() && searchQuery.isNotBlank() -> EmptyState(
-                icon = Icons.Default.SearchOff,
+                icon = Lucide.SearchX,
                 title = "No artists match \"$searchQuery\""
             )
             filteredArtists.isEmpty() -> EmptyState(
-                icon = Icons.Default.Person,
+                icon = Lucide.UserRound,
                 title = "No artists yet",
                 message = "Artists appear here once music is on your device."
             )
@@ -171,7 +171,7 @@ private fun ArtistListItem(
             Artwork(
                 uri = artist.artworkUri,
                 shape = CircleShape,
-                placeholderIcon = Icons.Default.Person,
+                placeholderIcon = Lucide.UserRound,
                 iconSize = 28.dp,
                 placeholderTint = AccentSecondary,
                 contentDescription = artist.name,
@@ -208,7 +208,7 @@ private fun ArtistListItem(
         }
 
         Icon(
-            imageVector = Icons.Default.ChevronRight,
+            imageVector = Lucide.ChevronRight,
             contentDescription = null,
             tint = TextMuted,
             modifier = Modifier.size(22.dp)

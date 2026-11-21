@@ -1,0 +1,11 @@
+{
+  "uniqueId": "com.tokotype:plus-jakarta-sans",
+  "artifactVersion": "2.071",
+  "name": "Plus Jakarta Sans",
+  "description": "The typeface used across Muzik, bundled as static weights.",
+  "website": "https://github.com/tokotype/PlusJakartaSans",
+  "developers": [
+    { "name": "Tokotype", "organisationUrl": "https://tokotype.github.io" }
+  ],
+  "licenses": ["OFL-1.1"]
+}

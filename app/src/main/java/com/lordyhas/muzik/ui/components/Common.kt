@@ -30,21 +30,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.QueueMusic
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Shuffle
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -71,7 +63,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.lordyhas.muzik.ui.theme.contentColorOn
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.ListMusic
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.Search
+import com.composables.icons.lucide.Shuffle
+import com.composables.icons.lucide.X
 import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -81,6 +79,7 @@ import com.lordyhas.muzik.ui.theme.SurfaceElevated
 import com.lordyhas.muzik.ui.theme.TextMuted
 import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.theme.TextSecondary
+import com.lordyhas.muzik.ui.theme.contentColorOn
 import com.lordyhas.muzik.ui.theme.rememberArtworkColor
 import kotlinx.coroutines.launch
 
@@ -96,7 +95,7 @@ fun Artwork(
     uri: Uri?,
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(12.dp),
-    placeholderIcon: ImageVector = Icons.Default.MusicNote,
+    placeholderIcon: ImageVector = Lucide.Music,
     iconSize: Dp = 24.dp,
     placeholderTint: Color = AccentPrimary,
     contentDescription: String? = null
@@ -182,7 +181,7 @@ fun PlayShuffleButtons(
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = contentColorOn(accent, minContrast = 4.5f))
         ) {
-            Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(22.dp))
+            Icon(Lucide.PlayFilled, contentDescription = null, modifier = Modifier.size(22.dp))
             Spacer(modifier = Modifier.width(6.dp))
             Text("Play", style = MaterialTheme.typography.labelLarge)
         }
@@ -199,14 +198,14 @@ fun PlayShuffleButtons(
                 contentColor = TextPrimary
             )
         ) {
-            Icon(Icons.Default.Shuffle, contentDescription = null, modifier = Modifier.size(20.dp))
+            Icon(Lucide.Shuffle, contentDescription = null, modifier = Modifier.size(20.dp))
             Spacer(modifier = Modifier.width(6.dp))
             Text("Shuffle", style = MaterialTheme.typography.labelLarge)
         }
 
         if (onAddToQueue != null) {
             CircleIconButton(
-                icon = Icons.AutoMirrored.Filled.QueueMusic,
+                icon = Lucide.ListMusic,
                 contentDescription = "Add all to queue",
                 onClick = onAddToQueue,
                 size = 50.dp,
@@ -310,12 +309,12 @@ fun MuzikSearchField(
             Text(text = placeholder, color = TextMuted, style = MaterialTheme.typography.bodyMedium)
         },
         leadingIcon = {
-            Icon(Icons.Default.Search, contentDescription = null, tint = TextMuted)
+            Icon(Lucide.Search, contentDescription = null, tint = TextMuted)
         },
         trailingIcon = {
             if (value.isNotEmpty()) {
                 IconButton(onClick = { onValueChange("") }) {
-                    Icon(Icons.Default.Clear, contentDescription = "Clear search", tint = TextSecondary)
+                    Icon(Lucide.X, contentDescription = "Clear search", tint = TextSecondary)
                 }
             }
         },
@@ -406,6 +405,10 @@ fun DetailScaffold(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
+    /** Small cover shown next to the title in the collapsed top bar. */
+    topBarArtworkUri: Uri? = null,
+    /** Top-right corner (an [OverflowMenu]), always visible like the Back button. */
+    actions: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
     val showTopBar by remember {
@@ -440,13 +443,25 @@ fun DetailScaffold(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.width(52.dp))
+                if (topBarArtworkUri != null) {
+                    Artwork(
+                        uri = topBarArtworkUri,
+                        shape = RoundedCornerShape(8.dp),
+                        iconSize = 16.dp,
+                        contentDescription = null,
+                        modifier = Modifier.size(36.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                }
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                     color = TextPrimary,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
+                if (actions != null) Spacer(modifier = Modifier.width(52.dp))
             }
         }
 
@@ -464,11 +479,21 @@ fun DetailScaffold(
             contentAlignment = Alignment.Center
         ) {
             CircleIconButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Lucide.ArrowLeft,
                 contentDescription = "Back",
                 onClick = onBack,
                 background = Color.Black.copy(alpha = 0.35f)
             )
+        }
+
+        if (actions != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .statusBarsPadding()
+                    .size(72.dp, 60.dp),
+                contentAlignment = Alignment.Center
+            ) { actions() }
         }
     }
 }
@@ -489,7 +514,7 @@ fun DetailHero(
     subtitle: String? = null,
     onSubtitleClick: (() -> Unit)? = null,
     circular: Boolean = false,
-    placeholderIcon: ImageVector = Icons.Default.MusicNote,
+    placeholderIcon: ImageVector = Lucide.Music,
     cover: (@Composable (Modifier) -> Unit)? = null,
     extra: (@Composable () -> Unit)? = null
 ) {
@@ -552,12 +577,14 @@ fun DetailHero(
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            Text(
-                text = eyebrow.uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing * 3),
-                color = accent
-            )
-            Spacer(modifier = Modifier.height(6.dp))
+            if (eyebrow.isNotBlank()) {
+                Text(
+                    text = eyebrow.uppercase(),
+                    style = MaterialTheme.typography.labelSmall.copy(letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing * 3),
+                    color = accent
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineMedium,
@@ -611,12 +638,12 @@ fun DetailNotFound(
 ) {
     Box(modifier = modifier.fillMaxSize().background(BackgroundDark)) {
         EmptyState(
-            icon = Icons.Default.MusicNote,
+            icon = Lucide.Music,
             title = message,
             message = "It may have been removed from this device."
         )
         CircleIconButton(
-            icon = Icons.AutoMirrored.Filled.ArrowBack,
+            icon = Lucide.ArrowLeft,
             contentDescription = "Back",
             onClick = onBack,
             modifier = Modifier

@@ -18,11 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bedtime
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.TimerOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -47,12 +42,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.Check
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Moon
+import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.TimerOff
 import com.lordyhas.muzik.service.EqualizerInfo
 import com.lordyhas.muzik.service.EqualizerSettings
 import com.lordyhas.muzik.service.SleepTimer
-import com.lordyhas.muzik.ui.theme.OnAccentFill
 import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
+import com.lordyhas.muzik.ui.theme.OnAccentFill
 import com.lordyhas.muzik.ui.theme.StrokeSubtle
 import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.SurfaceDark
@@ -60,8 +60,8 @@ import com.lordyhas.muzik.ui.theme.SurfaceElevated
 import com.lordyhas.muzik.ui.theme.TextMuted
 import com.lordyhas.muzik.ui.theme.TextPrimary
 import com.lordyhas.muzik.ui.theme.TextSecondary
-import kotlinx.coroutines.delay
 import java.util.Locale
+import kotlinx.coroutines.delay
 
 /** Milliseconds left on a running timer, ticking every second; null when no timed sleep is set. */
 @Composable
@@ -139,7 +139,7 @@ fun SleepTimerSheet(
 
             listOf(5, 15, 30, 45, 60, 90).forEach { minutes ->
                 SheetOption(
-                    icon = Icons.Default.Bedtime,
+                    icon = Lucide.Moon,
                     label = if (minutes < 60) "$minutes minutes" else if (minutes == 60) "1 hour" else "1 hour 30 minutes",
                     selected = timer is SleepTimer.At && timer.totalMillis == minutes * 60_000L,
                     onClick = {
@@ -149,7 +149,7 @@ fun SleepTimerSheet(
                 )
             }
             SheetOption(
-                icon = Icons.Default.MusicNote,
+                icon = Lucide.Music,
                 label = "End of current song",
                 selected = timer == SleepTimer.EndOfTrack,
                 onClick = {
@@ -159,7 +159,7 @@ fun SleepTimerSheet(
             )
             if (timer != SleepTimer.Off) {
                 SheetOption(
-                    icon = Icons.Default.TimerOff,
+                    icon = Lucide.TimerOff,
                     label = "Turn off timer",
                     selected = false,
                     tint = TextSecondary,
@@ -199,7 +199,7 @@ private fun SheetOption(
             modifier = Modifier.weight(1f)
         )
         if (selected) {
-            Icon(Icons.Default.Check, contentDescription = "Selected", tint = AccentPrimary, modifier = Modifier.size(20.dp))
+            Icon(Lucide.Check, contentDescription = "Selected", tint = AccentPrimary, modifier = Modifier.size(20.dp))
         }
     }
 }

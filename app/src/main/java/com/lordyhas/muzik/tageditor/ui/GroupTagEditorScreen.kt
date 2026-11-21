@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,12 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.AutoFixHigh
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
@@ -46,6 +41,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.CircleAlert
+import com.composables.icons.lucide.ListOrdered
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Pencil
+import com.composables.icons.lucide.WandSparkles
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.tags.AudioTagStore
 import com.lordyhas.muzik.data.tags.CoverArt
@@ -170,7 +170,7 @@ fun GroupTagEditorScreen(
         )
 
         when {
-            songs.isEmpty() -> EmptyState(icon = Icons.Default.ErrorOutline, title = "Nothing to edit here")
+            songs.isEmpty() -> EmptyState(icon = Lucide.CircleAlert, title = "Nothing to edit here")
             originals == null -> LoadingState()
             else -> LazyColumn(
                 modifier = Modifier.fillMaxSize().imePadding(),
@@ -218,7 +218,7 @@ fun GroupTagEditorScreen(
                             modifier = Modifier.horizontalScroll(rememberScrollState()).padding(top = 4.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            ToolChip("Titles from file names", Icons.Default.AutoFixHigh) {
+                            ToolChip("Titles from file names", Lucide.WandSparkles) {
                                 songs.forEach { song ->
                                     val guess = guessFromFileName(song.fileName)
                                     titles[song.id] = guess.title
@@ -226,7 +226,7 @@ fun GroupTagEditorScreen(
                                 }
                             }
                             if (kind.editsTrackNumbers) {
-                                ToolChip("Number 1 to ${songs.size}", Icons.Default.FormatListNumbered) {
+                                ToolChip("Number 1 to ${songs.size}", Lucide.ListOrdered) {
                                     songs.forEachIndexed { index, song -> tracks[song.id] = (index + 1).toString() }
                                 }
                             }
@@ -307,7 +307,7 @@ private fun SongRowEditor(
             TagTextField(label = "Title", value = title, onValueChange = onTitleChange, modifier = Modifier.weight(1f))
             if (onOpenSong != null) {
                 IconButton(onClick = onOpenSong) {
-                    Icon(Icons.Default.Edit, contentDescription = "All tags of this song", tint = TextSecondary)
+                    Icon(Lucide.Pencil, contentDescription = "All tags of this song", tint = TextSecondary)
                 }
             }
         }

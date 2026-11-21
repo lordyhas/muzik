@@ -13,8 +13,8 @@ android {
         applicationId = "com.lordyhas.muzik"
         minSdk = 24
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.6.4"
+        versionCode = 12
+        versionName = "1.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -75,7 +75,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.extended)
+    implementation(libs.lucide.icons)
     implementation(libs.androidx.navigation.compose)
 
     // Media3
@@ -104,4 +104,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+aboutLibraries {
+    collect {
+        // Entries that aren't Gradle dependencies, such as the bundled Plus Jakarta Sans font
+        configPath = rootProject.file("config")
+    }
 }

@@ -1,5 +1,6 @@
 package com.lordyhas.muzik.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,28 +13,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material.icons.filled.LibraryBooks
-import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.graphics.drawable.toBitmap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.BookOpen
+import com.composables.icons.lucide.Bug
+import com.composables.icons.lucide.CircleFadingArrowUp
+import com.composables.icons.lucide.CodeXml
+import com.composables.icons.lucide.Lightbulb
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Scale
+import com.composables.icons.lucide.Sparkles
 import com.lordyhas.muzik.data.AppLinks
 import com.lordyhas.muzik.data.AppVersion
 import com.lordyhas.muzik.ui.components.CircleIconButton
@@ -69,7 +69,7 @@ fun AboutScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
             CircleIconButton(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Lucide.ArrowLeft,
                 contentDescription = "Back",
                 onClick = onBackClick
             )
@@ -103,7 +103,7 @@ fun AboutScreen(
 
         SettingsGroup(title = null) {
             SettingsRow(
-                icon = Icons.Default.AutoAwesome,
+                icon = Lucide.Sparkles,
                 title = "What's new",
                 subtitle = "See what changed in each version",
                 onClick = onWhatsNewClick,
@@ -113,21 +113,21 @@ fun AboutScreen(
 
         SettingsGroup(title = "Open source") {
             SettingsRow(
-                icon = Icons.Default.Code,
+                icon = Lucide.CodeXml,
                 title = "Source code",
                 subtitle = "Muzik is open source on GitHub",
                 trailing = SettingsRowTrailing.External,
                 onClick = { uriHandler.openUri(AppLinks.SOURCE_CODE) }
             )
             SettingsRow(
-                icon = Icons.Default.Gavel,
+                icon = Lucide.Scale,
                 title = "License",
                 subtitle = "GNU Affero General Public License v3.0",
                 trailing = SettingsRowTrailing.External,
                 onClick = { uriHandler.openUri(AppLinks.LICENSE) }
             )
             SettingsRow(
-                icon = Icons.Default.LibraryBooks,
+                icon = Lucide.BookOpen,
                 title = "Open-source libraries",
                 subtitle = "The projects Muzik is built with",
                 onClick = onLicensesClick,
@@ -137,7 +137,7 @@ fun AboutScreen(
 
         SettingsGroup(title = "Feedback") {
             SettingsRow(
-                icon = Icons.Default.BugReport,
+                icon = Lucide.Bug,
                 title = "Report a bug",
                 subtitle = "Something not working? Let us know",
                 iconTint = AccentSecondary,
@@ -145,7 +145,7 @@ fun AboutScreen(
                 onClick = { uriHandler.openUri(AppLinks.REPORT_BUG) }
             )
             SettingsRow(
-                icon = Icons.Default.Lightbulb,
+                icon = Lucide.Lightbulb,
                 title = "Suggest a feature",
                 iconTint = AccentSecondary,
                 trailing = SettingsRowTrailing.External,
@@ -156,7 +156,7 @@ fun AboutScreen(
 
         SettingsGroup(title = "Updates") {
             SettingsRow(
-                icon = Icons.Default.SystemUpdate,
+                icon = Lucide.CircleFadingArrowUp,
                 title = "Get the latest version",
                 subtitle = "Opens the download page in your browser",
                 iconTint = AccentSecondary,

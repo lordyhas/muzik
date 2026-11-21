@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +26,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.composables.icons.lucide.ChevronRight
+import com.composables.icons.lucide.ExternalLink
+import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.StrokeSubtle
 import com.lordyhas.muzik.ui.theme.SurfaceCard
@@ -114,12 +114,12 @@ fun SettingsRow(
             }
             when (trailing) {
                 SettingsRowTrailing.Chevron -> Icon(
-                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    Lucide.ChevronRight,
                     contentDescription = null,
                     tint = TextMuted
                 )
                 SettingsRowTrailing.External -> Icon(
-                    Icons.AutoMirrored.Filled.OpenInNew,
+                    Lucide.ExternalLink,
                     contentDescription = null,
                     tint = TextMuted,
                     modifier = Modifier.size(18.dp)

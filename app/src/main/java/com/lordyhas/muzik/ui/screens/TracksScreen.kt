@@ -5,11 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,10 +18,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MusicNote
-import androidx.compose.material.icons.filled.SearchOff
-import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,16 +26,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Music
+import com.composables.icons.lucide.SearchX
+import com.composables.icons.lucide.Shuffle
 import com.lordyhas.muzik.data.model.SongSort
 import com.lordyhas.muzik.data.model.indexLetter
 import com.lordyhas.muzik.ui.components.AlphabetFastScroller
 import com.lordyhas.muzik.ui.components.CircleIconButton
-import com.lordyhas.muzik.ui.components.SortMenuButton
 import com.lordyhas.muzik.ui.components.EmptyState
 import com.lordyhas.muzik.ui.components.LoadingState
 import com.lordyhas.muzik.ui.components.MuzikSearchField
 import com.lordyhas.muzik.ui.components.ScreenHeader
 import com.lordyhas.muzik.ui.components.SongItem
+import com.lordyhas.muzik.ui.components.SortMenuButton
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -81,7 +81,7 @@ fun TracksScreen(
         ) {
             if (totalSongs.isNotEmpty()) {
                 CircleIconButton(
-                    icon = Icons.Default.Shuffle,
+                    icon = Lucide.Shuffle,
                     contentDescription = "Shuffle all",
                     onClick = { viewModel.playRandom() },
                     tint = AccentPrimary
@@ -111,14 +111,14 @@ fun TracksScreen(
             // Empty states scroll so the pull-to-refresh gesture still works on them
             songs.isEmpty() && searchQuery.isNotBlank() -> PullableEmptyArea {
                 EmptyState(
-                    icon = Icons.Default.SearchOff,
+                    icon = Lucide.SearchX,
                     title = "No results for \"$searchQuery\"",
                     message = "Try a different title, artist or album."
                 )
             }
             songs.isEmpty() -> PullableEmptyArea {
                 EmptyState(
-                    icon = Icons.Default.MusicNote,
+                    icon = Lucide.Music,
                     title = "No music found",
                     message = "Add audio files to your device, then pull down to refresh."
                 )

@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,6 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.UserRound
 import com.lordyhas.muzik.data.model.Artist
 import com.lordyhas.muzik.ui.components.AlbumCard
 import com.lordyhas.muzik.ui.components.DetailHero
@@ -68,9 +68,8 @@ fun ArtistDetailScreen(
                 title = artist.name,
                 meta = "${pluralize(artist.songCount, "song")} • ${pluralize(artist.albumCount, "album")}",
                 circular = true,
-                placeholderIcon = Icons.Default.Person,
+                placeholderIcon = Lucide.UserRound,
                 onPlay = { viewModel.playArtist(artist) },
-                onAddToQueue = { viewModel.addAllToQueue(songs) },
                 onShuffle = {
                     val shuffled = songs.shuffled()
                     if (shuffled.isNotEmpty()) viewModel.playSong(shuffled.first(), shuffled)

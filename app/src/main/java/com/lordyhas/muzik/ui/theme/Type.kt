@@ -2,11 +2,21 @@ package com.lordyhas.muzik.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.lordyhas.muzik.R
 
-private val Default = FontFamily.Default
+// Plus Jakarta Sans (SIL OFL 1.1). Static weights rather than the variable font, because weight
+// variations need API 26 and minSdk is 24. It stops at ExtraBold, which also serves Black.
+private val Default = FontFamily(
+    Font(R.font.plus_jakarta_sans_regular, FontWeight.Normal),
+    Font(R.font.plus_jakarta_sans_medium, FontWeight.Medium),
+    Font(R.font.plus_jakarta_sans_semibold, FontWeight.SemiBold),
+    Font(R.font.plus_jakarta_sans_bold, FontWeight.Bold),
+    Font(R.font.plus_jakarta_sans_extrabold, FontWeight.ExtraBold),
+)
 
 // Tight, heavy headings + relaxed body text for a modern music-app feel
 val Typography = Typography(

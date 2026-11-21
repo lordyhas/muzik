@@ -10,15 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Bedtime
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Sell
-import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.Equalizer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,6 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.composables.icons.lucide.ArrowLeft
+import com.composables.icons.lucide.AudioLines
+import com.composables.icons.lucide.Folder
+import com.composables.icons.lucide.Info
+import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Moon
+import com.composables.icons.lucide.RefreshCw
+import com.composables.icons.lucide.SlidersHorizontal
+import com.composables.icons.lucide.Tag
 import com.lordyhas.muzik.service.SleepTimer
 import com.lordyhas.muzik.tageditor.TagEditorActivity
 import com.lordyhas.muzik.ui.components.AudioEffectsSheet
@@ -94,7 +94,7 @@ fun SettingsScreen(
         Column {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 8.dp)) {
                 CircleIconButton(
-                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                    icon = Lucide.ArrowLeft,
                     contentDescription = "Back",
                     onClick = onBackClick
                 )
@@ -112,7 +112,7 @@ fun SettingsScreen(
 
         SettingsGroup(title = "Library") {
             SettingsRow(
-                icon = Icons.Default.Folder,
+                icon = Lucide.Folder,
                 title = "Folders",
                 subtitle = if (hiddenFolderCount > 0) {
                     pluralize(hiddenFolderCount, "hidden folder")
@@ -122,13 +122,13 @@ fun SettingsScreen(
                 onClick = onFoldersClick
             )
             SettingsRow(
-                icon = Icons.Default.Tune,
+                icon = Lucide.SlidersHorizontal,
                 title = "Library filters",
                 subtitle = libraryFiltersSummary(filter.hideRecordings, filter.minDurationMs),
                 onClick = { showFilters = true }
             )
             SettingsRow(
-                icon = Icons.Default.Sell,
+                icon = Lucide.Tag,
                 title = "Tag editor",
                 subtitle = "Fix titles, artists, albums and covers in your files",
                 iconTint = AccentSecondary,
@@ -136,7 +136,7 @@ fun SettingsScreen(
                 trailing = SettingsRowTrailing.External
             )
             SettingsRow(
-                icon = Icons.Default.Refresh,
+                icon = Lucide.RefreshCw,
                 title = if (isRefreshing) "Scanning…" else "Rescan library",
                 subtitle = pluralize(songs.size, "song") +
                     if (hiddenSongCount > 0) " · $hiddenSongCount hidden" else "",
@@ -148,7 +148,7 @@ fun SettingsScreen(
 
         SettingsGroup(title = "Playback") {
             SettingsRow(
-                icon = Icons.Default.Bedtime,
+                icon = Lucide.Moon,
                 title = "Sleep timer",
                 subtitle = when (sleepTimer) {
                     SleepTimer.Off -> "Off"
@@ -159,7 +159,7 @@ fun SettingsScreen(
                 onClick = { showSleepTimer = true }
             )
             SettingsRow(
-                icon = Icons.Default.Equalizer,
+                icon = Lucide.AudioLines,
                 title = "Equalizer & speed",
                 subtitle = (if (equalizer.enabled) "Equalizer on" else "Equalizer off") +
                     " · " + formatSpeed(playbackSpeed),
@@ -171,7 +171,7 @@ fun SettingsScreen(
 
         SettingsGroup(title = "About") {
             SettingsRow(
-                icon = Icons.Default.Info,
+                icon = Lucide.Info,
                 title = "About Muzik",
                 subtitle = "Version ${viewModel.appVersion.name}",
                 iconTint = AccentSecondary,
