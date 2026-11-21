@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -41,22 +43,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
 import coil.compose.AsyncImage
-import com.composables.icons.lucide.BadgePlus
 import com.composables.icons.lucide.EyeOff
-import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.Folder
 import com.composables.icons.lucide.LibraryBig
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Play
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.Shuffle
-import com.composables.icons.lucide.Sparkles
+import com.lordyhas.muzik.data.model.Playlist
 import com.lordyhas.muzik.data.model.SmartPlaylistType
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.ui.components.AlbumCard
@@ -64,12 +66,14 @@ import com.lordyhas.muzik.ui.components.ArtistCard
 import com.lordyhas.muzik.ui.components.Artwork
 import com.lordyhas.muzik.ui.components.CircleIconButton
 import com.lordyhas.muzik.ui.components.EmptyState
-import com.lordyhas.muzik.ui.components.HeartFilled
 import com.lordyhas.muzik.ui.components.LoadingState
+import com.lordyhas.muzik.ui.components.PauseFilled
 import com.lordyhas.muzik.ui.components.PlayFilled
+import com.lordyhas.muzik.ui.components.PlaylistCollage
 import com.lordyhas.muzik.ui.components.SectionHeader
+import com.lordyhas.muzik.ui.components.gradient
+import com.lordyhas.muzik.ui.components.icon
 import com.lordyhas.muzik.ui.components.pluralize
-import com.lordyhas.muzik.ui.theme.AccentFill
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.AccentSecondary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
@@ -82,6 +86,7 @@ import com.lordyhas.muzik.ui.theme.contentColorOn
 import com.lordyhas.muzik.ui.theme.rememberArtworkColor
 import com.lordyhas.muzik.ui.viewmodel.MusicViewModel
 import java.util.Calendar
+import kotlinx.coroutines.flow.StateFlow
 
 @UnstableApi
 @Composable
@@ -95,9 +100,12 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onFoldersClick: () -> Unit = {},
-    onSmartPlaylistClick: (SmartPlaylistType) -> Unit = {}
+    onSmartPlaylistClick: (SmartPlaylistType) -> Unit = {},
+    onPlaylistClick: (String) -> Unit = {},
+    onSeeAllPlaylists: () -> Unit = {}
 ) {
     val songs by viewModel.songs.collectAsState()
+    val playlists by viewModel.playlists.collectAsState()
     val recentSongs by viewModel.recentlyPlayedSongs.collectAsState()
     val recentAlbums by viewModel.recentlyPlayedAlbums.collectAsState()
     val recentArtists by viewModel.recentlyPlayedArtists.collectAsState()
@@ -108,7 +116,17 @@ fun HomeScreen(
     val isPlaying by viewModel.isPlaying.collectAsState()
 
     val greeting = greetingForNow()
-    val heroSong = recentSongs.firstOrNull() ?: songs.firstOrNull()
+    // The hero continues what the player has loaded; otherwise it offers the last song played.
+    val loadedSong = currentSong
+    val heroSong = loadedSong ?: recentSongs.firstOrNull() ?: songs.firstOrNull()
+    val heroLabel = when {
+        loadedSong != null && isPlaying -> "NOW PLAYING"
+        loadedSong != null -> "CONTINUE LISTENING"
+        recentSongs.isNotEmpty() -> "JUMP BACK IN"
+        else -> "START LISTENING"
+    }
+    // Recently played without the hero's song, so it isn't shown twice
+    val recentRow = recentSongs.filter { it.id != heroSong?.id }.take(12)
 
     Box(modifier = modifier.fillMaxSize().background(BackgroundDark)) {
         // Soft brand glow behind the header
@@ -190,92 +208,72 @@ fun HomeScreen(
                 )
                 else -> {
                     if (heroSong != null) {
+                        val isLoaded = loadedSong != null
                         HeroCard(
                             song = heroSong,
-                            isRecent = recentSongs.isNotEmpty(),
-                            onPlay = { viewModel.playSong(heroSong) },
+                            label = heroLabel,
+                            isPlaying = isLoaded && isPlaying,
+                            progress = if (isLoaded) viewModel.currentPosition to viewModel.duration else null,
+                            onOpen = { if (isLoaded) viewModel.setShowNowPlaying(true) else viewModel.playSong(heroSong) },
+                            onPlayPause = { if (isLoaded) viewModel.togglePlayPause() else viewModel.playSong(heroSong) },
                             modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
 
                     Spacer(modifier = Modifier.height(14.dp))
 
-                    // Quick mixes
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        QuickActionCard(
-                            title = "Shuffle all",
-                            subtitle = "Your whole library",
-                            icon = Lucide.Shuffle,
-                            gradient = BrandGradient,
-                            onClick = { viewModel.playRandom() },
-                            modifier = Modifier.weight(1f)
-                        )
-                        QuickActionCard(
-                            title = "Discover",
-                            subtitle = "10 random picks",
-                            icon = Lucide.Sparkles,
-                            gradient = listOf(AccentSecondary, AccentFill),
-                            onClick = {
-                                val sample = songs.shuffled().take(10)
-                                if (sample.isNotEmpty()) viewModel.playSong(sample.first(), sample)
+                    // Library shortcuts: a 2x3 grid, everything visible at once
+                    ShortcutGrid(
+                        tiles = listOf(
+                            ShortcutTile("Shuffle all", Lucide.Shuffle, Brush.linearGradient(BrandGradient), contentColorOn(BrandGradient)) {
+                                viewModel.playRandom()
                             },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    // Library shortcuts
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState())
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        ShortcutChip(
-                            icon = Lucide.HeartFilled,
-                            label = "Liked Songs",
-                            onClick = { onSmartPlaylistClick(SmartPlaylistType.LIKED) }
-                        )
-                        ShortcutChip(
-                            icon = Lucide.Flame,
-                            label = "Most Played",
-                            onClick = { onSmartPlaylistClick(SmartPlaylistType.MOST_PLAYED) },
-                            tint = AccentSecondary
-                        )
-                        ShortcutChip(
-                            icon = Lucide.BadgePlus,
-                            label = "Recently Added",
-                            onClick = { onSmartPlaylistClick(SmartPlaylistType.RECENTLY_ADDED) },
-                            tint = AccentPrimary
-                        )
-                        ShortcutChip(icon = Lucide.Folder, label = "Folders", onClick = onFoldersClick, tint = TextSecondary)
-                    }
+                            smartTile(SmartPlaylistType.LIKED, onSmartPlaylistClick),
+                            smartTile(SmartPlaylistType.MOST_PLAYED, onSmartPlaylistClick),
+                            smartTile(SmartPlaylistType.RECENTLY_ADDED, onSmartPlaylistClick),
+                            smartTile(SmartPlaylistType.REDISCOVER, onSmartPlaylistClick),
+                            ShortcutTile("Folders", Lucide.Folder, SolidColor(StrokeSubtle), TextPrimary, onFoldersClick)
+                        ),
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    if (recentSongs.isNotEmpty()) {
+                    if (recentRow.isNotEmpty()) {
                         SectionHeader(title = "Recently played")
+                        // Compact song rows (3 per column) so they read as tracks to play,
+                        // unlike the big square covers of the album row below.
+                        LazyHorizontalGrid(
+                            rows = GridCells.Fixed(RECENT_ROWS),
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier
+                                .height(RecentRowHeight * RECENT_ROWS + 8.dp * (RECENT_ROWS - 1))
+                        ) {
+                            gridItems(recentRow, key = { it.contentUri.toString() }) { song ->
+                                RecentSongRow(song = song, onClick = { viewModel.playSong(song) })
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    if (playlists.isNotEmpty()) {
+                        SectionHeader(title = "Your playlists", actionLabel = "See all", onAction = onSeeAllPlaylists)
                         LazyRow(
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             modifier = Modifier.padding(vertical = 6.dp)
                         ) {
-                            items(recentSongs.take(10), key = { it.contentUri.toString() }) { song ->
-                                RecentSongCard(song = song, onClick = { viewModel.playSong(song) })
+                            items(playlists, key = { it.id }) { playlist ->
+                                HomePlaylistCard(playlist = playlist, onClick = { onPlaylistClick(playlist.id) })
                             }
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     if (recentAlbums.isNotEmpty()) {
-                        SectionHeader(title = "Albums", actionLabel = "See all", onAction = onSeeAllAlbums)
+                        SectionHeader(title = "Recent albums", actionLabel = "See all", onAction = onSeeAllAlbums)
                         LazyRow(
                             contentPadding = PaddingValues(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -295,7 +293,7 @@ fun HomeScreen(
                     }
 
                     if (recentArtists.isNotEmpty()) {
-                        SectionHeader(title = "Artists", actionLabel = "See all", onAction = onSeeAllArtists)
+                        SectionHeader(title = "Recent artists", actionLabel = "See all", onAction = onSeeAllArtists)
                         LazyRow(
                             contentPadding = PaddingValues(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -321,8 +319,11 @@ fun HomeScreen(
 @Composable
 private fun HeroCard(
     song: Song,
-    isRecent: Boolean,
-    onPlay: () -> Unit,
+    label: String,
+    isPlaying: Boolean,
+    progress: Pair<StateFlow<Long>, StateFlow<Long>>?,
+    onOpen: () -> Unit,
+    onPlayPause: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val accent = rememberArtworkColor(song.albumArtUri)
@@ -336,7 +337,7 @@ private fun HeroCard(
             .clip(shape)
             .background(SurfaceCard)
             .border(1.dp, StrokeSubtle, shape)
-            .clickable(onClick = onPlay)
+            .clickable(onClick = onOpen)
     ) {
         // Artwork backdrop
         if (song.albumArtUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -381,7 +382,7 @@ private fun HeroCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (isRecent) "JUMP BACK IN" else "START LISTENING",
+                    text = label,
                     style = MaterialTheme.typography.labelSmall,
                     color = TextPrimary.copy(alpha = 0.75f)
                 )
@@ -400,6 +401,10 @@ private fun HeroCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                if (progress != null) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    HeroProgress(position = progress.first, duration = progress.second)
+                }
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -409,26 +414,158 @@ private fun HeroCard(
                     .size(50.dp)
                     .shadow(12.dp, CircleShape)
                     .clip(CircleShape)
-                    .background(Color.White),
+                    .background(Color.White)
+                    .clickable(onClick = onPlayPause),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Lucide.PlayFilled,
-                    contentDescription = "Play",
+                    imageVector = if (isPlaying) Lucide.PauseFilled else Lucide.PlayFilled,
+                    contentDescription = if (isPlaying) "Pause" else "Play",
                     tint = BackgroundDark,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(26.dp)
                 )
             }
         }
     }
 }
 
+/** Thin progress line. It collects the position itself so only it recomposes on each tick. */
 @Composable
-private fun RecentSongCard(
+private fun HeroProgress(position: StateFlow<Long>, duration: StateFlow<Long>) {
+    val positionMs by position.collectAsState()
+    val durationMs by duration.collectAsState()
+    val fraction = if (durationMs > 0) (positionMs.toFloat() / durationMs).coerceIn(0f, 1f) else 0f
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(3.dp)
+            .clip(CircleShape)
+            .background(TextPrimary.copy(alpha = 0.2f))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(fraction)
+                .height(3.dp)
+                .clip(CircleShape)
+                .background(TextPrimary)
+        )
+    }
+}
+
+private const val RECENT_ROWS = 3
+private val RecentRowHeight = 60.dp
+
+/** One recently played song: small cover, title and artist, and a play hint. */
+@Composable
+private fun RecentSongRow(
     song: Song,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // A quiet card (same stroke as the shortcut tiles) ties the play hint to its song.
+    val shape = RoundedCornerShape(14.dp)
+    Row(
+        modifier = modifier
+            .width(300.dp)
+            .height(RecentRowHeight)
+            .clip(shape)
+            .background(SurfaceCard.copy(alpha = 0.5f))
+            .border(1.dp, StrokeSubtle, shape)
+            .clickable(onClick = onClick)
+            .padding(start = 6.dp, end = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Artwork(
+            uri = song.albumArtUri,
+            shape = RoundedCornerShape(10.dp),
+            iconSize = 20.dp,
+            contentDescription = null,
+            modifier = Modifier.size(48.dp)
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = song.title,
+                style = MaterialTheme.typography.titleSmall,
+                color = TextPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = song.artist,
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Icon(
+            imageVector = Lucide.Play,
+            contentDescription = "Play ${song.title}",
+            tint = TextSecondary,
+            modifier = Modifier.size(18.dp)
+        )
+    }
+}
+
+private class ShortcutTile(
+    val label: String,
+    val icon: ImageVector,
+    val iconBackground: Brush,
+    val iconTint: Color,
+    val onClick: () -> Unit
+)
+
+private fun smartTile(type: SmartPlaylistType, onClick: (SmartPlaylistType) -> Unit) =
+    ShortcutTile(type.title, type.icon, Brush.linearGradient(type.gradient), contentColorOn(type.gradient)) { onClick(type) }
+
+/** Library shortcuts in two columns, so every one is visible without scrolling sideways. */
+@Composable
+private fun ShortcutGrid(tiles: List<ShortcutTile>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        tiles.chunked(2).forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                row.forEach { tile -> ShortcutTileView(tile, Modifier.weight(1f)) }
+                if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShortcutTileView(tile: ShortcutTile, modifier: Modifier = Modifier) {
+    val shape = RoundedCornerShape(14.dp)
+    Row(
+        modifier = modifier
+            .height(52.dp)
+            .clip(shape)
+            .background(SurfaceCard)
+            .border(1.dp, StrokeSubtle, shape)
+            .clickable(onClick = tile.onClick),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(52.dp)
+                .background(tile.iconBackground),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(tile.icon, contentDescription = null, tint = tile.iconTint, modifier = Modifier.size(22.dp))
+        }
+        Text(
+            text = tile.label,
+            style = MaterialTheme.typography.titleSmall,
+            color = TextPrimary,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 12.dp)
+        )
+    }
+}
+
+@Composable
+private fun HomePlaylistCard(playlist: Playlist, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .width(128.dp)
@@ -436,94 +573,27 @@ private fun RecentSongCard(
             .clickable(onClick = onClick)
             .padding(4.dp)
     ) {
-        Artwork(
-            uri = song.albumArtUri,
-            shape = RoundedCornerShape(14.dp),
-            iconSize = 36.dp,
-            contentDescription = song.title,
+        PlaylistCollage(
+            playlist = playlist,
             modifier = Modifier
                 .size(120.dp)
+                .clip(RoundedCornerShape(14.dp))
                 .border(1.dp, StrokeSubtle, RoundedCornerShape(14.dp))
         )
-
         Spacer(modifier = Modifier.height(8.dp))
-
         Text(
-            text = song.title,
+            text = playlist.name,
             style = MaterialTheme.typography.titleSmall,
             color = TextPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = song.artist,
+            text = pluralize(playlist.songs.size, "song"),
             style = MaterialTheme.typography.bodySmall,
             color = TextSecondary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            maxLines = 1
         )
-    }
-}
-
-@Composable
-private fun QuickActionCard(
-    title: String,
-    subtitle: String,
-    icon: ImageVector,
-    gradient: List<Color>,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val shape = RoundedCornerShape(18.dp)
-    Row(
-        modifier = modifier
-            .height(68.dp)
-            .clip(shape)
-            .background(SurfaceCard)
-            .background(Brush.horizontalGradient(listOf(gradient[0].copy(alpha = 0.28f), Color.Transparent)))
-            .border(1.dp, StrokeSubtle, shape)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .size(38.dp)
-                .clip(CircleShape)
-                .background(Brush.linearGradient(gradient)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(icon, contentDescription = null, tint = contentColorOn(gradient), modifier = Modifier.size(20.dp))
-        }
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Column {
-            Text(text = title, style = MaterialTheme.typography.titleSmall, color = TextPrimary, maxLines = 1)
-            Text(text = subtitle, style = MaterialTheme.typography.bodySmall, color = TextSecondary, maxLines = 1)
-        }
-    }
-}
-
-@Composable
-internal fun ShortcutChip(
-    icon: ImageVector,
-    label: String,
-    onClick: () -> Unit,
-    tint: Color = AccentPrimary
-) {
-    Row(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(SurfaceCard)
-            .border(1.dp, StrokeSubtle, CircleShape)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 9.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.size(18.dp))
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(label, style = MaterialTheme.typography.labelLarge, color = TextPrimary)
     }
 }
 
