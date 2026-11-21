@@ -61,8 +61,8 @@ class TagEditorActivity : ComponentActivity() {
 
     private val viewModel: TagEditorViewModel by viewModels()
 
-    /** Song to open directly (from "Edit tags" in the player); consumed once navigated to. */
-    private val openSongId = MutableStateFlow<Long?>(null)
+    /** Page to open directly ("song/<id>" or "album/<id>", from "Edit tags" in the player); consumed once opened. */
+    private val openRoute = MutableStateFlow<String?>(null)
     private val hasReadPermission = MutableStateFlow(true)
     private val showConfirmationTip = MutableStateFlow(false)
 
@@ -70,7 +70,7 @@ class TagEditorActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         AppThemeStore.init(this)
         enableEdgeToEdge()
-        if (savedInstanceState == null) openSongId.value = intent.songIdExtra()
+        if (savedInstanceState == null) openRoute.value = intent.routeExtra()
 
         setContent {
             MuzikTheme {
@@ -82,7 +82,7 @@ class TagEditorActivity : ComponentActivity() {
                 }
                 val hasPermission by hasReadPermission.collectAsState()
                 val tip by showConfirmationTip.collectAsState()
-                val songToOpen by openSongId.collectAsState()
+                val routeToOpen by openRoute.collectAsState()
 
                 LaunchedEffect(Unit) {
                     if (!hasReadPermission(this@TagEditorActivity)) permissionLauncher.launch(readPermission())
@@ -94,8 +94,8 @@ class TagEditorActivity : ComponentActivity() {
                     } else {
                         TagEditorApp(
                             viewModel = viewModel,
-                            songToOpen = songToOpen,
-                            onSongOpened = { openSongId.value = null },
+                            routeToOpen = routeToOpen,
+                            onRouteOpened = { openRoute.value = null },
                             showConfirmationTip = tip,
                             onAllowWithoutConfirmation = { WriteAccess.openMediaManagementSettings(this) },
                             onDismissTip = {
@@ -112,7 +112,7 @@ class TagEditorActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intent.songIdExtra()?.let { openSongId.value = it }
+        intent.routeExtra()?.let { openRoute.value = it }
     }
 
     override fun onResume() {
@@ -130,18 +130,23 @@ class TagEditorActivity : ComponentActivity() {
 
     companion object {
         private const val EXTRA_SONG_ID = "com.lordyhas.muzik.extra.SONG_ID"
+        private const val EXTRA_ALBUM_ID = "com.lordyhas.muzik.extra.ALBUM_ID"
         private const val PREFS = "muzik_tag_editor"
         private const val KEY_TIP_DISMISSED = "confirmation_tip_dismissed"
 
-        /** Opens the Tag editor in its own task, optionally straight on one song. */
-        fun intent(context: Context, songId: Long? = null): Intent =
+        /** Opens the Tag editor in its own task, optionally straight on one song or one album. */
+        fun intent(context: Context, songId: Long? = null, albumId: Long? = null): Intent =
             Intent(context, TagEditorActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 songId?.let { putExtra(EXTRA_SONG_ID, it) }
+                albumId?.let { putExtra(EXTRA_ALBUM_ID, it) }
             }
 
-        private fun Intent.songIdExtra(): Long? =
-            if (hasExtra(EXTRA_SONG_ID)) getLongExtra(EXTRA_SONG_ID, -1L).takeIf { it >= 0 } else null
+        private fun Intent.longExtra(key: String): Long? =
+            if (hasExtra(key)) getLongExtra(key, -1L).takeIf { it >= 0 } else null
+
+        private fun Intent.routeExtra(): String? =
+            longExtra(EXTRA_SONG_ID)?.let { "song/$it" } ?: longExtra(EXTRA_ALBUM_ID)?.let { "album/$it" }
 
         private fun readPermission() =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) Manifest.permission.READ_MEDIA_AUDIO
@@ -160,8 +165,8 @@ private const val ARTIST_ROUTE = "artist/{artistName}"
 @Composable
 private fun TagEditorApp(
     viewModel: TagEditorViewModel,
-    songToOpen: Long?,
-    onSongOpened: () -> Unit,
+    routeToOpen: String?,
+    onRouteOpened: () -> Unit,
     showConfirmationTip: Boolean,
     onAllowWithoutConfirmation: () -> Unit,
     onDismissTip: () -> Unit,
@@ -169,10 +174,10 @@ private fun TagEditorApp(
 ) {
     val navController = rememberNavController()
 
-    LaunchedEffect(songToOpen) {
-        if (songToOpen != null) {
-            navController.navigate("song/$songToOpen") { launchSingleTop = true }
-            onSongOpened()
+    LaunchedEffect(routeToOpen) {
+        if (routeToOpen != null) {
+            navController.navigate(routeToOpen) { launchSingleTop = true }
+            onRouteOpened()
         }
     }
 

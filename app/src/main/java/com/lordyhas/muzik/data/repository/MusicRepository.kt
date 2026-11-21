@@ -35,6 +35,7 @@ class MusicRepository(private val context: Context) {
             MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.TRACK,
             MediaStore.Audio.Media.DATE_ADDED,
+            MediaStore.Audio.Media.YEAR,
             @Suppress("DEPRECATION") MediaStore.Audio.Media.DATA,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) MediaStore.Audio.Media.IS_RECORDING else null
         ).toTypedArray()
@@ -61,6 +62,7 @@ class MusicRepository(private val context: Context) {
                 val displayNameColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
                 val trackColumn = it.getColumnIndex(MediaStore.Audio.Media.TRACK)
                 val dateAddedColumn = it.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED)
+                val yearColumn = it.getColumnIndex(MediaStore.Audio.Media.YEAR)
                 @Suppress("DEPRECATION")
                 val dataColumn = it.getColumnIndex(MediaStore.Audio.Media.DATA)
                 val recordingColumn = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -79,6 +81,7 @@ class MusicRepository(private val context: Context) {
                     val displayName = it.getString(displayNameColumn) ?: "audio_${id}"
                     val rawTrack = if (trackColumn != -1 && !it.isNull(trackColumn)) it.getInt(trackColumn) else 0
                     val dateAdded = if (dateAddedColumn != -1 && !it.isNull(dateAddedColumn)) it.getLong(dateAddedColumn) else 0L
+                    val year = if (yearColumn != -1 && !it.isNull(yearColumn)) it.getInt(yearColumn).takeIf { y -> y > 0 } else null
                     val filePath = if (dataColumn != -1) it.getString(dataColumn) else null
                     val folderPath = filePath?.substringBeforeLast('/', missingDelimiterValue = "").orEmpty()
                     val isRecording = recordingColumn != -1 && !it.isNull(recordingColumn) && it.getInt(recordingColumn) != 0
@@ -130,6 +133,7 @@ class MusicRepository(private val context: Context) {
                         trackNumber = trackNumber,
                         discNumber = discNumber,
                         dateAdded = dateAdded,
+                        year = year,
                         folderPath = folderPath,
                         fileName = displayName,
                         isRecording = isRecording

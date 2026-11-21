@@ -56,6 +56,7 @@ import com.composables.icons.lucide.Music
 import com.composables.icons.lucide.UserRound
 import com.lordyhas.muzik.data.model.SmartPlaylistType
 import com.lordyhas.muzik.tageditor.TagEditorActivity
+import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.components.AddToPlaylistSheet
 import com.lordyhas.muzik.ui.components.AudioEffectsSheet
 import com.lordyhas.muzik.ui.components.CreatePlaylistDialog
@@ -121,7 +122,7 @@ fun MainAppScreen(
     val currentQueue by viewModel.currentQueue.collectAsState()
     val currentQueueIndex by viewModel.currentQueueIndex.collectAsState()
     val selectedSongForDetails by viewModel.selectedSongForDetails.collectAsState()
-    val songPendingAddToPlaylist by viewModel.songPendingAddToPlaylist.collectAsState()
+    val songsPendingAddToPlaylist by viewModel.songsPendingAddToPlaylist.collectAsState()
     val playlists by viewModel.playlists.collectAsState()
     val showCreatePlaylistDialog by viewModel.showCreatePlaylistDialog.collectAsState()
     val sleepTimer by viewModel.sleepTimer.collectAsState()
@@ -189,7 +190,7 @@ fun MainAppScreen(
     val isTopLevelRoute = currentRoute in TAB_ROUTES
 
     // Intercept back for overlays: AddToPlaylistSheet & SongDetailsDialog
-    BackHandler(enabled = songPendingAddToPlaylist != null && !showCreatePlaylistDialog) {
+    BackHandler(enabled = songsPendingAddToPlaylist.isNotEmpty() && !showCreatePlaylistDialog) {
         viewModel.setSongPendingAddToPlaylist(null)
     }
 
@@ -200,7 +201,7 @@ fun MainAppScreen(
     // Intercept back on secondary tabs: go back to Home tab first
     BackHandler(
         enabled = isTopLevelRoute && currentRoute != NavigationTab.HOME.route && !showNowPlaying &&
-                selectedSongForDetails == null && songPendingAddToPlaylist == null
+                selectedSongForDetails == null && songsPendingAddToPlaylist.isEmpty()
     ) {
         navigateToTab(NavigationTab.HOME)
     }
@@ -208,7 +209,7 @@ fun MainAppScreen(
     // On Home tab: double back press to exit application safely
     BackHandler(
         enabled = currentRoute == NavigationTab.HOME.route && !showNowPlaying &&
-                selectedSongForDetails == null && songPendingAddToPlaylist == null && !showCreatePlaylistDialog
+                selectedSongForDetails == null && songsPendingAddToPlaylist.isEmpty() && !showCreatePlaylistDialog
     ) {
         val now = System.currentTimeMillis()
         if (now - backPressedTime < 2000L) {
@@ -327,14 +328,11 @@ fun MainAppScreen(
                             viewModel = viewModel,
                             onAlbumClick = { id -> navigateToAlbum(id) },
                             onArtistClick = { name -> navigateToArtist(name) },
-                            onSeeAllAlbums = { navigateToTab(NavigationTab.ALBUMS) },
-                            onSeeAllArtists = { navigateToTab(NavigationTab.ARTISTS) },
                             onSearchClick = { navController.navigate("search") },
                             onSettingsClick = { navController.navigate(SETTINGS_ROUTE) },
                             onFoldersClick = { navController.navigate("folders") },
                             onSmartPlaylistClick = { type -> navController.navigate("smart/${type.name}") },
-                            onPlaylistClick = { id -> navigateToPlaylist(id) },
-                            onSeeAllPlaylists = { navigateToTab(NavigationTab.PLAYLISTS) }
+                            onPlaylistClick = { id -> navigateToPlaylist(id) }
                         )
                     }
 
@@ -430,7 +428,8 @@ fun MainAppScreen(
                             albumId = backStackEntry.arguments?.getLong("albumId") ?: 0L,
                             viewModel = viewModel,
                             onBackClick = { safePopBack() },
-                            onGoToArtist = { name -> navigateToArtist(name) }
+                            onGoToArtist = { name -> navigateToArtist(name) },
+                            onAlbumClick = { id -> navigateToAlbum(id) }
                         )
                     }
 
@@ -616,12 +615,15 @@ fun MainAppScreen(
         }
 
         // ─── Add To Playlist Sheet ─────────────────────────────────────────────
-        songPendingAddToPlaylist?.let { song ->
+        if (songsPendingAddToPlaylist.isNotEmpty()) {
+            val pending = songsPendingAddToPlaylist
             AddToPlaylistSheet(
-                song = song,
+                subject = pending.singleOrNull()?.title
+                    ?: "${pending.first().album} · ${pluralize(pending.size, "song")}",
+                songIds = pending.map { it.id },
                 playlists = playlists,
                 onAddToPlaylist = { playlist ->
-                    viewModel.addSongToPlaylist(playlist.id, song.id)
+                    viewModel.addSongsToPlaylist(playlist, pending)
                     viewModel.setSongPendingAddToPlaylist(null)
                 },
                 onCreateNew = {
@@ -644,13 +646,13 @@ fun MainAppScreen(
         )
 
         // ─── Create Playlist Dialog (global, triggered from AddToPlaylistSheet) ─
-        if (showCreatePlaylistDialog && songPendingAddToPlaylist != null) {
+        if (showCreatePlaylistDialog && songsPendingAddToPlaylist.isNotEmpty()) {
             CreatePlaylistDialog(
                 title = "New playlist",
                 initialName = "",
                 onConfirm = { name ->
                     // Create the playlist and add the pending song once it exists
-                    viewModel.createPlaylist(name, initialSongId = songPendingAddToPlaylist?.id)
+                    viewModel.createPlaylist(name, initialSongIds = songsPendingAddToPlaylist.map { it.id })
                     viewModel.setShowCreatePlaylistDialog(false)
                     viewModel.setSongPendingAddToPlaylist(null)
                 },

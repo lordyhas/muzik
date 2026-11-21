@@ -8,7 +8,9 @@ data class Album(
     val artist: String,
     val albumArtUri: Uri?,
     val songCount: Int,
-    val songs: List<Song> = emptyList()
+    val songs: List<Song> = emptyList(),
+    /** Most common release year among the tracks, when the tags have one. */
+    val year: Int? = null
 )
 
 /**
@@ -26,7 +28,8 @@ fun List<Song>.groupIntoAlbums(): List<Album> =
                 artist = albumSongs.groupingBy { it.artist }.eachCount().maxByOrNull { it.value }!!.key,
                 albumArtUri = sorted.firstOrNull { it.albumArtUri != null }?.albumArtUri,
                 songCount = sorted.size,
-                songs = sorted
+                songs = sorted,
+                year = albumSongs.mapNotNull { it.year }.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key
             )
         }
         .sortedWith(compareBy<Album> { it.title.lowercase() }.thenBy { it.artist.lowercase() })

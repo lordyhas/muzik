@@ -405,6 +405,10 @@ fun DetailScaffold(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
+    /** Small cover shown next to the title in the collapsed top bar. */
+    topBarArtworkUri: Uri? = null,
+    /** Top-right corner (an [OverflowMenu]), always visible like the Back button. */
+    actions: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
     val showTopBar by remember {
@@ -439,13 +443,25 @@ fun DetailScaffold(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Spacer(modifier = Modifier.width(52.dp))
+                if (topBarArtworkUri != null) {
+                    Artwork(
+                        uri = topBarArtworkUri,
+                        shape = RoundedCornerShape(8.dp),
+                        iconSize = 16.dp,
+                        contentDescription = null,
+                        modifier = Modifier.size(36.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                }
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                     color = TextPrimary,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
+                if (actions != null) Spacer(modifier = Modifier.width(52.dp))
             }
         }
 
@@ -468,6 +484,16 @@ fun DetailScaffold(
                 onClick = onBack,
                 background = Color.Black.copy(alpha = 0.35f)
             )
+        }
+
+        if (actions != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .statusBarsPadding()
+                    .size(72.dp, 60.dp),
+                contentAlignment = Alignment.Center
+            ) { actions() }
         }
     }
 }
@@ -551,12 +577,14 @@ fun DetailHero(
 
             Spacer(modifier = Modifier.height(22.dp))
 
-            Text(
-                text = eyebrow.uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing * 3),
-                color = accent
-            )
-            Spacer(modifier = Modifier.height(6.dp))
+            if (eyebrow.isNotBlank()) {
+                Text(
+                    text = eyebrow.uppercase(),
+                    style = MaterialTheme.typography.labelSmall.copy(letterSpacing = MaterialTheme.typography.labelSmall.letterSpacing * 3),
+                    color = accent
+                )
+                Spacer(modifier = Modifier.height(6.dp))
+            }
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineMedium,

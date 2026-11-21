@@ -3,10 +3,11 @@ package com.lordyhas.muzik.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -17,15 +18,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.composables.icons.lucide.BadgePlus
 import com.composables.icons.lucide.Flame
+import com.composables.icons.lucide.Heart
 import com.composables.icons.lucide.History
 import com.composables.icons.lucide.Lucide
 import com.lordyhas.muzik.data.model.SmartPlaylist
 import com.lordyhas.muzik.data.model.SmartPlaylistType
 import com.lordyhas.muzik.ui.theme.AppThemeStore
+import com.lordyhas.muzik.ui.theme.SurfaceCard
 import com.lordyhas.muzik.ui.theme.contentColorOn
 
 /** Visual identity (icon + gradient) of each smart playlist. */
@@ -56,35 +63,80 @@ fun SmartPlaylistCover(type: SmartPlaylistType, modifier: Modifier = Modifier, i
     }
 }
 
+/** Outline icon for the tile's badge and watermark (the liked heart is filled elsewhere). */
+private val SmartPlaylistType.outlineIcon: ImageVector
+    get() = if (this == SmartPlaylistType.LIKED) Lucide.Heart else icon
+
+/**
+ * Smart playlist card: a muted tint of the playlist's hue (over its first song's cover, except for
+ * Liked Songs), a round badge with its icon, the title at the bottom, and a large faded copy of the
+ * icon spilling off the bottom-right corner.
+ */
 @Composable
 fun SmartPlaylistTile(
     playlist: SmartPlaylist,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val hue = playlist.type.gradient.first()
+    val background = lerp(SurfaceCard, hue, 0.42f)
+    val light = lerp(hue, Color.White, 0.72f)
     Box(
         modifier = modifier
-            .size(width = 150.dp, height = 110.dp)
-            .clip(RoundedCornerShape(18.dp))
+            .height(120.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .background(background)
             .clickable(onClick = onClick)
     ) {
-        SmartPlaylistCover(type = playlist.type, modifier = Modifier.fillMaxSize(), iconSize = 30.dp)
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = 0.45f))))
-        )
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(12.dp)
-        ) {
-            Text(playlist.type.title, style = MaterialTheme.typography.titleSmall, color = Color.White)
-            Text(
-                pluralize(playlist.songs.size, "song"),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.8f)
+        // Except Liked Songs, the card shows the cover of its first song under the tint. If the
+        // cover can't load, the tint over the plain background gives back the usual color.
+        val coverUri = if (playlist.type == SmartPlaylistType.LIKED) null else playlist.songs.firstOrNull()?.albumArtUri
+        if (coverUri != null) {
+            AsyncImage(
+                model = coverUri,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(background.copy(alpha = 0.72f))
             )
         }
+        Icon(
+            imageVector = playlist.type.outlineIcon,
+            contentDescription = null,
+            tint = light.copy(alpha = 0.18f),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = 22.dp, y = 26.dp)
+                .size(110.dp)
+        )
+        Box(
+            modifier = Modifier
+                .padding(14.dp)
+                .size(38.dp)
+                .clip(CircleShape)
+                .background(light),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = playlist.type.outlineIcon,
+                contentDescription = null,
+                tint = lerp(hue, Color.Black, 0.45f),
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Text(
+            text = playlist.type.title,
+            style = MaterialTheme.typography.titleMedium,
+            color = light,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+        )
     }
 }
