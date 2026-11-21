@@ -20,8 +20,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.composables.icons.lucide.BadgePlus
 import com.composables.icons.lucide.Flame
 import com.composables.icons.lucide.Heart
@@ -66,8 +68,9 @@ private val SmartPlaylistType.outlineIcon: ImageVector
     get() = if (this == SmartPlaylistType.LIKED) Lucide.Heart else icon
 
 /**
- * Smart playlist card: a muted tint of the playlist's hue, a round badge with its icon, the title
- * at the bottom, and a large faded copy of the icon spilling off the bottom-right corner.
+ * Smart playlist card: a muted tint of the playlist's hue (over its first song's cover, except for
+ * Liked Songs), a round badge with its icon, the title at the bottom, and a large faded copy of the
+ * icon spilling off the bottom-right corner.
  */
 @Composable
 fun SmartPlaylistTile(
@@ -85,6 +88,22 @@ fun SmartPlaylistTile(
             .background(background)
             .clickable(onClick = onClick)
     ) {
+        // Except Liked Songs, the card shows the cover of its first song under the tint. If the
+        // cover can't load, the tint over the plain background gives back the usual color.
+        val coverUri = if (playlist.type == SmartPlaylistType.LIKED) null else playlist.songs.firstOrNull()?.albumArtUri
+        if (coverUri != null) {
+            AsyncImage(
+                model = coverUri,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(background.copy(alpha = 0.72f))
+            )
+        }
         Icon(
             imageVector = playlist.type.outlineIcon,
             contentDescription = null,
