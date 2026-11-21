@@ -2,6 +2,17 @@
   "_comment": "Shown to users in the 'What's new' sheet after an update, and at the top of the GitHub release notes. Newest release first. Write for listeners, not developers: what they can do now, in a sentence or two. type is new, improved or fixed.",
   "releases": [
     {
+      "versionCode": 10,
+      "versionName": "1.6.4",
+      "highlights": [
+        {
+          "type": "fixed",
+          "title": "Next stays in its place",
+          "text": "On some phones, the shuffle button in the notification took the place of Next on the last song. Next now keeps its spot."
+        }
+      ]
+    },
+    {
       "versionCode": 9,
       "versionName": "1.6.3",
       "highlights": [
