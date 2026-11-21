@@ -21,7 +21,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,6 +69,7 @@ import com.lordyhas.muzik.ui.components.ArtistCard
 import com.lordyhas.muzik.ui.components.Artwork
 import com.lordyhas.muzik.ui.components.CircleIconButton
 import com.lordyhas.muzik.ui.components.EmptyState
+import com.lordyhas.muzik.ui.components.HorizontalScrollIndicator
 import com.lordyhas.muzik.ui.components.LoadingState
 import com.lordyhas.muzik.ui.components.PauseFilled
 import com.lordyhas.muzik.ui.components.PlayFilled
@@ -96,8 +99,6 @@ fun HomeScreen(
     onAlbumClick: (Long) -> Unit,
     onArtistClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onSeeAllAlbums: () -> Unit = {},
-    onSeeAllArtists: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onFoldersClick: () -> Unit = {},
@@ -242,7 +243,9 @@ fun HomeScreen(
                     // Pinned albums and playlists; the row disappears when nothing is pinned
                     if (pinnedItems.isNotEmpty()) {
                         SectionHeader(title = "Pinned")
+                        val pinnedState = rememberLazyListState()
                         LazyRow(
+                            state = pinnedState,
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             modifier = Modifier.padding(vertical = 6.dp)
@@ -271,6 +274,7 @@ fun HomeScreen(
                                 }
                             }
                         }
+                        HorizontalScrollIndicator(pinnedState)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
@@ -278,7 +282,9 @@ fun HomeScreen(
                         SectionHeader(title = "Recently played")
                         // Compact song rows (3 per column) so they read as tracks to play,
                         // unlike the big square covers of the album row below.
+                        val recentState = rememberLazyGridState()
                         LazyHorizontalGrid(
+                            state = recentState,
                             rows = GridCells.Fixed(RECENT_ROWS),
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -290,12 +296,15 @@ fun HomeScreen(
                                 RecentSongRow(song = song, onClick = { viewModel.playSong(song) })
                             }
                         }
+                        HorizontalScrollIndicator(recentState, rows = RECENT_ROWS)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     if (recentAlbums.isNotEmpty()) {
-                        SectionHeader(title = "Recent albums", actionLabel = "See all", onAction = onSeeAllAlbums)
+                        SectionHeader(title = "Recent albums")
+                        val albumsState = rememberLazyListState()
                         LazyRow(
+                            state = albumsState,
                             contentPadding = PaddingValues(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.padding(vertical = 6.dp)
@@ -310,12 +319,15 @@ fun HomeScreen(
                                 )
                             }
                         }
+                        HorizontalScrollIndicator(albumsState)
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     if (recentArtists.isNotEmpty()) {
-                        SectionHeader(title = "Recent artists", actionLabel = "See all", onAction = onSeeAllArtists)
+                        SectionHeader(title = "Recent artists")
+                        val artistsState = rememberLazyListState()
                         LazyRow(
+                            state = artistsState,
                             contentPadding = PaddingValues(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
                             modifier = Modifier.padding(vertical = 6.dp)
@@ -329,6 +341,7 @@ fun HomeScreen(
                                 )
                             }
                         }
+                        HorizontalScrollIndicator(artistsState)
                     }
                 }
             }

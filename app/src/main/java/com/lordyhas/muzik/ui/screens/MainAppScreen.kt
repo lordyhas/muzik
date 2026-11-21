@@ -328,8 +328,6 @@ fun MainAppScreen(
                             viewModel = viewModel,
                             onAlbumClick = { id -> navigateToAlbum(id) },
                             onArtistClick = { name -> navigateToArtist(name) },
-                            onSeeAllAlbums = { navigateToTab(NavigationTab.ALBUMS) },
-                            onSeeAllArtists = { navigateToTab(NavigationTab.ARTISTS) },
                             onSearchClick = { navController.navigate("search") },
                             onSettingsClick = { navController.navigate(SETTINGS_ROUTE) },
                             onFoldersClick = { navController.navigate("folders") },
