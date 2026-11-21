@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -51,6 +54,7 @@ import com.composables.icons.lucide.EyeOff
 import com.composables.icons.lucide.Folder
 import com.composables.icons.lucide.LibraryBig
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Play
 import com.composables.icons.lucide.Search
 import com.composables.icons.lucide.Settings
 import com.composables.icons.lucide.Shuffle
@@ -122,7 +126,7 @@ fun HomeScreen(
         else -> "START LISTENING"
     }
     // Recently played without the hero's song, so it isn't shown twice
-    val recentRow = recentSongs.filter { it.id != heroSong?.id }.take(10)
+    val recentRow = recentSongs.filter { it.id != heroSong?.id }.take(12)
 
     Box(modifier = modifier.fillMaxSize().background(BackgroundDark)) {
         // Soft brand glow behind the header
@@ -237,13 +241,18 @@ fun HomeScreen(
 
                     if (recentRow.isNotEmpty()) {
                         SectionHeader(title = "Recently played")
-                        LazyRow(
+                        // Compact song rows (3 per column) so they read as tracks to play,
+                        // unlike the big square covers of the album row below.
+                        LazyHorizontalGrid(
+                            rows = GridCells.Fixed(RECENT_ROWS),
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            modifier = Modifier.padding(vertical = 6.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier
+                                .height(RecentRowHeight * RECENT_ROWS + 8.dp * (RECENT_ROWS - 1))
                         ) {
-                            items(recentRow, key = { it.contentUri.toString() }) { song ->
-                                RecentSongCard(song = song, onClick = { viewModel.playSong(song) })
+                            gridItems(recentRow, key = { it.contentUri.toString() }) { song ->
+                                RecentSongRow(song = song, onClick = { viewModel.playSong(song) })
                             }
                         }
                         Spacer(modifier = Modifier.height(16.dp))
@@ -443,44 +452,59 @@ private fun HeroProgress(position: StateFlow<Long>, duration: StateFlow<Long>) {
     }
 }
 
+private const val RECENT_ROWS = 3
+private val RecentRowHeight = 60.dp
+
+/** One recently played song: small cover, title and artist, and a play hint. */
 @Composable
-private fun RecentSongCard(
+private fun RecentSongRow(
     song: Song,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    // A quiet card (same stroke as the shortcut tiles) ties the play hint to its song.
+    val shape = RoundedCornerShape(14.dp)
+    Row(
         modifier = modifier
-            .width(128.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .width(300.dp)
+            .height(RecentRowHeight)
+            .clip(shape)
+            .background(SurfaceCard.copy(alpha = 0.5f))
+            .border(1.dp, StrokeSubtle, shape)
             .clickable(onClick = onClick)
-            .padding(4.dp)
+            .padding(start = 6.dp, end = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Artwork(
             uri = song.albumArtUri,
-            shape = RoundedCornerShape(14.dp),
-            iconSize = 36.dp,
-            contentDescription = song.title,
-            modifier = Modifier
-                .size(120.dp)
-                .border(1.dp, StrokeSubtle, RoundedCornerShape(14.dp))
+            shape = RoundedCornerShape(10.dp),
+            iconSize = 20.dp,
+            contentDescription = null,
+            modifier = Modifier.size(48.dp)
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = song.title,
-            style = MaterialTheme.typography.titleSmall,
-            color = TextPrimary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(
-            text = song.artist,
-            style = MaterialTheme.typography.bodySmall,
-            color = TextSecondary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = song.title,
+                style = MaterialTheme.typography.titleSmall,
+                color = TextPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = song.artist,
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Icon(
+            imageVector = Lucide.Play,
+            contentDescription = "Play ${song.title}",
+            tint = TextSecondary,
+            modifier = Modifier.size(18.dp)
         )
     }
 }
