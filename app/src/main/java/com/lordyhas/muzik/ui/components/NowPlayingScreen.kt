@@ -313,10 +313,10 @@ fun NowPlayingScreen(
                                     coroutineScope.launch { pagerState.animateScrollToPage(1) }
                                 }
                                 MenuItem(
-                                    if (showVisualizer) "Show cover" else "Visualizer",
-                                    Lucide.AudioLines,
+                                    if (playbackSpeed != 1f) "Audio effects · ${formatSpeed(playbackSpeed)}" else "Audio effects",
+                                    Lucide.SlidersHorizontal,
                                     accent,
-                                    onToggleVisualizer
+                                    onAudioEffectsClick
                                 )
                                 MenuItem("Go to album", Lucide.Disc3, TextSecondary, onGoToAlbum)
                                 MenuItem("Go to artist", Lucide.UserRound, TextSecondary, onGoToArtist)
@@ -502,7 +502,7 @@ fun NowPlayingScreen(
                         )
                     }
 
-                    // ── Secondary actions ───────────────────────────────
+                    // ── Secondary actions (on narrow screens the labels shorten instead of overflowing) ──
                     val sleepRemaining = rememberSleepRemaining(sleepTimer)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -517,21 +517,24 @@ fun NowPlayingScreen(
                             },
                             active = sleepTimer != SleepTimer.Off,
                             accent = accent,
-                            onClick = onSleepTimerClick
+                            onClick = onSleepTimerClick,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
                         PlayerActionChip(
                             icon = Lucide.MicVocal,
                             label = "Lyrics",
                             active = showLyrics,
                             accent = accent,
-                            onClick = onToggleLyrics
+                            onClick = onToggleLyrics,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
                         PlayerActionChip(
-                            icon = Lucide.SlidersHorizontal,
-                            label = if (playbackSpeed != 1f) formatSpeed(playbackSpeed) else "Audio",
-                            active = playbackSpeed != 1f,
+                            icon = Lucide.AudioLines,
+                            label = "Visualizer",
+                            active = showVisualizer,
                             accent = accent,
-                            onClick = onAudioEffectsClick
+                            onClick = onToggleVisualizer,
+                            modifier = Modifier.weight(1f, fill = false)
                         )
                     }
 
@@ -953,10 +956,11 @@ private fun PlayerActionChip(
     label: String,
     active: Boolean,
     accent: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .clip(CircleShape)
             .background(if (active) accent.copy(alpha = 0.22f) else Color.White.copy(alpha = 0.06f))
             .clickable(onClick = onClick)
@@ -972,7 +976,9 @@ private fun PlayerActionChip(
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            color = if (active) accent else TextPrimary.copy(alpha = 0.8f)
+            color = if (active) accent else TextPrimary.copy(alpha = 0.8f),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
