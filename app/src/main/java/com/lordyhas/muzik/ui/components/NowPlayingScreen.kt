@@ -67,6 +67,7 @@ import androidx.compose.ui.unit.dp
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import coil.compose.AsyncImage
+import com.composables.icons.lucide.AudioLines
 import com.composables.icons.lucide.ChevronDown
 import com.composables.icons.lucide.ChevronUp
 import com.composables.icons.lucide.Disc3
@@ -131,6 +132,8 @@ fun NowPlayingScreen(
     showLyrics: Boolean,
     lyricsState: LyricsState,
     onToggleLyrics: () -> Unit,
+    showVisualizer: Boolean,
+    onToggleVisualizer: () -> Unit,
     onAddToPlaylist: () -> Unit,
     onGoToAlbum: () -> Unit,
     onGoToArtist: () -> Unit,
@@ -309,6 +312,12 @@ fun NowPlayingScreen(
                                 MenuItem("Queue", Lucide.ListMusic, accent) {
                                     coroutineScope.launch { pagerState.animateScrollToPage(1) }
                                 }
+                                MenuItem(
+                                    if (showVisualizer) "Show cover" else "Visualizer",
+                                    Lucide.AudioLines,
+                                    accent,
+                                    onToggleVisualizer
+                                )
                                 MenuItem("Go to album", Lucide.Disc3, TextSecondary, onGoToAlbum)
                                 MenuItem("Go to artist", Lucide.UserRound, TextSecondary, onGoToArtist)
                                 MenuItem("Song details", Lucide.Info, TextSecondary, onShowDetails)
@@ -316,8 +325,21 @@ fun NowPlayingScreen(
                         }
                     }
 
-                    // ── Lyrics panel or album art (swipe left/right to skip) ──
-                    if (showLyrics) {
+                    // ── Lyrics, visualizer or album art (swipe left/right to skip) ──
+                    if (showVisualizer) {
+                        SpectrumPanel(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(1f)
+                                // Tapping the bars brings the cover back
+                                .clickable(
+                                    interactionSource = null,
+                                    indication = null,
+                                    onClickLabel = "Show cover",
+                                    onClick = onToggleVisualizer
+                                )
+                        )
+                    } else if (showLyrics) {
                         LyricsPanel(
                             state = lyricsState,
                             positionMs = currentPosition,

@@ -440,7 +440,20 @@ class MusicViewModel(application: Application) : AndroidViewModel(application) {
     private val _showLyrics = MutableStateFlow(false)
     val showLyrics: StateFlow<Boolean> = _showLyrics.asStateFlow()
 
-    fun toggleLyrics() { _showLyrics.value = !_showLyrics.value }
+    fun toggleLyrics() {
+        _showLyrics.value = !_showLyrics.value
+        if (_showLyrics.value) _showVisualizer.value = false
+    }
+
+    // ─── Visualizer (the other thing that can take the cover's place) ────────
+
+    private val _showVisualizer = MutableStateFlow(false)
+    val showVisualizer: StateFlow<Boolean> = _showVisualizer.asStateFlow()
+
+    fun toggleVisualizer() {
+        _showVisualizer.value = !_showVisualizer.value
+        if (_showVisualizer.value) _showLyrics.value = false
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val lyrics: StateFlow<LyricsState> = combine(currentSong, _showLyrics) { song, show -> song.takeIf { show } }
