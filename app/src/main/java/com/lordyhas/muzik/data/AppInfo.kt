@@ -39,9 +39,8 @@ fun Context.readAppVersion(): AppVersion {
 /** Links shown on the About screen. */
 object AppLinks {
     private const val REPO = "https://github.com/lordyhas/muzik"
-    const val SOURCE_CODE = REPO
     const val LICENSE = "$REPO/blob/main/LICENSE"
     const val REPORT_BUG = "$REPO/issues/new?template=bug_report.yml"
     const val SUGGEST_FEATURE = "$REPO/issues/new?template=feature_request.yml"
-    const val RELEASES = "$REPO/releases/latest"
+    const val DOWNLOAD_PAGE = "https://apps.hassankajila.com/fr/apps/muzik"
 }

@@ -124,7 +124,7 @@ fun AlbumDetailScreen(
         item(key = "hero") {
             DetailHero(
                 artworkUri = album.albumArtUri,
-                eyebrow = "",
+                eyebrow = "Album",
                 title = album.title,
                 subtitle = album.artist,
                 onSubtitleClick = { onGoToArtist(album.artist) },
