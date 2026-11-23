@@ -530,7 +530,7 @@ fun NowPlayingScreen(
                         )
                         PlayerActionChip(
                             icon = Lucide.AudioLines,
-                            label = "Bars",
+                            label = "Visual",
                             active = showVisualizer,
                             accent = accent,
                             onClick = onToggleVisualizer,
