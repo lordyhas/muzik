@@ -361,7 +361,14 @@ fun NowPlayingScreen(
                                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.ExtraBold),
                                     color = TextPrimary,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    overflow = TextOverflow.Ellipsis,
+                                    // Tapping the title opens the song's album.
+                                    modifier = Modifier.clickable(
+                                        interactionSource = null,
+                                        indication = null,
+                                        onClickLabel = "Go to album",
+                                        onClick = onGoToAlbum
+                                    )
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
