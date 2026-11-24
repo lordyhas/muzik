@@ -37,6 +37,7 @@ GitHub Actions in `.github/workflows/`: `ci.yml` runs unit tests, a debug build 
   - It applies the sleep timer, speed and equalizer from `PlaybackSettings`. That object is shared in-process: the UI writes to it and the service collects from it.
   - It saves progress into `PlaybackStateStore`.
   - It serves the Android Auto browse tree (`MediaLibraryTree`) and `onPlaybackResumption`, and updates the home-screen widget (`widget/NowPlayingWidget`).
+  - Its audio sink carries `SpectrumAudioProcessor`, a pass-through processor that feeds the visualizer on Now Playing (`SpectrumPanel`, which replaces the cover like the lyrics). It runs an FFT (`SpectrumMath`, unit-tested) only while `SpectrumAnalyzer.enabled`, and stamps each result with when it will be heard, since the audio is processed ahead of the AudioTrack buffer. No `RECORD_AUDIO` permission is involved.
   - **Queue items must keep `mediaId` = song id**, because current-song lookup, play stats and session restore depend on it. Browse-tree items use `song|<id>|<parentId>` ids and are converted back in `onAddMediaItems`/`onSetMediaItems`.
 - `service/MusicController`: the in-app client. It connects through a `MediaController` built from a `SessionToken`, mirrors player state into StateFlows, and polls position every 500ms while playing.
 
