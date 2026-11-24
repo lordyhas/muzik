@@ -1,6 +1,7 @@
 package com.lordyhas.muzik.service
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -13,7 +14,10 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.audio.AudioSink
+import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.session.CommandButton
 import androidx.media3.session.LibraryResult
@@ -113,6 +117,7 @@ class MusicPlaybackService : MediaLibraryService() {
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             updateWidget()
+            if (isPlaying) SpectrumAnalyzer.onResume() else SpectrumAnalyzer.onPause()
             if (isPlaying) {
                 recordPendingPlay()
                 startProgressSaver()
@@ -144,7 +149,20 @@ class MusicPlaybackService : MediaLibraryService() {
             .setUsage(C.USAGE_MEDIA)
             .build()
 
-        val player = ExoPlayer.Builder(this)
+        // The spectrum visualizer reads the decoded audio from inside the chain (no permission needed)
+        val renderersFactory = object : DefaultRenderersFactory(this) {
+            override fun buildAudioSink(
+                context: Context,
+                enableFloatOutput: Boolean,
+                enableAudioTrackPlaybackParams: Boolean
+            ): AudioSink = DefaultAudioSink.Builder(context)
+                .setEnableFloatOutput(enableFloatOutput)
+                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                .setAudioProcessors(arrayOf(SpectrumAudioProcessor()))
+                .build()
+        }
+
+        val player = ExoPlayer.Builder(this, renderersFactory)
             .setAudioAttributes(audioAttributes, true) // true = handle audio focus automatically
             .setHandleAudioBecomingNoisy(true) // pause when headphones unplugged
             .setWakeMode(C.WAKE_MODE_LOCAL)
@@ -284,7 +302,10 @@ class MusicPlaybackService : MediaLibraryService() {
 
     private fun observeSettings() {
         serviceScope.launch {
-            PlaybackSettings.speed.collect { speed -> exoPlayer?.setPlaybackSpeed(speed) }
+            PlaybackSettings.speed.collect { speed ->
+                SpectrumAnalyzer.speed = speed
+                exoPlayer?.setPlaybackSpeed(speed)
+            }
         }
         serviceScope.launch {
             PlaybackSettings.equalizer.collect { applyEqualizer(it) }

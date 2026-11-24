@@ -129,6 +129,7 @@ fun MainAppScreen(
     val likedIds by viewModel.likedSongIds.collectAsState()
     val showLyrics by viewModel.showLyrics.collectAsState()
     val lyricsState by viewModel.lyrics.collectAsState()
+    val showVisualizer by viewModel.showVisualizer.collectAsState()
     val playbackSpeed by viewModel.playbackSpeed.collectAsState()
     val equalizer by viewModel.equalizer.collectAsState()
     val equalizerInfo by viewModel.equalizerInfo.collectAsState()
@@ -548,6 +549,8 @@ fun MainAppScreen(
                 showLyrics = showLyrics,
                 lyricsState = lyricsState,
                 onToggleLyrics = { viewModel.toggleLyrics() },
+                showVisualizer = showVisualizer,
+                onToggleVisualizer = { viewModel.toggleVisualizer() },
                 onAddToPlaylist = { currentSong?.let { viewModel.setSongPendingAddToPlaylist(it) } },
                 onGoToAlbum = {
                     currentSong?.let {

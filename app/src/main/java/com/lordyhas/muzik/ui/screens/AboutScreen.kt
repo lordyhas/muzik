@@ -29,7 +29,6 @@ import com.composables.icons.lucide.ArrowLeft
 import com.composables.icons.lucide.BookOpen
 import com.composables.icons.lucide.Bug
 import com.composables.icons.lucide.CircleFadingArrowUp
-import com.composables.icons.lucide.CodeXml
 import com.composables.icons.lucide.Lightbulb
 import com.composables.icons.lucide.Lucide
 import com.composables.icons.lucide.Scale
@@ -113,13 +112,6 @@ fun AboutScreen(
 
         SettingsGroup(title = "Open source") {
             SettingsRow(
-                icon = Lucide.CodeXml,
-                title = "Source code",
-                subtitle = "Muzik is open source on GitHub",
-                trailing = SettingsRowTrailing.External,
-                onClick = { uriHandler.openUri(AppLinks.SOURCE_CODE) }
-            )
-            SettingsRow(
                 icon = Lucide.Scale,
                 title = "License",
                 subtitle = "GNU Affero General Public License v3.0",
@@ -161,7 +153,7 @@ fun AboutScreen(
                 subtitle = "Opens the download page in your browser",
                 iconTint = AccentSecondary,
                 trailing = SettingsRowTrailing.External,
-                onClick = { uriHandler.openUri(AppLinks.RELEASES) },
+                onClick = { uriHandler.openUri(AppLinks.DOWNLOAD_PAGE) },
                 showDivider = false
             )
         }
