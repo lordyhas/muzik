@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.composables.icons.lucide.CircleAlert
 import com.composables.icons.lucide.Lucide
+import com.composables.icons.lucide.Trash2
 import com.composables.icons.lucide.WandSparkles
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.tags.AudioTagStore
@@ -53,6 +54,7 @@ import com.lordyhas.muzik.ui.components.EmptyState
 import com.lordyhas.muzik.ui.components.LoadingState
 import com.lordyhas.muzik.ui.theme.AccentPrimary
 import com.lordyhas.muzik.ui.theme.BackgroundDark
+import com.lordyhas.muzik.ui.theme.DangerRed
 import com.lordyhas.muzik.ui.theme.TextMuted
 import kotlinx.coroutines.launch
 
@@ -75,6 +77,7 @@ fun SongTagEditorScreen(
     var fileCover by remember { mutableStateOf<CoverArt?>(null) }
     var coverEdit by remember { mutableStateOf<CoverEdit?>(null) }
     var askDiscard by remember { mutableStateOf(false) }
+    var askDelete by remember { mutableStateOf(false) }
 
     LaunchedEffect(song?.id) {
         if (song == null) return@LaunchedEffect
@@ -181,9 +184,27 @@ fun SongTagEditorScreen(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text("Fill title and track from the file name", color = AccentPrimary)
                 }
+                TextButton(onClick = { askDelete = true }, enabled = !isSaving) {
+                    Icon(Lucide.Trash2, contentDescription = null, tint = DangerRed, modifier = Modifier.size(18.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("Delete this song", color = DangerRed)
+                }
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
+
+    if (askDelete && song != null) {
+        DeleteSongDialog(
+            fileName = song.fileName,
+            onDelete = {
+                askDelete = false
+                writeAccess.requestDelete(listOf(song.contentUri)) { approved ->
+                    if (approved) viewModel.delete(song) { ok -> if (ok) onBack() }
+                }
+            },
+            onCancel = { askDelete = false }
+        )
     }
 
     if (askDiscard) {

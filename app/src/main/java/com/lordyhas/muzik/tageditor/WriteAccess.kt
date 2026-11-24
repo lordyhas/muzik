@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 
-/** Asks Android for permission to modify some audio files, then runs the pending save. */
+/** Asks Android for permission to modify or delete some audio files, then runs the pending action. */
 class WriteAccess internal constructor(
     private val context: Context,
     private val launchWriteRequest: (IntentSenderRequest) -> Unit,
@@ -35,6 +35,26 @@ class WriteAccess internal constructor(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             setPending(onResult)
             val sender = MediaStore.createWriteRequest(context.contentResolver, uris).intentSender
+            launchWriteRequest(IntentSenderRequest.Builder(sender).build())
+        } else if (hasLegacyWritePermission(context)) {
+            onResult(true)
+        } else {
+            setPending(onResult)
+            launchLegacyPermission()
+        }
+    }
+
+    /**
+     * Calls [onResult] with true once [uris] may be deleted. On Android 11+ the system shows its
+     * own confirmation and deletes the files itself when the user agrees (straight away with
+     * "media management" access, so always confirm in the app first). Android 10 and older use
+     * the storage write permission and leave the deleting to the caller.
+     */
+    fun requestDelete(uris: List<Uri>, onResult: (Boolean) -> Unit) {
+        if (uris.isEmpty()) return onResult(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            setPending(onResult)
+            val sender = MediaStore.createDeleteRequest(context.contentResolver, uris).intentSender
             launchWriteRequest(IntentSenderRequest.Builder(sender).build())
         } else if (hasLegacyWritePermission(context)) {
             onResult(true)
