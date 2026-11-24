@@ -17,6 +17,7 @@ import com.lordyhas.muzik.data.tags.AudioTagStore
 import com.lordyhas.muzik.data.tags.CoverArt
 import com.lordyhas.muzik.data.tags.SongEdit
 import com.lordyhas.muzik.data.tags.SongTags
+import com.lordyhas.muzik.service.DeletedSongs
 import com.lordyhas.muzik.ui.components.UiMessage
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.theme.ArtworkColorExtractor
@@ -173,6 +174,7 @@ class TagEditorViewModel(application: Application) : AndroidViewModel(applicatio
             reload()
             _isSaving.value = false
             val deleted = song(song.id) == null
+            if (deleted) DeletedSongs.announce(setOf(song.id))
             _messages.tryEmit(UiMessage(if (deleted) "Song deleted" else "Couldn't delete the song"))
             onDone(deleted)
         }
