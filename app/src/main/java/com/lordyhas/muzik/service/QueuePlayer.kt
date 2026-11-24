@@ -53,6 +53,13 @@ object QueuePlayer {
     }
 
     /** "Add to queue": [items] go right after the current song and the added songs after it. */
+    /** Removes every queue item playing one of [songIds]; the player moves on if it was current. */
+    fun Player.removeSongs(songIds: Set<Long>) {
+        for (index in mediaItemCount - 1 downTo 0) {
+            if (getMediaItemAt(index).mediaId.toLongOrNull() in songIds) removeMediaItem(index)
+        }
+    }
+
     fun Player.addToQueue(items: List<MediaItem>) {
         if (items.isEmpty()) return
         val index = QueueRules.addIndex(queueEntries(), currentMediaItemIndex)
