@@ -2,6 +2,32 @@
   "_comment": "Shown to users in the 'What's new' sheet after an update, and at the top of the GitHub release notes. Newest release first. Write for listeners, not developers: what they can do now, in a sentence or two. type is new, improved or fixed.",
   "releases": [
     {
+      "versionCode": 13,
+      "versionName": "1.8.0",
+      "highlights": [
+        {
+          "type": "new",
+          "title": "See your music",
+          "text": "Tap Visual on Now Playing to swap the cover for live bars that dance to the song, in your theme's colors. Tap the bars to bring the cover back."
+        },
+        {
+          "type": "improved",
+          "title": "Jump to the album",
+          "text": "Tap the song title on Now Playing to open its album. Audio effects now live in the ⋮ menu."
+        },
+        {
+          "type": "improved",
+          "title": "Simpler smart playlists",
+          "text": "Liked Songs, Most Played, Recently Added and Rediscover show just Play and Shuffle."
+        },
+        {
+          "type": "improved",
+          "title": "Easier updates",
+          "text": "Get the latest version in About now opens the Muzik web page."
+        }
+      ]
+    },
+    {
       "versionCode": 12,
       "versionName": "1.7.0",
       "highlights": [
