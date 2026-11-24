@@ -145,7 +145,7 @@ fun NowPlayingScreen(
 
     val pagerState = rememberPagerState(pageCount = { 2 })
     val coroutineScope = rememberCoroutineScope()
-    val accent = rememberArtworkColor(song.albumArtUri)
+    val accent = rememberArtworkColor(song.artworkUri)
 
     // Back: from the queue page return to the player; from the player, dismiss
     BackHandler(enabled = true) {
@@ -184,9 +184,9 @@ fun NowPlayingScreen(
             ) { /* consume clicks */ }
     ) {
         // ── Ambient backdrop: blurred artwork + accent gradient ──────────────
-        if (song.albumArtUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (song.artworkUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             AsyncImage(
-                model = song.albumArtUri,
+                model = song.artworkUri,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -355,7 +355,7 @@ fun NowPlayingScreen(
                         onSwipePrevious = onSkipPrevious
                     ) { coverModifier ->
                     Artwork(
-                        uri = song.albumArtUri,
+                        uri = song.artworkUri,
                         shape = RoundedCornerShape(24.dp),
                         iconSize = 96.dp,
                         placeholderTint = accent,
@@ -589,7 +589,7 @@ fun NowPlayingScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Artwork(
-                            uri = song.albumArtUri,
+                            uri = song.artworkUri,
                             shape = RoundedCornerShape(12.dp),
                             iconSize = 22.dp,
                             placeholderTint = accent,
@@ -857,7 +857,7 @@ private fun QueueSongRow(
     ) {
         Box(contentAlignment = Alignment.Center) {
             Artwork(
-                uri = song.albumArtUri,
+                uri = song.artworkUri,
                 shape = RoundedCornerShape(10.dp),
                 iconSize = 20.dp,
                 modifier = Modifier.size(48.dp)

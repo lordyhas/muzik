@@ -110,6 +110,12 @@
                 android:resource="@xml/widget_now_playing_info" />
         </receiver>
 
+        <!-- Each song's own cover (embedded picture, album cover as fallback) -->
+        <provider
+            android:name=".data.SongArtworkProvider"
+            android:authorities="${applicationId}.artwork"
+            android:exported="false" />
+
         <!-- Android Auto: this app provides media -->
         <meta-data
             android:name="com.google.android.gms.car.application"

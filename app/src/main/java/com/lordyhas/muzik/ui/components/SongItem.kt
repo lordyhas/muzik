@@ -125,7 +125,7 @@ fun SongItem(
             if (showArtwork) {
                 Box(contentAlignment = Alignment.Center) {
                     Artwork(
-                        uri = song.albumArtUri,
+                        uri = song.artworkUri,
                         shape = RoundedCornerShape(10.dp),
                         iconSize = 22.dp,
                         modifier = Modifier.size(52.dp)

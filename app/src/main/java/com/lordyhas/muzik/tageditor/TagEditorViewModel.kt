@@ -6,6 +6,7 @@ import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import coil.imageLoader
+import com.lordyhas.muzik.data.SongArtworkProvider
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.model.filteredBy
@@ -184,7 +185,9 @@ class TagEditorViewModel(application: Application) : AndroidViewModel(applicatio
 
     /** Covers are cached by URI, which doesn't change when the picture inside the file does. */
     private fun clearArtworkCaches() {
-        val loader = getApplication<Application>().imageLoader
+        val app = getApplication<Application>()
+        viewModelScope.launch(Dispatchers.IO) { SongArtworkProvider.clearCache(app) }
+        val loader = app.imageLoader
         loader.memoryCache?.clear()
         loader.diskCache?.clear()
         ArtworkColorExtractor.clear()
