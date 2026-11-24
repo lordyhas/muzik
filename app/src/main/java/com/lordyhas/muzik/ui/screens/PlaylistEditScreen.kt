@@ -265,7 +265,7 @@ private fun EditableSongRow(
             )
         }
         Artwork(
-            uri = song.albumArtUri,
+            uri = song.artworkUri,
             shape = RoundedCornerShape(8.dp),
             iconSize = 20.dp,
             modifier = Modifier.size(44.dp)

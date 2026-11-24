@@ -264,10 +264,10 @@ private fun QueueSongItem(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            if (song.albumArtUri != null) {
+            if (song.artworkUri != null) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(song.albumArtUri)
+                        .data(song.artworkUri)
                         .crossfade(true)
                         .build(),
                     contentDescription = null,
