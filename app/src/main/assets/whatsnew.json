@@ -2,6 +2,22 @@
   "_comment": "Shown to users in the 'What's new' sheet after an update, and at the top of the GitHub release notes. Newest release first. Write for listeners, not developers: what they can do now, in a sentence or two. type is new, improved or fixed.",
   "releases": [
     {
+      "versionCode": 14,
+      "versionName": "1.8.1",
+      "highlights": [
+        {
+          "type": "improved",
+          "title": "Every song, its own cover",
+          "text": "Songs now show the picture saved in their own file, so tracks of a compilation or bonus tracks no longer all share the album's cover."
+        },
+        {
+          "type": "new",
+          "title": "Delete songs in Muzik Tags",
+          "text": "Open a song in Muzik Tags and tap Delete this song to remove it from your phone. If it was in your queue, the player skips it."
+        }
+      ]
+    },
+    {
       "versionCode": 13,
       "versionName": "1.8.0",
       "highlights": [

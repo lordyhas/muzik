@@ -69,7 +69,7 @@ fun MiniPlayer(
 ) {
     if (song == null) return
 
-    val accent = rememberArtworkColor(song.albumArtUri)
+    val accent = rememberArtworkColor(song.artworkUri)
     val progress = if (duration > 0) {
         (currentPosition.toFloat() / duration.toFloat()).coerceIn(0f, 1f)
     } else 0f
@@ -126,7 +126,7 @@ fun MiniPlayer(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Artwork(
-                    uri = song.albumArtUri,
+                    uri = song.artworkUri,
                     shape = RoundedCornerShape(12.dp),
                     iconSize = 22.dp,
                     placeholderTint = accent,

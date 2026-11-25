@@ -37,6 +37,7 @@ import com.lordyhas.muzik.MainActivity
 import com.lordyhas.muzik.data.repository.LibraryRepository
 import com.lordyhas.muzik.service.QueuePlayer.cleanUpAfterLoop
 import com.lordyhas.muzik.service.QueuePlayer.isLoopTransition
+import com.lordyhas.muzik.service.QueuePlayer.removeSongs
 import com.lordyhas.muzik.service.QueuePlayer.reorderUpcoming
 import com.lordyhas.muzik.widget.NowPlayingWidget
 import kotlinx.coroutines.CoroutineScope
@@ -312,6 +313,12 @@ class MusicPlaybackService : MediaLibraryService() {
         }
         serviceScope.launch {
             PlaybackSettings.sleepTimer.collect { applySleepTimer(it) }
+        }
+        serviceScope.launch {
+            DeletedSongs.ids.collect { ids ->
+                exoPlayer?.removeSongs(ids)
+                saveProgress()
+            }
         }
     }
 

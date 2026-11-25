@@ -232,3 +232,15 @@ fun DiscardChangesDialog(onDiscard: () -> Unit, onKeepEditing: () -> Unit) {
         dismissButton = { TextButton(onClick = onKeepEditing) { Text("Keep editing", color = TextPrimary) } }
     )
 }
+
+@Composable
+fun DeleteSongDialog(fileName: String, onDelete: () -> Unit, onCancel: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onCancel,
+        containerColor = SurfaceDark,
+        title = { Text("Delete this song?", color = TextPrimary) },
+        text = { Text("$fileName will be removed from your device. This can't be undone.", color = TextSecondary) },
+        confirmButton = { TextButton(onClick = onDelete) { Text("Delete", color = DangerRed) } },
+        dismissButton = { TextButton(onClick = onCancel) { Text("Cancel", color = TextPrimary) } }
+    )
+}

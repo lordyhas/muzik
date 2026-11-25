@@ -369,7 +369,7 @@ private fun HeroCard(
     onPlayPause: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val accent = rememberArtworkColor(song.albumArtUri)
+    val accent = rememberArtworkColor(song.artworkUri)
     val shape = RoundedCornerShape(24.dp)
 
     Box(
@@ -383,9 +383,9 @@ private fun HeroCard(
             .clickable(onClick = onOpen)
     ) {
         // Artwork backdrop
-        if (song.albumArtUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (song.artworkUri != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             AsyncImage(
-                model = song.albumArtUri,
+                model = song.artworkUri,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -411,7 +411,7 @@ private fun HeroCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Artwork(
-                uri = song.albumArtUri,
+                uri = song.artworkUri,
                 shape = RoundedCornerShape(16.dp),
                 iconSize = 40.dp,
                 placeholderTint = accent,
@@ -578,7 +578,7 @@ private fun RecentSongRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Artwork(
-            uri = song.albumArtUri,
+            uri = song.artworkUri,
             shape = RoundedCornerShape(10.dp),
             iconSize = 20.dp,
             contentDescription = null,

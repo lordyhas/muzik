@@ -173,7 +173,7 @@ fun TagLibraryScreen(
                     }
                     TagTab.SONGS -> items(library.songs, key = { it.id }) { song ->
                         LibraryRow(
-                            artworkUri = song.albumArtUri,
+                            artworkUri = song.artworkUri,
                             placeholder = Lucide.Music,
                             title = song.title,
                             subtitle = "${song.artist} · ${song.album}",

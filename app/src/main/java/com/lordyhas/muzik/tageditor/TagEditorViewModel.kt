@@ -1,10 +1,12 @@
 package com.lordyhas.muzik.tageditor
 
 import android.app.Application
+import android.os.Build
 import android.provider.MediaStore
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import coil.imageLoader
+import com.lordyhas.muzik.data.SongArtworkProvider
 import com.lordyhas.muzik.data.model.Album
 import com.lordyhas.muzik.data.model.Song
 import com.lordyhas.muzik.data.model.filteredBy
@@ -16,6 +18,7 @@ import com.lordyhas.muzik.data.tags.AudioTagStore
 import com.lordyhas.muzik.data.tags.CoverArt
 import com.lordyhas.muzik.data.tags.SongEdit
 import com.lordyhas.muzik.data.tags.SongTags
+import com.lordyhas.muzik.service.DeletedSongs
 import com.lordyhas.muzik.ui.components.UiMessage
 import com.lordyhas.muzik.ui.components.pluralize
 import com.lordyhas.muzik.ui.theme.ArtworkColorExtractor
@@ -32,6 +35,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 /** An artist in the Tag editor: every song whose artist tag has this name. */
 data class TagArtist(val name: String, val songs: List<Song>) {
@@ -151,11 +156,38 @@ class TagEditorViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    /**
+     * Removes [song] from the device once deletion was approved (see WriteAccess.requestDelete).
+     * Android 11+ has already deleted the file by then; older versions delete it here.
+     */
+    fun delete(song: Song, onDone: (success: Boolean) -> Unit) {
+        viewModelScope.launch {
+            _isSaving.value = true
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                withContext(Dispatchers.IO) {
+                    val resolver = getApplication<Application>().contentResolver
+                    runCatching { resolver.delete(song.contentUri, null, null) }
+                    if (song.folderPath.isNotEmpty() && song.fileName.isNotEmpty()) {
+                        runCatching { File(song.folderPath, song.fileName).takeIf { it.exists() }?.delete() }
+                    }
+                }
+            }
+            reload()
+            _isSaving.value = false
+            val deleted = song(song.id) == null
+            if (deleted) DeletedSongs.announce(setOf(song.id))
+            _messages.tryEmit(UiMessage(if (deleted) "Song deleted" else "Couldn't delete the song"))
+            onDone(deleted)
+        }
+    }
+
     fun showMessage(text: String) { _messages.tryEmit(UiMessage(text)) }
 
     /** Covers are cached by URI, which doesn't change when the picture inside the file does. */
     private fun clearArtworkCaches() {
-        val loader = getApplication<Application>().imageLoader
+        val app = getApplication<Application>()
+        viewModelScope.launch(Dispatchers.IO) { SongArtworkProvider.clearCache(app) }
+        val loader = app.imageLoader
         loader.memoryCache?.clear()
         loader.diskCache?.clear()
         ArtworkColorExtractor.clear()

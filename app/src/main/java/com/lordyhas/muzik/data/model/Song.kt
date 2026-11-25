@@ -15,7 +15,13 @@ data class Song(
     val albumId: Long,
     val duration: Long,
     val contentUri: Uri,
+    /** The album's cover (MediaStore keeps one per album): for album cards and pages. */
     val albumArtUri: Uri? = null,
+    /**
+     * This song's own cover (the picture in the file, the album's as fallback, see
+     * SongArtworkProvider): for anything that shows one song.
+     */
+    val artworkUri: Uri? = albumArtUri,
     val trackNumber: Int? = null,
     val discNumber: Int? = null,
     /** Seconds since epoch when the file was added to the device (MediaStore DATE_ADDED). */
@@ -27,7 +33,9 @@ data class Song(
     /** File name with extension, e.g. "01 - Intro.mp3". */
     val fileName: String = "",
     /** Voice/call recording according to MediaStore (Android 12+ only, always false before). */
-    val isRecording: Boolean = false
+    val isRecording: Boolean = false,
+    /** Seconds since epoch when the file last changed (MediaStore DATE_MODIFIED). */
+    val dateModified: Long = 0L
 ) {
     fun formattedDuration(): String {
         val minutes = TimeUnit.MILLISECONDS.toMinutes(duration)
@@ -58,7 +66,7 @@ data class Song(
         trackNumber?.let { metadataBuilder.setTrackNumber(it) }
         discNumber?.let { metadataBuilder.setDiscNumber(it) }
 
-        albumArtUri?.let {
+        artworkUri?.let {
             metadataBuilder.setArtworkUri(it)
         }
 

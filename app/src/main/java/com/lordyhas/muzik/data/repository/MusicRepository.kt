@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import com.lordyhas.muzik.data.SongArtworkProvider
 import com.lordyhas.muzik.data.model.Song
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -35,6 +36,7 @@ class MusicRepository(private val context: Context) {
             MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.TRACK,
             MediaStore.Audio.Media.DATE_ADDED,
+            MediaStore.Audio.Media.DATE_MODIFIED,
             MediaStore.Audio.Media.YEAR,
             @Suppress("DEPRECATION") MediaStore.Audio.Media.DATA,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) MediaStore.Audio.Media.IS_RECORDING else null
@@ -62,6 +64,7 @@ class MusicRepository(private val context: Context) {
                 val displayNameColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DISPLAY_NAME)
                 val trackColumn = it.getColumnIndex(MediaStore.Audio.Media.TRACK)
                 val dateAddedColumn = it.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED)
+                val dateModifiedColumn = it.getColumnIndex(MediaStore.Audio.Media.DATE_MODIFIED)
                 val yearColumn = it.getColumnIndex(MediaStore.Audio.Media.YEAR)
                 @Suppress("DEPRECATION")
                 val dataColumn = it.getColumnIndex(MediaStore.Audio.Media.DATA)
@@ -81,6 +84,7 @@ class MusicRepository(private val context: Context) {
                     val displayName = it.getString(displayNameColumn) ?: "audio_${id}"
                     val rawTrack = if (trackColumn != -1 && !it.isNull(trackColumn)) it.getInt(trackColumn) else 0
                     val dateAdded = if (dateAddedColumn != -1 && !it.isNull(dateAddedColumn)) it.getLong(dateAddedColumn) else 0L
+                    val dateModified = if (dateModifiedColumn != -1 && !it.isNull(dateModifiedColumn)) it.getLong(dateModifiedColumn) else 0L
                     val year = if (yearColumn != -1 && !it.isNull(yearColumn)) it.getInt(yearColumn).takeIf { y -> y > 0 } else null
                     val filePath = if (dataColumn != -1) it.getString(dataColumn) else null
                     val folderPath = filePath?.substringBeforeLast('/', missingDelimiterValue = "").orEmpty()
@@ -130,13 +134,15 @@ class MusicRepository(private val context: Context) {
                         duration = if (duration < 0) 0L else duration,
                         contentUri = contentUri,
                         albumArtUri = albumArtUri,
+                        artworkUri = SongArtworkProvider.uriFor(context, id, albumId, dateModified),
                         trackNumber = trackNumber,
                         discNumber = discNumber,
                         dateAdded = dateAdded,
                         year = year,
                         folderPath = folderPath,
                         fileName = displayName,
-                        isRecording = isRecording
+                        isRecording = isRecording,
+                        dateModified = dateModified
                     )
                     songsList.add(song)
                 }
